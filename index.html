@@ -754,13 +754,9 @@ function renderPreview() {
   if (learn) infoItems.push(['⟳','Learning', learn]);
 
   if (infoItems.length) {
-    html += `<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">`;
+    html += `<div style="display:flex;flex-direction:column;gap:4px;margin-bottom:10px;font-size:11.5px">`;
     infoItems.forEach(([sym, label, val]) => {
-      html += `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:7px;font-size:11.5px">
-        <span style="opacity:.45;font-size:13px;width:18px;text-align:center">${sym}</span>
-        <span style="color:rgba(255,255,255,0.3);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;min-width:68px">${label}</span>
-        <span style="color:rgba(255,255,255,0.78)">${val}</span>
-      </div>`;
+      html += `<div><span style="opacity:.4;margin-right:6px">${sym}</span><span style="color:rgba(255,255,255,0.3);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;margin-right:8px">${label}</span><span style="color:rgba(255,255,255,0.78)">${val}</span></div>`;
     });
     html += `</div>`;
   }
@@ -848,8 +844,8 @@ function gen() {
 
   let o = '';
 
-  // BANNER
-  o += `<div align="center">\n  <img src="https://capsule-render.vercel.app/api?type=waving&color=${accentHex}&height=200&section=header&text=${encodeURIComponent(name)}&fontSize=60&fontColor=ffffff&fontAlignY=36&desc=${encodeURIComponent(role)}&descSize=18&descAlignY=58&descColor=ffffffcc&animation=fadeIn" width="100%"/>\n</div>\n\n`;
+  // BANNER — bold, modern header
+  o += `<div align="center">\n  <img src="https://capsule-render.vercel.app/api?type=waving&color=${accentHex}&height=240&section=header&text=${encodeURIComponent(name)}&fontSize=68&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=${encodeURIComponent(role)}&descSize=20&descAlignY=58&descColor=ffffffaa&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>\n</div>\n\n`;
 
   // TYPING + SOCIALS
   o += `<div align="center">\n\n`;
@@ -859,29 +855,25 @@ function gen() {
   }
   if (socs.length) { o += socs.join(' ') + '\n\n'; }
   if (T.views) o += `![Profile Views](https://komarev.com/ghpvc/?username=${user}&color=${accentHex}&style=flat-square)\n\n`;
-  o += `</div>\n\n---\n\n`;
+  o += `</div>\n\n`;
 
   // ABOUT
   o += `## About\n\n`;
   if (bio) o += `${bio}\n\n`;
   const infoRows = [];
-  if (loc)   infoRows.push(['📍', 'Location',   loc]);
-  if (exp)   infoRows.push(['⌗', 'Experience', exp]);
-  if (edu)   infoRows.push(['◎', 'Education',  edu]);
-  if (learn) infoRows.push(['⟳', 'Learning',   learn]);
+  if (loc)   infoRows.push(`📍 **Location** &nbsp; ${loc}`);
+  if (exp)   infoRows.push(`⌗ **Experience** &nbsp; ${exp}`);
+  if (edu)   infoRows.push(`◎ **Education** &nbsp; ${edu}`);
+  if (learn) infoRows.push(`⟳ **Learning** &nbsp; ${learn}`);
   if (infoRows.length) {
-    o += `<table>\n`;
-    infoRows.forEach(([sym, label, val]) => {
-      o += `<tr><td>${sym} <b>${label}</b></td><td>${val}</td></tr>\n`;
-    });
-    o += `</table>\n\n`;
+    // Use explicit br so GitHub renders each on its own line
+    o += infoRows.join(' <br/>\n') + '\n\n';
   }
   if (fun) o += `> ⚡ ${fun}\n\n`;
-  o += `---\n\n`;
 
   // STACK
   if (sections.length) {
-    o += `## Stack\n\n`;
+    o += `---\n\n## Stack\n\n`;
     sections.forEach(s => {
       o += `**${s.lb}**\n\n`;
       if (s.si) {
@@ -912,14 +904,14 @@ function gen() {
   }
   if (T.streak) o += `<div align="center">\n\n[![GitHub Streak](https://streak-stats.demolab.com?user=${user}&theme=${theme}&hide_border=true)](https://git.io/streak-stats)\n\n</div>\n\n`;
 
-  // TROPHIES
+  // TROPHIES — no extra --- before it, flows naturally after stats
   if (T.trophies) {
     const supported = ['flat','onedark','gruvbox','dracula','monokai','chalk','nord','alduin','darkhub','juicyfresh','buddhism','radical','onestar','discord','algolia','gitdimmed','tokyonight','matrix','apprentice','dark_dimmed','midnight_purple','kimbie_dark'];
     const tt = supported.includes(theme) ? theme : 'tokyonight';
-    o += `---\n\n## Trophies\n\n<div align="center">\n\n<a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=${user}&theme=${tt}&column=6&no-frame=true&margin-w=8" alt="trophies"/></a>\n\n</div>\n\n`;
+    o += `## Trophies\n\n<div align="center">\n\n<a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=${user}&theme=${tt}&column=6&no-frame=true&margin-w=8" alt="trophies"/></a>\n\n</div>\n\n`;
   }
 
-  // ACTIVITY
+  // ACTIVITY — single --- before this section
   if (T.activity) {
     const agMap = {'tokyonight':'tokyo-night','radical':'redical','dracula':'dracula','nord':'nord-dark','gruvbox':'github','onedark':'react-dark','cobalt':'cobalt','synthwave':'synthwave','merko':'merko','midnight_purple':'midnight-purple','ocean_dark':'ocean-dark','aura':'aura','github_dark':'github-dark','material_palenight':'material_palenight','calm':'minimal','solarized-light':'minimal'};
     const ag = agMap[theme] || 'tokyo-night';
