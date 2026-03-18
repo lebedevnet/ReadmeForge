@@ -476,14 +476,22 @@ footer strong{color:var(--accent)}
       <div class="tog on"  data-k="stats">   <div><div class="tn">GitHub Stats</div><div class="td">commits, stars & PRs</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="streak">  <div><div class="tn">Streak Stats</div><div class="td">contribution streak</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="langs">   <div><div class="tn">Top Languages</div><div class="td">most used languages</div></div><div class="sw"></div></div>
-      <div class="tog on"  data-k="trophies"><div><div class="tn">Trophies</div><div class="td">github achievements</div></div><div class="sw"></div></div>
+      <div class="tog"     data-k="trophies"><div><div class="tn">Trophies</div><div class="td">only if you have them</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="activity"><div><div class="tn">Activity Graph</div><div class="td">contribution chart</div></div><div class="sw"></div></div>
-      <div class="tog on"  data-k="quote">   <div><div class="tn">Dev Quote</div><div class="td">random dev wisdom</div></div><div class="sw"></div></div>
+      <div class="tog on"  data-k="quote">   <div><div class="tn">Quote</div><div class="td">custom or random</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="views">   <div><div class="tn">Profile Views</div><div class="td">visitor counter</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="snake">   <div><div class="tn">Snake Animation</div><div class="td">⚠️ needs Actions setup</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="waka">    <div><div class="tn">WakaTime Stats</div><div class="td">⚠️ needs wakatime.com</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="spotify"> <div><div class="tn">Spotify Widget</div><div class="td">⚠️ needs novatorem</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="bmc">     <div><div class="tn">Buy Me a Coffee</div><div class="td">support link</div></div><div class="sw"></div></div>
+    </div>
+
+    <div class="slabel-row" id="quote-input-row" style="margin-top:16px"><span class="slabel">Custom Quote</span></div>
+    <div id="quote-input-wrap">
+      <div class="field">
+        <input id="fquote" placeholder="Leave empty for a random dev quote" oninput="updatePreview()">
+      </div>
+      <div style="font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:6px">// leave blank → random quote each page load</div>
     </div>
 
   </div>
@@ -505,10 +513,10 @@ footer strong{color:var(--accent)}
 
 <footer>
   <strong>ReadmeForge</strong> &nbsp;·&nbsp;
-  ⭐ <a href="https://github.com/lebedevnet/ReadmeForge" target="_blank">Star on GitHub</a> &nbsp;·&nbsp;
-  🍴 <a href="https://github.com/lebedevnet/ReadmeForge/fork" target="_blank">Fork it</a> &nbsp;·&nbsp;
+  <a href="https://github.com/lebedevnet/ReadmeForge" target="_blank">Star on GitHub</a> &nbsp;·&nbsp;
+  <a href="https://github.com/lebedevnet/ReadmeForge/fork" target="_blank">Fork</a> &nbsp;·&nbsp;
   Free &amp; Open Source &nbsp;·&nbsp;
-  <a href="https://github.com/lebedevnet/ReadmeForge/issues" target="_blank">Report an issue</a>
+  <a href="https://github.com/lebedevnet/ReadmeForge/issues" target="_blank">Issues</a>
 </footer>
 
 </div><!-- /form-col -->
@@ -544,384 +552,413 @@ const siMap={
   'Redis':'redis','Supabase':'supabase','Firebase':'firebase','Prisma':'prisma',
   'Docker':'docker','Kubernetes':'kubernetes','AWS':'aws','Google Cloud':'gcp',
   'Azure':'azure','Vercel':'vercel','Nginx':'nginx','Git':'git','Linux':'linux',
-  'VS Code':'vscode','Figma':'figma','Terraform':'terraform',
-  'GitHub Actions':'githubactions',
+  'VS Code':'vscode','Figma':'figma','Terraform':'terraform','GitHub Actions':'githubactions',
   'TensorFlow':'tensorflow','PyTorch':'pytorch','Pandas':'pandas',
   'OpenCV':'opencv','Jupyter':'jupyter','NumPy':'numpy'
 };
 
 // ── COLOR SCHEME ──
-let accentColor='#00e87a',accentHex='00e87a',accentR=0,accentG=232,accentB=122;
+let accentColor='#00e87a', accentHex='00e87a', accentR=0, accentG=232, accentB=122;
 
-document.querySelectorAll('.cs').forEach(el=>{
-  el.addEventListener('click',()=>{
-    document.querySelectorAll('.cs').forEach(x=>x.classList.remove('on'));
+document.querySelectorAll('.cs').forEach(el => {
+  el.addEventListener('click', () => {
+    document.querySelectorAll('.cs').forEach(x => x.classList.remove('on'));
     el.classList.add('on');
-    accentColor=el.dataset.color;
-    accentHex=accentColor.replace('#','');
-    accentR=parseInt(el.dataset.r);
-    accentG=parseInt(el.dataset.g);
-    accentB=parseInt(el.dataset.b);
-    const r=document.documentElement;
-    r.style.setProperty('--accent',accentColor);
-    r.style.setProperty('--accent-r',accentR);
-    r.style.setProperty('--accent-g',accentG);
-    r.style.setProperty('--accent-b',accentB);
-    r.style.setProperty('--adim',`rgba(${accentR},${accentG},${accentB},0.1)`);
-    r.style.setProperty('--aglow',`rgba(${accentR},${accentG},${accentB},0.25)`);
-    r.style.setProperty('--border-h',`rgba(${accentR},${accentG},${accentB},0.45)`);
+    accentColor = el.dataset.color;
+    accentHex = accentColor.replace('#','');
+    accentR = parseInt(el.dataset.r);
+    accentG = parseInt(el.dataset.g);
+    accentB = parseInt(el.dataset.b);
+    const r = document.documentElement;
+    r.style.setProperty('--accent', accentColor);
+    r.style.setProperty('--accent-r', accentR);
+    r.style.setProperty('--accent-g', accentG);
+    r.style.setProperty('--accent-b', accentB);
+    r.style.setProperty('--adim', `rgba(${accentR},${accentG},${accentB},0.1)`);
+    r.style.setProperty('--aglow', `rgba(${accentR},${accentG},${accentB},0.25)`);
+    r.style.setProperty('--border-h', `rgba(${accentR},${accentG},${accentB},0.45)`);
     updatePreview();
   });
 });
 
 // ── THEME ──
-let theme='tokyonight';
-document.querySelectorAll('.tcard').forEach(t=>{
-  t.addEventListener('click',()=>{
-    document.querySelectorAll('.tcard').forEach(x=>x.classList.remove('on'));
-    t.classList.add('on');theme=t.dataset.t;updatePreview();
+let theme = 'tokyonight';
+document.querySelectorAll('.tcard').forEach(t => {
+  t.addEventListener('click', () => {
+    document.querySelectorAll('.tcard').forEach(x => x.classList.remove('on'));
+    t.classList.add('on');
+    theme = t.dataset.t;
+    updatePreview();
   });
 });
 
 // ── TOGGLES ──
-const T={typing:true,stats:true,streak:true,langs:true,trophies:true,activity:true,quote:true,views:false,snake:false,waka:false,spotify:false,bmc:false};
-document.querySelectorAll('.tog').forEach(el=>{
-  el.addEventListener('click',()=>{T[el.dataset.k]=!T[el.dataset.k];el.classList.toggle('on',T[el.dataset.k]);updatePreview();});
+const T = {typing:true,stats:true,streak:true,langs:true,trophies:false,activity:true,quote:true,views:false,snake:false,waka:false,spotify:false,bmc:false};
+document.querySelectorAll('.tog').forEach(el => {
+  if (T[el.dataset.k]) el.classList.add('on');
+  else el.classList.remove('on');
+  el.addEventListener('click', () => {
+    T[el.dataset.k] = !T[el.dataset.k];
+    el.classList.toggle('on', T[el.dataset.k]);
+    if (el.dataset.k === 'quote') {
+      document.getElementById('quote-input-wrap').style.opacity = T.quote ? '1' : '0.35';
+    }
+    updatePreview();
+  });
 });
 
-// ── PROGRESS ──
-function updateProgress(){
-  const fields=['fn','fu','fr','fl','fb'];
-  const filled=fields.filter(id=>document.getElementById(id)?.value?.trim()).length;
-  const techOn=document.querySelectorAll('.chip.on').length;
-  const hasSocial=['sli','stw','stg','syt','stv','sdev','smed','sem','sweb','sbmc'].some(id=>document.getElementById(id)?.value?.trim());
-  let s=(filled/fields.length)*40+Math.min(techOn/5,1)*40+(hasSocial?20:0);
-  document.getElementById('pbar').style.width=Math.min(s,100)+'%';
+// ── PROGRESS BAR ──
+function updateProgress() {
+  const fields = ['fn','fu','fr','fl','fb'];
+  const filled = fields.filter(id => document.getElementById(id)?.value?.trim()).length;
+  const techOn = document.querySelectorAll('.chip.on').length;
+  const hasSocial = ['sli','stw','stg','syt','stv','sdev','smed','sem','sweb','sbmc'].some(id => document.getElementById(id)?.value?.trim());
+  let s = (filled / fields.length) * 40 + Math.min(techOn / 5, 1) * 40 + (hasSocial ? 20 : 0);
+  document.getElementById('pbar').style.width = Math.min(s, 100) + '%';
 }
-document.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',()=>{updateProgress();updatePreview();}));
+document.querySelectorAll('input,textarea').forEach(el => el.addEventListener('input', () => { updateProgress(); updatePreview(); }));
 
-// ── CHIPS ──
-function updateCounter(){
-  const n=document.querySelectorAll('.chip.on').length;
-  const el=document.getElementById('tech-count');
-  el.textContent=n;el.classList.add('bump');
-  setTimeout(()=>el.classList.remove('bump'),200);
-  updateProgress();updatePreview();
+// ── CHIP TOGGLE + COUNTER ──
+function updateCounter() {
+  const n = document.querySelectorAll('.chip.on').length;
+  const el = document.getElementById('tech-count');
+  el.textContent = n;
+  el.classList.add('bump');
+  setTimeout(() => el.classList.remove('bump'), 200);
+  updateProgress();
+  updatePreview();
 }
-document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{c.classList.toggle('on');updateCounter();}));
-function clearGroup(id){document.querySelectorAll('#'+id+' .chip.on').forEach(c=>c.classList.remove('on'));updateCounter();}
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => { c.classList.toggle('on'); updateCounter(); }));
+function clearGroup(id) { document.querySelectorAll('#' + id + ' .chip.on').forEach(c => c.classList.remove('on')); updateCounter(); }
 
 // ── SPOKEN LANGS ──
-let lc=0;
-function addLang(nm='',lv=3){
-  lc++;const id='lr'+lc;
-  const d=document.createElement('div');d.className='lang-row';d.id=id;
-  d.innerHTML=`<input class="ln" type="text" placeholder="e.g. English, Русский…" value="${nm}" oninput="updatePreview()">
-  <div class="dots">${[1,2,3,4,5].map(i=>`<div class="dot${i<=lv?' on':''}" onclick="setLv('${id}',${i})"></div>`).join('')}</div>
+let lc = 0;
+function addLang(nm = '', lv = 3) {
+  lc++;
+  const id = 'lr' + lc;
+  const d = document.createElement('div');
+  d.className = 'lang-row';
+  d.id = id;
+  d.innerHTML = `<input class="ln" type="text" placeholder="e.g. English, Русский…" value="${nm}" oninput="updatePreview()">
+  <div class="dots">${[1,2,3,4,5].map(i => `<div class="dot${i<=lv?' on':''}" onclick="setLv('${id}',${i})"></div>`).join('')}</div>
   <button class="rm" onclick="document.getElementById('${id}').remove();updatePreview()">×</button>`;
   document.getElementById('ll').appendChild(d);
 }
-function setLv(id,lv){document.querySelectorAll('#'+id+' .dot').forEach((d,i)=>d.classList.toggle('on',i<lv));updatePreview();}
-addLang('English',5);addLang('',3);
+function setLv(id, lv) {
+  document.querySelectorAll('#' + id + ' .dot').forEach((d, i) => d.classList.toggle('on', i < lv));
+  updatePreview();
+}
+addLang('English', 5);
+addLang('', 3);
 
 // ── HELPERS ──
-const v=id=>document.getElementById(id)?.value?.trim()||'';
-function chips(id){return[...document.querySelectorAll('#'+id+' .chip.on')].map(c=>({nm:c.dataset.d||c.dataset.v,v:c.dataset.v,c:c.dataset.c,l:c.dataset.l,lc:c.dataset.lc||'white'}));}
-function allOnChips(){return[...document.querySelectorAll('.chip.on')];}
-function badge(nm,c,l,lc='white'){return`![${nm}](https://img.shields.io/badge/${encodeURIComponent(nm)}-${c}?style=for-the-badge&logo=${l}&logoColor=${lc})`;}
-function sbadge(nm,c,l,url){return`[![${nm}](https://img.shields.io/badge/${nm.replace(/-/g,'--')}-${c}?style=for-the-badge&logo=${l}&logoColor=white)](${toU(url)})`;}
-function toU(u){if(!u)return'#';return u.startsWith('http')?u:'https://'+u;}
-function langFlag(nm){
-  const n=nm.toLowerCase();
-  if(n.includes('russian')||n.includes('русский'))return'🇷🇺';
-  if(n.includes('english'))return'🇬🇧';
-  if(n.includes('german')||n.includes('deutsch')||n.includes('немецкий'))return'🇩🇪';
-  if(n.includes('french'))return'🇫🇷';if(n.includes('spanish'))return'🇪🇸';
-  if(n.includes('chinese'))return'🇨🇳';if(n.includes('japanese'))return'🇯🇵';
-  if(n.includes('portuguese'))return'🇧🇷';if(n.includes('arabic'))return'🇸🇦';
-  if(n.includes('turkish'))return'🇹🇷';return'🌐';
-}
-const lvlLabels=['','Basic','Conversational','Intermediate','Advanced','Native'];
-const bars=['','🟥⬛⬛⬛⬛','🟧🟧⬛⬛⬛','🟨🟨🟨⬛⬛','🟩🟩🟩🟩⬛','🟩🟩🟩🟩🟩'];
+const v = id => document.getElementById(id)?.value?.trim() || '';
+function chips(id) { return [...document.querySelectorAll('#' + id + ' .chip.on')].map(c => ({nm:c.dataset.d||c.dataset.v,v:c.dataset.v,c:c.dataset.c,l:c.dataset.l,lc:c.dataset.lc||'white'})); }
+function allOnChips() { return [...document.querySelectorAll('.chip.on')]; }
+function badge(nm, c, l, lc = 'white') { return `![${nm}](https://img.shields.io/badge/${encodeURIComponent(nm)}-${c}?style=for-the-badge&logo=${l}&logoColor=${lc})`; }
+function toU(u) { if (!u) return '#'; return u.startsWith('http') ? u : 'https://' + u; }
 
-// Get skillicons string for a set of chips
-function getSkillicons(chipEls){
-  return chipEls.map(c=>{
-    const key=c.dataset.d||c.dataset.v;
-    return siMap[key]||null;
+function langFlag(nm) {
+  const n = nm.toLowerCase();
+  if (n.includes('russian') || n.includes('русский')) return '🇷🇺';
+  if (n.includes('english')) return '🇬🇧';
+  if (n.includes('german') || n.includes('deutsch') || n.includes('немецкий')) return '🇩🇪';
+  if (n.includes('french')) return '🇫🇷';
+  if (n.includes('spanish')) return '🇪🇸';
+  if (n.includes('chinese')) return '🇨🇳';
+  if (n.includes('japanese')) return '🇯🇵';
+  if (n.includes('portuguese')) return '🇧🇷';
+  if (n.includes('arabic')) return '🇸🇦';
+  if (n.includes('turkish')) return '🇹🇷';
+  return '🌐';
+}
+
+const lvlLabels = ['','Basic','Conversational','Intermediate','Advanced','Native'];
+const lvlColors = ['','ff4444','ff8c42','f7c948','66bb6a','00e87a'];
+
+function getSkillicons(chipEls) {
+  return chipEls.map(c => {
+    const key = c.dataset.d || c.dataset.v;
+    return siMap[key] || null;
   }).filter(Boolean).join(',');
 }
 
-// ── LIVE PREVIEW (honest — uses same images as GitHub) ──
+// ── LIVE PREVIEW ──
 let pvTimer;
-function updatePreview(){clearTimeout(pvTimer);pvTimer=setTimeout(renderPreview,120);}
+function updatePreview() { clearTimeout(pvTimer); pvTimer = setTimeout(renderPreview, 120); }
 
-function renderPreview(){
-  const name=v('fn')||'';
-  const user=v('fu')||'';
-  const role=v('fr')||'Developer';
-  const bio=v('fb');
-  const loc=v('fl');
-  const exp=v('fexp');
-  const edu=v('fedu');
-  const learn=v('fle');
-  const fun=v('ff');
-  const lines=v('ft').split('\n').filter(Boolean);
+function renderPreview() {
+  const name   = v('fn') || '';
+  const user   = v('fu') || '';
+  const role   = v('fr') || 'Developer';
+  const bio    = v('fb');
+  const loc    = v('fl');
+  const exp    = v('fexp');
+  const edu    = v('fedu');
+  const learn  = v('fle');
+  const fun    = v('ff');
+  const lines  = v('ft').split('\n').filter(Boolean);
 
-  const slangs=[...document.querySelectorAll('.lang-row')].map(r=>{
-    const nm=r.querySelector('.ln')?.value?.trim();if(!nm)return null;
-    const lv=[...r.querySelectorAll('.dot')].filter(d=>d.classList.contains('on')).length;
-    return{nm,lv,lb:lvlLabels[lv]||'Fluent'};
+  const slangs = [...document.querySelectorAll('.lang-row')].map(r => {
+    const nm = r.querySelector('.ln')?.value?.trim();
+    if (!nm) return null;
+    const lv = [...r.querySelectorAll('.dot')].filter(d => d.classList.contains('on')).length;
+    return { nm, lv, lb: lvlLabels[lv] || 'Fluent' };
   }).filter(Boolean);
 
-  const allOn=allOnChips();
-  const isEmpty=!name&&!user&&!bio&&allOn.length===0;
-  if(isEmpty){
-    document.getElementById('preview-content').innerHTML='<div class="pv-empty">Fill in your details to see a live preview →</div>';
+  const isEmpty = !name && !user && !bio && allOnChips().length === 0;
+  if (isEmpty) {
+    document.getElementById('preview-content').innerHTML = '<div class="pv-empty">Fill in your details to see a live preview →</div>';
     return;
   }
 
-  const displayName=name||'Your Name';
-  const displayUser=user||'username';
+  const displayName = name || 'Your Name';
+  const displayUser = user || 'username';
 
-  // Socials for preview
-  const socialBadges=[];
-  if(v('sli')) socialBadges.push(`<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" height="26">`);
-  if(v('stw')) socialBadges.push(`<img src="https://img.shields.io/badge/Twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white" height="26">`);
-  if(v('stg')) socialBadges.push(`<img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" height="26">`);
-  if(v('syt')) socialBadges.push(`<img src="https://img.shields.io/badge/YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white" height="26">`);
-  if(v('sem')) socialBadges.push(`<img src="https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white" height="26">`);
-  if(v('sweb')) socialBadges.push(`<img src="https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=googlechrome&logoColor=white" height="26">`);
-  if(T.views&&user) socialBadges.push(`<img src="https://komarev.com/ghpvc/?username=${displayUser}&color=${accentHex}&style=for-the-badge&label=PROFILE+VIEWS" height="26">`);
+  const socialBadges = [];
+  if (v('sli'))  socialBadges.push(`<img src="https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white" height="20">`);
+  if (v('stw'))  socialBadges.push(`<img src="https://img.shields.io/badge/Twitter-1DA1F2?style=flat-square&logo=twitter&logoColor=white" height="20">`);
+  if (v('stg'))  socialBadges.push(`<img src="https://img.shields.io/badge/Telegram-2CA5E0?style=flat-square&logo=telegram&logoColor=white" height="20">`);
+  if (v('syt'))  socialBadges.push(`<img src="https://img.shields.io/badge/YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white" height="20">`);
+  if (v('sem'))  socialBadges.push(`<img src="https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail&logoColor=white" height="20">`);
+  if (v('sweb')) socialBadges.push(`<img src="https://img.shields.io/badge/Portfolio-FF5722?style=flat-square&logo=googlechrome&logoColor=white" height="20">`);
+  if (T.views && user) socialBadges.push(`<img src="https://komarev.com/ghpvc/?username=${displayUser}&color=${accentHex}&style=flat-square" height="20">`);
 
-  // Skillicons per section
-  const langSi  = getSkillicons([...document.querySelectorAll('#cl .chip.on')]);
-  const feSi    = getSkillicons([...document.querySelectorAll('#cfe .chip.on')]);
-  const beSi    = getSkillicons([...document.querySelectorAll('#cbe .chip.on')]);
-  const opsSi   = getSkillicons([...document.querySelectorAll('#cops .chip.on')]);
-  const aiSi    = getSkillicons([...document.querySelectorAll('#cai .chip.on')]);
+  const langSi = getSkillicons([...document.querySelectorAll('#cl .chip.on')]);
+  const feSi   = getSkillicons([...document.querySelectorAll('#cfe .chip.on')]);
+  const beSi   = getSkillicons([...document.querySelectorAll('#cbe .chip.on')]);
+  const opsSi  = getSkillicons([...document.querySelectorAll('#cops .chip.on')]);
+  const aiSi   = getSkillicons([...document.querySelectorAll('#cai .chip.on')]);
 
-  let html='';
+  let html = '';
 
-  // 1. Banner
-  html+=`<div class="pv-banner"><img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=120&section=header&text=${encodeURIComponent(displayName)}&fontSize=36&fontColor=ffffff&fontAlignY=38&desc=${encodeURIComponent(role)}&descSize=13&descAlignY=60&descColor=ffffffcc&animation=fadeIn" alt="banner"></div>`;
+  html += `<div class="pv-banner"><img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=120&section=header&text=${encodeURIComponent(displayName)}&fontSize=34&fontColor=ffffff&fontAlignY=38&desc=${encodeURIComponent(role)}&descSize=13&descAlignY=60&descColor=ffffffcc&animation=fadeIn" alt="banner" style="width:100%;display:block"></div>`;
 
-  // 2. Typing
-  if(T.typing && lines.length && user){
-    const enc=lines.map(l=>encodeURIComponent(l)).join(';');
-    html+=`<div class="pv-center"><img class="pv-typing" src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=16&pause=1000&color=${accentHex}&center=true&vCenter=true&width=340&lines=${enc}" alt="typing"></div>`;
+  if (T.typing && lines.length && user) {
+    const enc = lines.map(l => encodeURIComponent(l)).join(';');
+    html += `<div style="text-align:center;margin:10px 0 6px"><img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=15&pause=1000&color=${accentHex}&center=true&vCenter=true&width=340&lines=${enc}" alt="typing" style="max-width:100%"></div>`;
   }
 
-  // 3. Social badges
-  if(socialBadges.length){
-    html+=`<div class="pv-badges">${socialBadges.join('')}</div>`;
+  if (socialBadges.length) {
+    html += `<div style="text-align:center;margin:8px 0 12px;display:flex;justify-content:center;flex-wrap:wrap;gap:5px">${socialBadges.join('')}</div>`;
   }
 
-  html+=`<div class="pv-hr"></div>`;
+  html += `<div class="pv-hr"></div>`;
+  html += `<div class="pv-h2">About</div>`;
+  if (bio) html += `<p class="pv-p">${bio}</p>`;
 
-  // 4. About
-  html+=`<div class="pv-h2">01 — About</div>`;
-  if(bio) html+=`<p class="pv-p">${bio}</p>`;
+  const infoItems = [];
+  if (loc)   infoItems.push(['📍','Location', loc]);
+  if (exp)   infoItems.push(['⌗','Experience', exp]);
+  if (edu)   infoItems.push(['◎','Education', edu]);
+  if (learn) infoItems.push(['⟳','Learning', learn]);
 
-  const infoItems=[];
-  if(loc)   infoItems.push(['📍 Location',loc]);
-  if(exp)   infoItems.push(['⌗ Experience',exp]);
-  if(edu)   infoItems.push(['◎ Education',edu]);
-  if(learn) infoItems.push(['⟳ Learning',learn]);
-
-  if(infoItems.length){
-    html+=`<table class="pv-table"><tr>`;
-    infoItems.forEach(([label,val])=>{html+=`<td><b>${label}</b>${val}</td>`;});
-    html+=`</tr></table>`;
+  if (infoItems.length) {
+    html += `<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:10px">`;
+    infoItems.forEach(([sym, label, val]) => {
+      html += `<div style="display:flex;align-items:center;gap:8px;padding:6px 10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:7px;font-size:11.5px">
+        <span style="opacity:.45;font-size:13px;width:18px;text-align:center">${sym}</span>
+        <span style="color:rgba(255,255,255,0.3);font-size:9.5px;text-transform:uppercase;letter-spacing:.08em;min-width:68px">${label}</span>
+        <span style="color:rgba(255,255,255,0.78)">${val}</span>
+      </div>`;
+    });
+    html += `</div>`;
   }
-  if(fun) html+=`<div class="pv-blockquote">⚡ <strong>Fun fact:</strong> ${fun}</div>`;
+  if (fun) html += `<div class="pv-blockquote">⚡ ${fun}</div>`;
+  html += `<div class="pv-hr"></div>`;
 
-  html+=`<div class="pv-hr"></div>`;
-
-  // 5. Stack — skillicons.dev
-  const hasTech=langSi||feSi||beSi||opsSi||aiSi;
-  if(hasTech){
-    html+=`<div class="pv-h2">02 — Stack</div>`;
-    if(langSi)  html+=`<p style="font-size:11px;color:#8b949e;margin:4px 0 4px"><strong>Languages:</strong></p><div class="pv-skillicons"><img src="https://skillicons.dev/icons?i=${langSi}&theme=dark" alt="langs"></div>`;
-    if(feSi)    html+=`<p style="font-size:11px;color:#8b949e;margin:8px 0 4px"><strong>Frontend:</strong></p><div class="pv-skillicons"><img src="https://skillicons.dev/icons?i=${feSi}&theme=dark" alt="fe"></div>`;
-    if(beSi)    html+=`<p style="font-size:11px;color:#8b949e;margin:8px 0 4px"><strong>Backend & DBs:</strong></p><div class="pv-skillicons"><img src="https://skillicons.dev/icons?i=${beSi}&theme=dark" alt="be"></div>`;
-    if(opsSi)   html+=`<p style="font-size:11px;color:#8b949e;margin:8px 0 4px"><strong>DevOps & Cloud:</strong></p><div class="pv-skillicons"><img src="https://skillicons.dev/icons?i=${opsSi}&theme=dark" alt="ops"></div>`;
-    if(aiSi)    html+=`<p style="font-size:11px;color:#8b949e;margin:8px 0 4px"><strong>AI / ML:</strong></p><div class="pv-skillicons"><img src="https://skillicons.dev/icons?i=${aiSi}&theme=dark" alt="ai"></div>`;
-    html+=`<div class="pv-hr"></div>`;
-  }
-
-  // 6. Languages
-  if(slangs.length){
-    html+=`<div class="pv-h2">03 — Languages</div>`;
-    html+=`<table class="pv-ltable"><tr><th>Language</th><th>Level</th><th>Proficiency</th></tr>`;
-    slangs.forEach(l=>{html+=`<tr><td>${langFlag(l.nm)} ${l.nm}</td><td>${l.lb}</td><td>${bars[l.lv]||''}</td></tr>`;});
-    html+=`</table><div class="pv-hr"></div>`;
+  const hasTech = langSi || feSi || beSi || opsSi || aiSi;
+  if (hasTech) {
+    html += `<div class="pv-h2">Stack</div>`;
+    [['Languages', langSi], ['Frontend', feSi], ['Backend', beSi], ['DevOps', opsSi], ['AI / ML', aiSi]].forEach(([lb, si]) => {
+      if (!si) return;
+      html += `<p style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:.08em;margin:6px 0 5px">${lb}</p>`;
+      html += `<div style="margin-bottom:4px"><img src="https://skillicons.dev/icons?i=${si}&theme=dark" alt="${lb}" style="height:38px;display:block"></div>`;
+    });
+    html += `<div class="pv-hr"></div>`;
   }
 
-  // 7. Stats
-  if((T.stats||T.langs) && user){
-    html+=`<div class="pv-h2">04 — GitHub Stats</div>`;
-    html+=`<div class="pv-stats">`;
-    if(T.stats) html+=`<img src="https://github-readme-stats.vercel.app/api?username=${displayUser}&show_icons=true&theme=${theme}&hide_border=true" alt="stats">`;
-    if(T.langs) html+=`<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${displayUser}&layout=compact&langs_count=6&theme=${theme}&hide_border=true" alt="langs">`;
-    html+=`</div>`;
-    if(T.streak) html+=`<div style="text-align:center;margin:8px 0"><img src="https://streak-stats.demolab.com?user=${displayUser}&theme=${theme}&hide_border=true" alt="streak" style="max-width:100%"></div>`;
-    html+=`<div class="pv-hr"></div>`;
+  if (slangs.length) {
+    html += `<div class="pv-h2">Languages</div>`;
+    html += `<div style="display:flex;flex-direction:column;gap:5px;margin-bottom:8px">`;
+    slangs.forEach(l => {
+      const col = lvlColors[l.lv] || '888888';
+      html += `<div style="display:flex;align-items:center;gap:10px;padding:7px 12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px">
+        <span style="font-size:18px;width:24px">${langFlag(l.nm)}</span>
+        <span style="font-size:13px;font-weight:500;color:rgba(255,255,255,0.82);flex:1">${l.nm}</span>
+        <img src="https://img.shields.io/badge/${encodeURIComponent(l.lb)}-${col}?style=flat-square" height="18" alt="${l.lb}">
+      </div>`;
+    });
+    html += `</div><div class="pv-hr"></div>`;
   }
 
-  document.getElementById('preview-content').innerHTML=html;
+  if ((T.stats || T.langs) && user) {
+    html += `<div class="pv-h2">GitHub Stats</div>`;
+    html += `<div class="pv-stats">`;
+    if (T.stats) html += `<img src="https://github-readme-stats.vercel.app/api?username=${displayUser}&show_icons=true&theme=${theme}&hide_border=true" alt="stats">`;
+    if (T.langs) html += `<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${displayUser}&layout=compact&langs_count=6&theme=${theme}&hide_border=true" alt="langs">`;
+    html += `</div>`;
+    if (T.streak) html += `<div style="text-align:center;margin:8px 0"><img src="https://streak-stats.demolab.com?user=${displayUser}&theme=${theme}&hide_border=true" alt="streak" style="max-width:100%;border-radius:6px"></div>`;
+    html += `<div class="pv-hr"></div>`;
+  }
+
+  document.getElementById('preview-content').innerHTML = html;
 }
 
 // ── GENERATE ──
-function gen(){
-  const name=v('fn')||'Your Name', user=v('fu')||'YOUR_USERNAME',
-    role=v('fr')||'Developer', loc=v('fl'), bio=v('fb'),
-    exp=v('fexp'), edu=v('fedu'), learn=v('fle'), fun=v('ff'),
-    lines=v('ft').split('\n').filter(Boolean);
+function gen() {
+  const name  = v('fn') || 'Your Name';
+  const user  = v('fu') || 'YOUR_USERNAME';
+  const role  = v('fr') || 'Developer';
+  const loc   = v('fl');
+  const bio   = v('fb');
+  const exp   = v('fexp');
+  const edu   = v('fedu');
+  const learn = v('fle');
+  const fun   = v('ff');
+  const lines = v('ft').split('\n').filter(Boolean);
+  const customQuote = v('fquote');
 
-  // Skillicons per section
-  const sections=[
-    {lb:'Languages',    si:getSkillicons([...document.querySelectorAll('#cl .chip.on')]),  cs:chips('cl')},
-    {lb:'Frontend',     si:getSkillicons([...document.querySelectorAll('#cfe .chip.on')]), cs:chips('cfe')},
-    {lb:'Backend & Databases', si:getSkillicons([...document.querySelectorAll('#cbe .chip.on')]), cs:chips('cbe')},
-    {lb:'DevOps & Cloud',      si:getSkillicons([...document.querySelectorAll('#cops .chip.on')]),cs:chips('cops')},
-    {lb:'AI / ML',      si:getSkillicons([...document.querySelectorAll('#cai .chip.on')]), cs:chips('cai')},
-  ].filter(s=>s.cs.length);
+  const sections = [
+    { lb: 'Languages',          si: getSkillicons([...document.querySelectorAll('#cl .chip.on')]),   cs: chips('cl') },
+    { lb: 'Frontend',           si: getSkillicons([...document.querySelectorAll('#cfe .chip.on')]),  cs: chips('cfe') },
+    { lb: 'Backend & Databases',si: getSkillicons([...document.querySelectorAll('#cbe .chip.on')]),  cs: chips('cbe') },
+    { lb: 'DevOps & Cloud',     si: getSkillicons([...document.querySelectorAll('#cops .chip.on')]), cs: chips('cops') },
+    { lb: 'AI / ML',            si: getSkillicons([...document.querySelectorAll('#cai .chip.on')]),  cs: chips('cai') },
+  ].filter(s => s.cs.length);
 
-  const slangs=[...document.querySelectorAll('.lang-row')].map(r=>{
-    const nm=r.querySelector('.ln')?.value?.trim();if(!nm)return null;
-    const lv=[...r.querySelectorAll('.dot')].filter(d=>d.classList.contains('on')).length;
-    return{nm,lv,lb:lvlLabels[lv]||'Fluent'};
+  const slangs = [...document.querySelectorAll('.lang-row')].map(r => {
+    const nm = r.querySelector('.ln')?.value?.trim();
+    if (!nm) return null;
+    const lv = [...r.querySelectorAll('.dot')].filter(d => d.classList.contains('on')).length;
+    return { nm, lv, lb: lvlLabels[lv] || 'Fluent' };
   }).filter(Boolean);
 
-  const socs=[];
-  const li=v('sli');  if(li)  socs.push(sbadge('LinkedIn','0077B5','linkedin',li));
-  const tw=v('stw');  if(tw)  socs.push(sbadge('Twitter','1DA1F2','twitter',tw));
-  const tg=v('stg');  if(tg)  socs.push(sbadge('Telegram','2CA5E0','telegram',tg));
-  const yt=v('syt');  if(yt)  socs.push(sbadge('YouTube','FF0000','youtube',yt));
-  const tv=v('stv');  if(tv)  socs.push(sbadge('Twitch','9146FF','twitch',tv));
-  const dv=v('sdev'); if(dv)  socs.push(sbadge('Dev.to','0A0A0A','devdotto',dv));
-  const md=v('smed'); if(md)  socs.push(sbadge('Medium','12100E','medium',md));
-  const em=v('sem');  if(em)  socs.push(`[![Email](https://img.shields.io/badge/Email-D14836?style=for-the-badge&logo=gmail&logoColor=white)](mailto:${em})`);
-  const wb=v('sweb'); if(wb)  socs.push(sbadge('Portfolio','FF5722','googlechrome',wb));
-  const bm=v('sbmc'); if(bm&&T.bmc) socs.push(sbadge('Buy%20Me%20a%20Coffee','FFDD00','buymeacoffee',bm));
+  const socs = [];
+  const li  = v('sli');  if (li)  socs.push(`[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=flat-square&logo=linkedin&logoColor=white)](${toU(li)})`);
+  const tw  = v('stw');  if (tw)  socs.push(`[![Twitter](https://img.shields.io/badge/Twitter-1DA1F2?style=flat-square&logo=twitter&logoColor=white)](${toU(tw)})`);
+  const tg  = v('stg');  if (tg)  socs.push(`[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=flat-square&logo=telegram&logoColor=white)](${toU(tg)})`);
+  const yt  = v('syt');  if (yt)  socs.push(`[![YouTube](https://img.shields.io/badge/YouTube-FF0000?style=flat-square&logo=youtube&logoColor=white)](${toU(yt)})`);
+  const tv  = v('stv');  if (tv)  socs.push(`[![Twitch](https://img.shields.io/badge/Twitch-9146FF?style=flat-square&logo=twitch&logoColor=white)](${toU(tv)})`);
+  const dv  = v('sdev'); if (dv)  socs.push(`[![Dev.to](https://img.shields.io/badge/Dev.to-0A0A0A?style=flat-square&logo=devdotto&logoColor=white)](${toU(dv)})`);
+  const md  = v('smed'); if (md)  socs.push(`[![Medium](https://img.shields.io/badge/Medium-12100E?style=flat-square&logo=medium&logoColor=white)](${toU(md)})`);
+  const em  = v('sem');  if (em)  socs.push(`[![Email](https://img.shields.io/badge/Email-D14836?style=flat-square&logo=gmail&logoColor=white)](mailto:${em})`);
+  const wb  = v('sweb'); if (wb)  socs.push(`[![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=flat-square&logo=googlechrome&logoColor=white)](${toU(wb)})`);
+  const bm  = v('sbmc'); if (bm && T.bmc) socs.push(`[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat-square&logo=buymeacoffee&logoColor=black)](${toU(bm)})`);
 
-  let o='';
+  let o = '';
 
-  // 1. BANNER
-  o+=`<div align="center">\n  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(name)}&fontSize=60&fontColor=ffffff&fontAlignY=36&desc=${encodeURIComponent(role)}&descSize=18&descAlignY=58&descColor=ffffffcc&animation=fadeIn" width="100%"/>\n</div>\n\n`;
+  // BANNER
+  o += `<div align="center">\n  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(name)}&fontSize=60&fontColor=ffffff&fontAlignY=36&desc=${encodeURIComponent(role)}&descSize=18&descAlignY=58&descColor=ffffffcc&animation=fadeIn" width="100%"/>\n</div>\n\n`;
 
-  // 2. TYPING + BADGES
-  o+=`<div align="center">\n\n`;
-  if(T.typing&&lines.length){
-    const enc=lines.map(l=>encodeURIComponent(l)).join(';');
-    o+=`[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1000&color=${accentHex}&center=true&vCenter=true&width=600&lines=${enc})](https://git.io/typing-svg)\n\n`;
+  // TYPING + SOCIALS
+  o += `<div align="center">\n\n`;
+  if (T.typing && lines.length) {
+    const enc = lines.map(l => encodeURIComponent(l)).join(';');
+    o += `[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1000&color=${accentHex}&center=true&vCenter=true&width=600&lines=${enc})](https://git.io/typing-svg)\n\n`;
   }
-  o+=`<br/>\n\n`;
-  if(socs.length) o+=socs.join('\n&nbsp;\n')+'\n\n';
-  if(T.views) o+=`[![Profile Views](https://komarev.com/ghpvc/?username=${user}&color=${accentHex}&style=for-the-badge&label=PROFILE+VIEWS)](https://github.com/${user})\n\n`;
-  o+=`</div>\n\n---\n\n`;
+  if (socs.length) { o += `<br/>\n\n` + socs.join(' ') + '\n\n'; }
+  if (T.views) o += `![Profile Views](https://komarev.com/ghpvc/?username=${user}&color=${accentHex}&style=flat-square)\n\n`;
+  o += `</div>\n\n---\n\n`;
 
-  // 3. ABOUT
-  o+=`## 01 — About\n\n`;
-  if(bio) o+=`${bio}\n\n`;
-  const infoRows=[];
-  if(loc)   infoRows.push(['📍 Location',loc]);
-  if(exp)   infoRows.push(['⌗ Experience',exp]);
-  if(edu)   infoRows.push(['◎ Education',edu]);
-  if(learn) infoRows.push(['⟳ Learning',learn]);
-  if(infoRows.length){
-    o+=`<table><tr>\n`;
-    infoRows.forEach(([sym,val])=>{ o+=`<td><b>${sym}</b><br/>${val}</td>\n`; });
-    o+=`</tr></table>\n\n`;
-  }
-  if(fun) o+=`> ⚡ **Fun fact:** ${fun}\n\n`;
-  o+=`---\n\n`;
+  // ABOUT
+  o += `## About\n\n`;
+  if (bio) o += `${bio}\n\n`;
+  const infoLines = [];
+  if (loc)   infoLines.push(`📍 **Location** &nbsp; ${loc}`);
+  if (exp)   infoLines.push(`⌗ **Experience** &nbsp; ${exp}`);
+  if (edu)   infoLines.push(`◎ **Education** &nbsp; ${edu}`);
+  if (learn) infoLines.push(`⟳ **Learning** &nbsp; ${learn}`);
+  if (infoLines.length) o += infoLines.join('\n') + '\n\n';
+  if (fun) o += `> ⚡ ${fun}\n\n`;
+  o += `---\n\n`;
 
-  // 4. TECH STACK — skillicons.dev
-  if(sections.length){
-    o+=`## 02 — Stack\n\n`;
-    for(const s of sections){
-      o+=`**${s.lb}:**\n\n`;
-      if(s.si){
-        // Use skillicons.dev as primary (looks great on GitHub)
-        o+=`<img src="https://skillicons.dev/icons?i=${s.si}&theme=dark" alt="${s.lb}"/>\n\n`;
+  // STACK
+  if (sections.length) {
+    o += `## Stack\n\n`;
+    sections.forEach(s => {
+      o += `**${s.lb}**\n\n`;
+      if (s.si) {
+        o += `<img src="https://skillicons.dev/icons?i=${s.si}&theme=dark" alt="${s.lb}"/>\n\n`;
       } else {
-        // Fallback to shields.io badges
-        o+=s.cs.map(c=>badge(c.nm,c.c,c.l,c.lc)).join('\n')+'\n\n';
+        o += s.cs.map(c => badge(c.nm, c.c, c.l, c.lc)).join(' ') + '\n\n';
       }
+    });
+    o += `---\n\n`;
+  }
+
+  // LANGUAGES
+  if (slangs.length) {
+    o += `## Languages\n\n<div align="center">\n\n| &nbsp; | Language | Level |\n|:---:|:---|:---:|\n`;
+    slangs.forEach(l => {
+      const col = lvlColors[l.lv] || '888888';
+      o += `| ${langFlag(l.nm)} | ${l.nm} | ![${l.lb}](https://img.shields.io/badge/${encodeURIComponent(l.lb)}-${col}?style=flat-square) |\n`;
+    });
+    o += `\n</div>\n\n---\n\n`;
+  }
+
+  // STATS
+  if (T.stats || T.langs) {
+    o += `## GitHub Stats\n\n<div align="center">\n\n`;
+    if (T.stats) o += `<img height="180em" src="https://github-readme-stats.vercel.app/api?username=${user}&show_icons=true&theme=${theme}&include_all_commits=true&count_private=true&hide_border=true"/>\n&nbsp;\n`;
+    if (T.langs) o += `<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=${user}&layout=compact&langs_count=8&theme=${theme}&hide_border=true"/>\n`;
+    o += `\n</div>\n\n`;
+  }
+  if (T.streak) o += `<div align="center">\n\n[![GitHub Streak](https://streak-stats.demolab.com?user=${user}&theme=${theme}&hide_border=true)](https://git.io/streak-stats)\n\n</div>\n\n`;
+  if (T.stats || T.langs || T.streak) o += `---\n\n`;
+
+  // TROPHIES
+  if (T.trophies) {
+    const supported = ['flat','onedark','gruvbox','dracula','monokai','chalk','nord','alduin','darkhub','juicyfresh','buddhism','radical','onestar','discord','algolia','gitdimmed','tokyonight','matrix','apprentice','dark_dimmed','midnight_purple','kimbie_dark'];
+    const tt = supported.includes(theme) ? theme : 'tokyonight';
+    o += `## Trophies\n\n<div align="center">\n\n<a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=${user}&theme=${tt}&column=6&no-frame=true&margin-w=8" alt="trophies"/></a>\n\n</div>\n\n---\n\n`;
+  }
+
+  // ACTIVITY
+  if (T.activity) {
+    const agMap = {'tokyonight':'tokyo-night','radical':'redical','dracula':'dracula','nord':'nord-dark','gruvbox':'github','onedark':'react-dark','cobalt':'cobalt','synthwave':'synthwave','merko':'merko','midnight_purple':'midnight-purple','ocean_dark':'ocean-dark','aura':'aura','github_dark':'github-dark','material_palenight':'material_palenight','calm':'minimal','solarized-light':'minimal'};
+    const ag = agMap[theme] || 'tokyo-night';
+    o += `## Activity\n\n[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${user}&theme=${ag}&hide_border=true&area=true)](https://github.com/ashutosh00710/github-readme-activity-graph)\n\n---\n\n`;
+  }
+
+  // WAKATIME
+  if (T.waka) o += `## Coding Time\n\n<div align="center">\n\n[![WakaTime](https://github-readme-stats.vercel.app/api/wakatime?username=${user}&theme=${theme}&hide_border=true)](https://wakatime.com/@${user})\n\n</div>\n\n> ⚠️ Requires a public WakaTime profile\n\n---\n\n`;
+
+  // SPOTIFY
+  if (T.spotify) o += `## Now Playing\n\n<div align="center">\n\n[![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com)\n\n</div>\n\n> ⚠️ Requires [Novatorem](https://github.com/novatorem/novatorem) setup\n\n---\n\n`;
+
+  // SNAKE
+  if (T.snake) {
+    o += `## Contribution Snake\n\n<div align="center">\n\n<picture>\n  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake-dark.svg">\n  <img alt="snake" src="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake.svg">\n</picture>\n\n</div>\n\n> ⚠️ Requires GitHub Actions setup\n\n---\n\n`;
+  }
+
+  // QUOTE
+  if (T.quote) {
+    o += `<div align="center">\n\n`;
+    if (customQuote) {
+      o += `> *"${customQuote}"*\n\n`;
+    } else {
+      o += `![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=${theme})\n\n`;
     }
-    o+=`---\n\n`;
+    o += `</div>\n\n---\n\n`;
   }
 
-  // 5. LANGUAGES
-  if(slangs.length){
-    o+=`## 03 — Languages\n\n<div align="center">\n\n`;
-    o+=`| Language | Level | Proficiency |\n|:---:|:---:|:---:|\n`;
-    slangs.forEach(l=>{ o+=`| ${langFlag(l.nm)} ${l.nm} | ${l.lb} | ${bars[l.lv]||''} |\n`; });
-    o+=`\n</div>\n\n---\n\n`;
-  }
+  // FOOTER
+  o += `<div align="center">\n\n<sub>Made with <a href="https://lebedevnet.github.io/ReadmeForge">ReadmeForge</a> &nbsp;·&nbsp; <a href="https://github.com/${user}">github.com/${user}</a></sub>\n\n<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>\n\n</div>\n`;
 
-  // 6. STATS
-  if(T.stats||T.langs){
-    o+=`## 04 — GitHub Stats\n\n<div align="center">\n\n`;
-    if(T.stats) o+=`<img height="180em" src="https://github-readme-stats.vercel.app/api?username=${user}&show_icons=true&theme=${theme}&include_all_commits=true&count_private=true&hide_border=true"/>\n&nbsp;\n`;
-    if(T.langs) o+=`<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=${user}&layout=compact&langs_count=8&theme=${theme}&hide_border=true"/>\n`;
-    o+=`\n</div>\n\n`;
-  }
-  if(T.streak) o+=`<div align="center">\n\n[![GitHub Streak](https://streak-stats.demolab.com?user=${user}&theme=${theme}&hide_border=true)](https://git.io/streak-stats)\n\n</div>\n\n`;
-  if(T.stats||T.langs||T.streak) o+=`---\n\n`;
-
-  // 7. TROPHIES
-  if(T.trophies){
-    const supported=['flat','onedark','gruvbox','dracula','monokai','chalk','nord','alduin','darkhub','juicyfresh','buddhism','radical','onestar','discord','algolia','gitdimmed','tokyonight','matrix','apprentice','dark_dimmed','midnight_purple','kimbie_dark'];
-    const tt=supported.includes(theme)?theme:'tokyonight';
-    o+=`## 05 — Trophies\n\n<div align="center">\n\n`;
-    o+=`<a href="https://github.com/ryo-ma/github-profile-trophy"><img src="https://github-profile-trophy.vercel.app/?username=${user}&theme=${tt}&column=6&no-frame=true&margin-w=8" alt="trophies"/></a>\n\n`;
-    o+=`</div>\n\n---\n\n`;
-  }
-
-  // 8. ACTIVITY
-  if(T.activity){
-    const agMap={'tokyonight':'tokyo-night','radical':'redical','dracula':'dracula','nord':'nord-dark','gruvbox':'github','onedark':'react-dark','cobalt':'cobalt','synthwave':'synthwave','merko':'merko','midnight_purple':'midnight-purple','ocean_dark':'ocean-dark','aura':'aura','github_dark':'github-dark','material_palenight':'material_palenight','calm':'minimal','solarized-light':'minimal'};
-    const ag=agMap[theme]||'tokyo-night';
-    o+=`## 06 — Activity\n\n[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${user}&theme=${ag}&hide_border=true&area=true)](https://github.com/ashutosh00710/github-readme-activity-graph)\n\n---\n\n`;
-  }
-
-  // 9. WAKATIME
-  if(T.waka) o+=`## ⏱️ Coding Time\n\n<div align="center">\n\n[![WakaTime](https://github-readme-stats.vercel.app/api/wakatime?username=${user}&theme=${theme}&hide_border=true)](https://wakatime.com/@${user})\n\n</div>\n\n> ⚠️ Requires a public WakaTime profile\n\n---\n\n`;
-
-  // 10. SPOTIFY
-  if(T.spotify) o+=`## 🎵 Now Playing\n\n<div align="center">\n\n[![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com)\n\n</div>\n\n> ⚠️ Requires [Novatorem](https://github.com/novatorem/novatorem) setup\n\n---\n\n`;
-
-  // 11. SNAKE
-  if(T.snake){
-    o+=`## 🐍 Contribution Snake\n\n<div align="center">\n\n<picture>\n`;
-    o+=`  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake-dark.svg">\n`;
-    o+=`  <img alt="snake" src="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake.svg">\n`;
-    o+=`</picture>\n\n</div>\n\n> ⚠️ Requires GitHub Actions setup\n\n---\n\n`;
-  }
-
-  // 12. QUOTE
-  if(T.quote){
-    o+=`<div align="center">\n\n![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=${theme})\n\n</div>\n\n---\n\n`;
-  }
-
-  // 13. FOOTER
-  o+=`<div align="center">\n\n⭐ From [${user}](https://github.com/${user}) — thanks for visiting!\n\n`;
-  o+=`<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>\n\n</div>\n`;
-
-  document.getElementById('co').textContent=o;
-  const el=document.getElementById('out');
+  document.getElementById('co').textContent = o;
+  const el = document.getElementById('out');
   el.classList.add('show');
-  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);
+  setTimeout(() => el.scrollIntoView({behavior:'smooth', block:'start'}), 60);
 }
 
-function copyIt(){
-  navigator.clipboard.writeText(document.getElementById('co').textContent).then(()=>{
-    const b=document.getElementById('cb');
-    b.innerHTML='<i class="fa-solid fa-check"></i>&nbsp; Copied!';b.classList.add('ok');
-    setTimeout(()=>{b.innerHTML='<i class="fa-regular fa-copy"></i>&nbsp; Copy';b.classList.remove('ok');},2000);
+// ── COPY ──
+function copyIt() {
+  navigator.clipboard.writeText(document.getElementById('co').textContent).then(() => {
+    const b = document.getElementById('cb');
+    b.innerHTML = '<i class="fa-solid fa-check"></i>&nbsp; Copied!';
+    b.classList.add('ok');
+    setTimeout(() => { b.innerHTML = '<i class="fa-regular fa-copy"></i>&nbsp; Copy'; b.classList.remove('ok'); }, 2000);
   });
 }
 
