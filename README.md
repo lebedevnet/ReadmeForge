@@ -4,9 +4,9 @@
 
 <div align="center">
 
-<a href="https://lebedevnet.github.io/ReadmeForge/"><img src="https://img.shields.io/badge/Open%20ReadmeForge%20%E2%86%92-238636?style=for-the-badge" height="52" width="240" alt="Open ReadmeForge"/></a>
-
-&nbsp;
+<a href="https://lebedevnet.github.io/ReadmeForge/">
+  <img src="https://img.shields.io/badge/%20%20%20%20Open%20ReadmeForge%20%E2%86%92%20%20%20%20-238636?style=flat-square&logoColor=white" height="40" width="240" alt="Open ReadmeForge"/>
+</a>
 
 [![Stars](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=flat-square&color=ffd700&logo=github&logoColor=white)](https://github.com/lebedevnet/ReadmeForge/stargazers)
 [![Forks](https://img.shields.io/github/forks/lebedevnet/ReadmeForge?style=flat-square&color=6366f1&logo=github&logoColor=white)](https://github.com/lebedevnet/ReadmeForge/network/members)
