@@ -3,202 +3,542 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<!-- ═══ PRIMARY SEO ═══ -->
 <title>ReadmeForge — GitHub Profile README Generator</title>
 <meta name="description" content="Create a stunning GitHub profile README in minutes. Pick your tech stack, choose a theme, add social links — and get a ready-to-paste README.md. Free, no sign-up.">
-<meta name="keywords" content="github profile readme generator, readme generator, github readme maker, github profile generator, readme md generator, profile readme, github bio generator, github stats readme, readme template github, github profile customizer">
+<meta name="keywords" content="github profile readme generator, readme generator, github readme maker, github profile generator, readme md generator, profile readme, github bio generator, github stats readme">
 <meta name="author" content="ReadmeForge">
 <meta name="robots" content="index, follow">
 <link rel="canonical" href="https://lebedevnet.github.io/ReadmeForge/">
-
-<!-- ═══ OPEN GRAPH (Facebook, LinkedIn, Telegram previews) ═══ -->
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://lebedevnet.github.io/ReadmeForge/">
 <meta property="og:title" content="ReadmeForge — GitHub Profile README Generator">
-<meta property="og:description" content="Create a stunning GitHub profile README in minutes. Pick your stack, choose a theme, add social links — get a ready-to-paste README.md instantly. Free & open source.">
+<meta property="og:description" content="Create a stunning GitHub profile README in minutes. Free & open source.">
 <meta property="og:image" content="https://lebedevnet.github.io/ReadmeForge/og-image.png">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
 <meta property="og:site_name" content="ReadmeForge">
-<meta property="og:locale" content="en_US">
-
-<!-- ═══ TWITTER / X CARD ═══ -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:url" content="https://lebedevnet.github.io/ReadmeForge/">
 <meta name="twitter:title" content="ReadmeForge — GitHub Profile README Generator">
-<meta name="twitter:description" content="The easiest way to build a beautiful GitHub profile README. No coding needed. Free & open source.">
+<meta name="twitter:description" content="The easiest way to build a beautiful GitHub profile README. Free & open source.">
 <meta name="twitter:image" content="https://lebedevnet.github.io/ReadmeForge/og-image.png">
-
-<!-- ═══ JSON-LD STRUCTURED DATA ═══ -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "ReadmeForge",
-  "url": "https://lebedevnet.github.io/ReadmeForge/",
-  "description": "Free GitHub Profile README generator. Customize your tech stack, theme, social links and get a ready-to-paste README.md in seconds.",
-  "applicationCategory": "DeveloperApplication",
-  "operatingSystem": "Any",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
-  "keywords": "github readme generator, github profile, readme maker, developer tools"
-}
-</script>
-
-<title>ReadmeForge — GitHub Profile README Generator</title>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"ReadmeForge","url":"https://lebedevnet.github.io/ReadmeForge/","description":"Free GitHub Profile README generator.","applicationCategory":"DeveloperApplication","operatingSystem":"Any","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
+/* ── TOKENS ── */
 :root {
-  --bg: #08090e;
-  --surface: #0f1018;
-  --surface2: #161720;
-  --border: #252637;
-  --border2: #2f3145;
-  --accent: #00e87a;
-  --accent-dim: rgba(0,232,122,0.1);
-  --accent-glow: rgba(0,232,122,0.22);
-  --text: #ecedf5;
-  --text2: #9a9bb5;
-  --muted: #525470;
-  --danger: #ff4d6a;
+  --bg:        #070810;
+  --glass:     rgba(255,255,255,0.04);
+  --glass-b:   rgba(255,255,255,0.08);
+  --glass-h:   rgba(255,255,255,0.06);
+  --border:    rgba(255,255,255,0.08);
+  --border-h:  rgba(0,232,122,0.45);
+  --accent:    #00e87a;
+  --accent2:   #6366f1;
+  --adim:      rgba(0,232,122,0.12);
+  --aglow:     rgba(0,232,122,0.3);
+  --text:      #f0f1fa;
+  --text2:     #8889aa;
+  --muted:     #44455e;
+  --danger:    #ff4d6a;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse 700px 500px at 0% -10%,rgba(0,232,122,0.03) 0%,transparent 60%),radial-gradient(ellipse 500px 400px at 100% 110%,rgba(99,102,241,0.04) 0%,transparent 60%);pointer-events:none}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Syne',sans-serif;
+  min-height:100vh;
+  overflow-x:hidden;
+}
 
-.wrap{max-width:860px;margin:0 auto;padding:0 28px 100px;position:relative;z-index:1}
+/* ── ANIMATED BG ── */
+.bg-orbs{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb{
+  position:absolute;
+  border-radius:50%;
+  filter:blur(80px);
+  opacity:0;
+  animation:orbFloat 20s ease-in-out infinite;
+}
+.orb1{width:600px;height:600px;background:radial-gradient(circle,rgba(0,232,122,0.12),transparent 70%);top:-200px;left:-100px;animation-delay:0s}
+.orb2{width:500px;height:500px;background:radial-gradient(circle,rgba(99,102,241,0.1),transparent 70%);bottom:-150px;right:-100px;animation-delay:-7s}
+.orb3{width:400px;height:400px;background:radial-gradient(circle,rgba(0,232,122,0.07),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);animation-delay:-14s}
 
-/* HEADER */
-header{padding:60px 0 48px;border-bottom:1px solid var(--border);margin-bottom:56px}
-.hrow{display:flex;align-items:center;gap:18px}
-.logo{width:46px;height:46px;background:var(--accent);border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:16px;font-weight:700;color:#08090e;flex-shrink:0;box-shadow:0 0 28px var(--accent-glow)}
-.htxt h1{font-size:clamp(20px,3.2vw,27px);font-weight:800;letter-spacing:-0.02em}
-.htxt h1 em{color:var(--accent);font-style:normal}
-.htxt p{margin-top:5px;font-family:'Space Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:.05em}
+@keyframes orbFloat{
+  0%  {opacity:0;transform:translate(0,0) scale(1)}
+  20% {opacity:1}
+  50% {transform:translate(30px,-40px) scale(1.05)}
+  80% {opacity:1}
+  100%{opacity:0;transform:translate(0,0) scale(1)}
+}
 
-/* CARDS */
-.steps{display:flex;flex-direction:column;gap:28px}
-.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color .2s}
-.card:focus-within{border-color:rgba(0,232,122,.25)}
-.card-head{display:flex;align-items:center;gap:16px;padding:22px 30px;background:var(--surface2);border-bottom:1px solid var(--border)}
-.badge{width:30px;height:30px;border-radius:8px;background:var(--accent);color:#08090e;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.cht .title{font-size:15px;font-weight:700}
-.cht .sub{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
-.card-body{padding:30px}
+/* ── GRID PATTERN ── */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);
+  background-size:60px 60px;
+  pointer-events:none;z-index:0;
+}
 
-/* FORM */
-.row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+/* ── LAYOUT ── */
+.wrap{
+  max-width:820px;
+  margin:0 auto;
+  padding:0 24px 100px;
+  position:relative;z-index:1;
+}
+
+/* ── HEADER ── */
+header{
+  padding:52px 0 40px;
+  margin-bottom:44px;
+  position:relative;
+}
+
+.header-line{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:12px;
+}
+
+.logo{
+  width:44px;height:44px;
+  background:var(--accent);
+  border-radius:12px;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Space Mono',monospace;
+  font-size:15px;font-weight:700;
+  color:#070810;
+  flex-shrink:0;
+  box-shadow:0 0 0 1px rgba(0,232,122,0.4), 0 0 30px var(--aglow);
+  animation:logoPulse 3s ease-in-out infinite;
+}
+@keyframes logoPulse{
+  0%,100%{box-shadow:0 0 0 1px rgba(0,232,122,0.4),0 0 24px var(--aglow)}
+  50%     {box-shadow:0 0 0 1px rgba(0,232,122,0.6),0 0 48px var(--aglow)}
+}
+
+h1{font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-0.02em;line-height:1.1}
+h1 em{color:var(--accent);font-style:normal}
+
+.tagline{
+  font-family:'Space Mono',monospace;
+  font-size:11px;color:var(--muted);
+  letter-spacing:.06em;margin-left:60px;
+}
+
+.header-divider{
+  height:1px;
+  background:linear-gradient(90deg,rgba(0,232,122,0.3),rgba(99,102,241,0.2),transparent);
+  margin-top:32px;
+}
+
+/* ── GLASS CARD ── */
+.card{
+  background:var(--glass);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border:1px solid var(--border);
+  border-radius:20px;
+  overflow:hidden;
+  margin-bottom:20px;
+  transition:border-color .3s, box-shadow .3s;
+  opacity:0;
+  transform:translateY(24px);
+  animation:cardIn .5s ease forwards;
+}
+.card:nth-child(1){animation-delay:.05s}
+.card:nth-child(2){animation-delay:.12s}
+.card:nth-child(3){animation-delay:.18s}
+.card:nth-child(4){animation-delay:.24s}
+.card:nth-child(5){animation-delay:.30s}
+
+@keyframes cardIn{
+  to{opacity:1;transform:translateY(0)}
+}
+
+.card:hover{
+  border-color:rgba(255,255,255,0.12);
+  box-shadow:0 8px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.04);
+}
+.card:focus-within{
+  border-color:var(--border-h);
+  box-shadow:0 0 0 1px rgba(0,232,122,0.15), 0 12px 48px rgba(0,0,0,0.4);
+}
+
+.card-head{
+  display:flex;align-items:center;gap:14px;
+  padding:20px 26px;
+  background:var(--glass-b);
+  border-bottom:1px solid var(--border);
+  position:relative;
+  overflow:hidden;
+}
+
+.card-head::after{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,232,122,0.2),transparent);
+}
+
+.badge{
+  width:28px;height:28px;
+  border-radius:8px;
+  background:linear-gradient(135deg,var(--accent),rgba(0,200,100,0.7));
+  color:#070810;
+  font-family:'Space Mono',monospace;
+  font-size:10px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+  box-shadow:0 2px 12px rgba(0,232,122,0.4);
+}
+
+.cht .title{font-size:14px;font-weight:700}
+.cht .sub{font-size:10.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+
+.card-body{padding:26px}
+
+/* ── FORM ── */
+.row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
 .row.one{grid-template-columns:1fr}
 .row:last-child{margin-bottom:0}
-.field{display:flex;flex-direction:column;gap:7px}
-label{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700}
-input,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text);font-family:'Space Mono',monospace;font-size:12.5px;padding:11px 14px;outline:none;transition:border-color .2s,box-shadow .2s;width:100%}
-input::placeholder,textarea::placeholder{color:var(--muted)}
-input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-textarea{resize:vertical;min-height:82px;line-height:1.6}
 
-/* SECTION DIVIDERS */
-.slabel{display:flex;align-items:center;gap:10px;font-size:9.5px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);margin:26px 0 14px}
+.field{display:flex;flex-direction:column;gap:6px}
+
+label{
+  font-size:9.5px;
+  font-family:'Space Mono',monospace;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+  font-weight:700;
+  transition:color .2s;
+}
+.field:focus-within label{color:var(--accent)}
+
+input,textarea{
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:'Space Mono',monospace;
+  font-size:12.5px;
+  padding:11px 14px;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s, background .2s;
+  width:100%;
+}
+input::placeholder,textarea::placeholder{color:var(--muted);font-size:11.5px}
+input:focus,textarea:focus{
+  background:rgba(255,255,255,0.05);
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,232,122,0.1), 0 0 20px rgba(0,232,122,0.05);
+}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
+
+/* ── SECTION LABEL ── */
+.slabel{
+  display:flex;align-items:center;gap:10px;
+  font-size:9px;
+  font-family:'Space Mono',monospace;
+  text-transform:uppercase;letter-spacing:.12em;font-weight:700;
+  color:var(--muted);
+  margin:22px 0 12px;
+}
 .slabel:first-child{margin-top:0}
-.slabel::after{content:'';flex:1;height:1px;background:var(--border)}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.07),transparent)}
 
-/* CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-.chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:100px;border:1px solid var(--border2);background:var(--surface2);cursor:pointer;font-size:12px;font-family:'Space Mono',monospace;color:var(--text2);transition:all .15s;user-select:none;line-height:1}
-.chip:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
-.chip.on{border-color:var(--accent);background:var(--accent-dim);color:var(--accent)}
-.chip img{width:15px;height:15px;object-fit:contain;flex-shrink:0;border-radius:2px}
+/* ── CHIPS ── */
+.chips{display:flex;flex-wrap:wrap;gap:7px}
 
-/* SPOKEN LANGS */
-.lang-row{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border)}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:6px 12px;
+  border-radius:100px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,0.03);
+  cursor:pointer;
+  font-size:11.5px;
+  font-family:'Space Mono',monospace;
+  color:var(--text2);
+  transition:all .2s ease;
+  user-select:none;line-height:1;
+  backdrop-filter:blur(8px);
+}
+.chip:hover{
+  border-color:rgba(0,232,122,0.5);
+  color:var(--accent);
+  background:var(--adim);
+  transform:translateY(-1px);
+  box-shadow:0 4px 16px rgba(0,0,0,0.2);
+}
+.chip.on{
+  border-color:var(--accent);
+  background:linear-gradient(135deg,rgba(0,232,122,0.15),rgba(0,232,122,0.08));
+  color:var(--accent);
+  box-shadow:0 0 12px rgba(0,232,122,0.2);
+}
+.chip img{width:14px;height:14px;object-fit:contain;flex-shrink:0;border-radius:2px}
+
+/* ── SPOKEN LANGS ── */
+.lang-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 0;
+  border-bottom:1px solid var(--border);
+}
 .lang-row:last-child{border-bottom:none}
 .lang-row input{flex:1}
-.dots{display:flex;gap:5px}
-.dot{width:21px;height:21px;border-radius:5px;border:1.5px solid var(--border2);background:var(--surface2);cursor:pointer;transition:all .15s;flex-shrink:0}
-.dot.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 6px var(--accent-glow)}
-.rm{width:30px;height:30px;border-radius:7px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
+.dots{display:flex;gap:4px}
+.dot{
+  width:20px;height:20px;
+  border-radius:5px;
+  border:1.5px solid var(--muted);
+  background:transparent;
+  cursor:pointer;
+  transition:all .15s;flex-shrink:0;
+}
+.dot.on{
+  background:var(--accent);
+  border-color:var(--accent);
+  box-shadow:0 0 8px rgba(0,232,122,0.5);
+}
+.rm{
+  width:28px;height:28px;
+  border-radius:7px;border:1px solid var(--border);
+  background:transparent;color:var(--muted);
+  cursor:pointer;font-size:16px;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;
+}
 .rm:hover{border-color:var(--danger);color:var(--danger);background:rgba(255,77,106,.08)}
-.add-btn{display:inline-flex;align-items:center;gap:7px;padding:9px 16px;border-radius:8px;border:1.5px dashed var(--border2);background:transparent;color:var(--muted);cursor:pointer;font-size:12px;font-family:'Space Mono',monospace;transition:all .15s;margin-top:12px}
-.add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
+.add-btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 16px;
+  border-radius:10px;
+  border:1.5px dashed rgba(255,255,255,0.1);
+  background:transparent;color:var(--muted);
+  cursor:pointer;font-size:11.5px;
+  font-family:'Space Mono',monospace;
+  transition:all .2s;margin-top:12px;
+}
+.add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim)}
 
-/* SOCIAL */
+/* ── SOCIAL ── */
 .sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.srow{display:flex;align-items:center;gap:10px;background:var(--surface2);border:1px solid var(--border2);border-radius:9px;padding:10px 14px;transition:border-color .2s}
-.srow:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-dim)}
-.sico{width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;opacity:.75}
-.sico img{width:16px;height:16px;object-fit:contain}
-.srow input{background:transparent;border:none;padding:0;font-size:12px;box-shadow:none!important;border-color:transparent!important}
+.srow{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);
+  border-radius:10px;padding:10px 14px;
+  transition:all .2s;
+  backdrop-filter:blur(8px);
+}
+.srow:hover{border-color:rgba(255,255,255,0.1)}
+.srow:focus-within{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(0,232,122,0.1);
+  background:rgba(0,232,122,0.03);
+}
+.sico{
+  width:18px;height:18px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;flex-shrink:0;
+}
+.sico img{width:15px;height:15px;object-fit:contain}
+.srow input{
+  background:transparent;border:none;padding:0;
+  font-size:12px;box-shadow:none!important;
+  border-color:transparent!important;
+}
 
-/* THEMES */
-.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(108px,1fr));gap:10px}
-.tcard{border:2px solid var(--border2);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s}
-.tcard:hover{border-color:rgba(0,232,122,.5);transform:translateY(-1px)}
-.tcard.on{border-color:var(--accent);box-shadow:0 0 14px var(--accent-glow)}
-.tprev{height:50px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'Space Mono',monospace;font-weight:700;text-align:center;padding:4px}
-.tname{text-align:center;font-size:9px;padding:5px 4px;color:var(--muted);background:var(--surface2);border-top:1px solid var(--border);font-family:'Space Mono',monospace}
+/* ── THEMES ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(106px,1fr));gap:10px}
+.tcard{
+  border:1.5px solid var(--border);
+  border-radius:12px;overflow:hidden;
+  cursor:pointer;
+  transition:all .2s;
+  backdrop-filter:blur(8px);
+}
+.tcard:hover{border-color:rgba(0,232,122,0.5);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.tcard.on{
+  border-color:var(--accent);
+  box-shadow:0 0 0 1px rgba(0,232,122,0.3),0 8px 32px rgba(0,0,0,0.4);
+}
+.tprev{height:50px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:'Space Mono',monospace;font-weight:700;padding:4px;text-align:center;line-height:1.3}
+.tname{text-align:center;font-size:9px;padding:5px 4px;color:var(--muted);background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.05);font-family:'Space Mono',monospace}
 
-/* TOGGLES */
-.togs{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px}
-.tog{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border:1px solid var(--border2);border-radius:10px;background:var(--surface2);cursor:pointer;transition:all .15s}
-.tog:hover{border-color:rgba(0,232,122,.3)}
-.tog.on{border-color:rgba(0,232,122,.4);background:rgba(0,232,122,.055)}
-.tn{font-size:13px;font-weight:600}
-.td{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
-.sw{width:38px;height:21px;border-radius:12px;background:var(--border2);position:relative;transition:background .2s;flex-shrink:0}
-.sw::after{content:'';position:absolute;width:15px;height:15px;border-radius:50%;background:var(--muted);top:3px;left:3px;transition:all .2s}
-.tog.on .sw{background:rgba(0,232,122,.35)}
-.tog.on .sw::after{left:20px;background:var(--accent)}
+/* ── TOGGLES ── */
+.togs{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}
+.tog{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 16px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:rgba(255,255,255,0.025);
+  cursor:pointer;
+  transition:all .2s;
+  backdrop-filter:blur(8px);
+}
+.tog:hover{border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.04)}
+.tog.on{
+  border-color:rgba(0,232,122,0.4);
+  background:linear-gradient(135deg,rgba(0,232,122,0.07),rgba(0,232,122,0.03));
+}
+.tn{font-size:12.5px;font-weight:600}
+.td{font-size:9.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+.sw{
+  width:38px;height:21px;
+  border-radius:12px;
+  background:var(--muted);
+  position:relative;transition:background .25s;flex-shrink:0;
+}
+.sw::after{
+  content:'';position:absolute;
+  width:15px;height:15px;border-radius:50%;
+  background:#fff;opacity:.5;
+  top:3px;left:3px;transition:all .25s;
+}
+.tog.on .sw{background:var(--accent);box-shadow:0 0 10px rgba(0,232,122,0.4)}
+.tog.on .sw::after{left:20px;opacity:1}
 
-/* GENERATE */
-.genwrap{margin-top:56px;display:flex;flex-direction:column;align-items:center;gap:12px}
-.genbtn{display:inline-flex;align-items:center;gap:10px;padding:16px 44px;background:var(--accent);color:#08090e;border:none;border-radius:12px;font-family:'Syne',sans-serif;font-size:15px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 22px var(--accent-glow)}
-.genbtn:hover{transform:translateY(-2px);box-shadow:0 8px 32px var(--accent-glow)}
-.genbtn:active{transform:translateY(0)}
+/* ── GENERATE BUTTON ── */
+.genwrap{
+  margin-top:48px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+
+.genbtn{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:18px 56px;
+  background:linear-gradient(135deg,var(--accent),#00c96a);
+  color:#070810;border:none;border-radius:16px;
+  font-family:'Syne',sans-serif;font-size:16px;font-weight:800;
+  cursor:pointer;
+  position:relative;overflow:hidden;
+  transition:all .3s;
+  box-shadow:0 4px 24px rgba(0,232,122,0.35), 0 0 0 1px rgba(0,232,122,0.2);
+}
+.genbtn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
+  opacity:0;transition:opacity .3s;
+}
+.genbtn:hover{
+  transform:translateY(-3px);
+  box-shadow:0 12px 40px rgba(0,232,122,0.45), 0 0 0 1px rgba(0,232,122,0.3);
+}
+.genbtn:hover::before{opacity:1}
+.genbtn:active{transform:translateY(-1px)}
+
+/* Shimmer on button */
+.genbtn::after{
+  content:'';position:absolute;
+  top:0;left:-100%;
+  width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
+  transform:skewX(-20deg);
+  animation:shimmer 3s infinite;
+}
+@keyframes shimmer{
+  0%  {left:-100%}
+  60%,100%{left:150%}
+}
+
 .genhint{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
 
-/* OUTPUT */
-.out{display:none;margin-top:56px}
-.out.show{display:block}
-.outhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px;flex-wrap:wrap}
-.outhead h2{font-size:20px;font-weight:800}
+/* ── OUTPUT ── */
+.out{display:none;margin-top:52px}
+.out.show{display:block;animation:fadeUp .4s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+.outhead{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;gap:12px;flex-wrap:wrap;
+}
+.outhead h2{font-size:18px;font-weight:800}
 .outhead h2 em{color:var(--accent);font-style:normal}
-.copybtn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;background:var(--surface2);border:1px solid var(--border2);border-radius:8px;color:var(--text2);font-family:'Space Mono',monospace;font-size:12px;cursor:pointer;transition:all .15s}
-.copybtn:hover{border-color:var(--accent);color:var(--accent)}
-.copybtn.ok{border-color:var(--accent);color:var(--accent);background:var(--accent-dim)}
-.codeblk{background:var(--surface);border:1px solid var(--border2);border-radius:14px;padding:28px;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.8;color:#6effa0;white-space:pre;overflow:auto;max-height:540px}
 
-footer{margin-top:64px;padding-top:28px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
-footer a{color:var(--accent);text-decoration:none}
+.copybtn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:10px 20px;
+  background:var(--glass);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text2);
+  font-family:'Space Mono',monospace;font-size:11.5px;
+  cursor:pointer;transition:all .2s;
+  backdrop-filter:blur(12px);
+}
+.copybtn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.copybtn.ok{border-color:var(--accent);color:var(--accent);background:rgba(0,232,122,0.1)}
 
+.codeblk{
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:16px;padding:28px;
+  font-family:'Space Mono',monospace;font-size:11px;line-height:1.8;
+  color:#5dffaa;white-space:pre;overflow:auto;max-height:500px;
+}
+
+/* ── FOOTER ── */
+footer{
+  margin-top:64px;padding-top:28px;
+  border-top:1px solid var(--border);
+  text-align:center;font-size:11px;
+  color:var(--muted);font-family:'Space Mono',monospace;
+  line-height:2;
+}
+footer a{color:var(--accent);text-decoration:none;transition:opacity .2s}
+footer a:hover{opacity:.7}
+footer strong{color:var(--accent)}
+
+/* ── SCROLL REVEAL ── */
+.reveal{
+  opacity:0;transform:translateY(20px);
+  transition:opacity .5s ease, transform .5s ease;
+}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── RESPONSIVE ── */
 @media(max-width:580px){
   .row{grid-template-columns:1fr}
   .sgrid{grid-template-columns:1fr}
   .tgrid{grid-template-columns:repeat(3,1fr)}
   .togs{grid-template-columns:1fr}
   .wrap{padding:0 16px 60px}
-  .card-body{padding:20px 18px}
-  .card-head{padding:18px}
+  .card-body{padding:18px}
+  header{padding:36px 0 28px}
 }
 </style>
 </head>
 <body>
+
+<div class="bg-orbs">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
 <div class="wrap">
 
+<!-- HEADER -->
 <header>
-  <div class="hrow">
-    <div class="logo">GH</div>
-    <div class="htxt">
+  <div class="header-line">
+    <div class="logo">RF</div>
+    <div>
       <h1><em>ReadmeForge</em> — GitHub Profile README Generator</h1>
-      <p>// fill in → pick tech → generate → copy → paste. free & open source.</p>
     </div>
   </div>
+  <div class="tagline">// free & open source · no sign-up · ready in 2 minutes</div>
+  <div class="header-divider"></div>
 </header>
 
 <div class="steps">
 
-<!-- 01 ABOUT -->
+<!-- ── 01 ABOUT ── -->
 <div class="card">
   <div class="card-head">
     <div class="badge">01</div>
@@ -206,30 +546,30 @@ footer a{color:var(--accent);text-decoration:none}
   </div>
   <div class="card-body">
     <div class="row">
-      <div class="field"><label>Full Name</label><input id="fn" placeholder="Alex Johnson"></div>
-      <div class="field"><label>GitHub Username</label><input id="fu" placeholder="alexjohnson"></div>
+      <div class="field"><label>Name</label><input id="fn" placeholder="Your name"></div>
+      <div class="field"><label>GitHub Username</label><input id="fu" placeholder="username"></div>
     </div>
     <div class="row">
-      <div class="field"><label>Role / Title</label><input id="fr" placeholder="Full-Stack Developer"></div>
-      <div class="field"><label>Location</label><input id="fl" placeholder="Berlin, Germany 🇩🇪"></div>
+      <div class="field"><label>Role</label><input id="fr" placeholder="Full-Stack Developer"></div>
+      <div class="field"><label>Location</label><input id="fl" placeholder="City, Country"></div>
     </div>
     <div class="row one">
-      <div class="field"><label>Short Bio</label><textarea id="fb" placeholder="I build things for the web. Passionate about open source and clean code."></textarea></div>
+      <div class="field"><label>Bio</label><textarea id="fb" placeholder="A short sentence about yourself..."></textarea></div>
     </div>
     <div class="row">
-      <div class="field"><label>Currently Learning</label><input id="fle" placeholder="Rust, WebAssembly, AI"></div>
-      <div class="field"><label>Fun Fact</label><input id="ff" placeholder="I debug code at 2am 🌙"></div>
+      <div class="field"><label>Currently Learning</label><input id="fle" placeholder="Rust, AI, etc."></div>
+      <div class="field"><label>Fun Fact</label><input id="ff" placeholder="Something interesting..."></div>
     </div>
     <div class="row one">
       <div class="field">
-        <label>Animated Typing Lines <span style="color:var(--muted);font-weight:400;text-transform:none">(one per line)</span></label>
-        <textarea id="ft" placeholder="Full-Stack Developer 🚀&#10;Open Source Enthusiast ✨&#10;Always learning new things 📚" style="min-height:88px"></textarea>
+        <label>Typing Lines <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(one per line)</span></label>
+        <textarea id="ft" style="min-height:80px" placeholder="Full-Stack Developer 🚀&#10;Open Source Enthusiast ✨"></textarea>
       </div>
     </div>
   </div>
 </div>
 
-<!-- 02 TECH -->
+<!-- ── 02 TECH STACK ── -->
 <div class="card">
   <div class="card-head">
     <div class="badge">02</div>
@@ -246,7 +586,7 @@ footer a{color:var(--accent);text-decoration:none}
       <div class="chip" data-v="Rust"       data-c="CE422B" data-l="rust"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg"> Rust</div>
       <div class="chip" data-v="Java"       data-c="ED8B00" data-l="java"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"> Java</div>
       <div class="chip" data-v="C%2B%2B"   data-c="00599C" data-l="cplusplus" data-d="C++"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg"> C++</div>
-      <div class="chip" data-v="C%23"       data-c="239120" data-l="csharp"    data-d="C#"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg"> C#</div>
+      <div class="chip" data-v="C%23"       data-c="239120" data-l="csharp" data-d="C#"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg"> C#</div>
       <div class="chip" data-v="PHP"        data-c="777BB4" data-l="php"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg"> PHP</div>
       <div class="chip" data-v="Ruby"       data-c="CC342D" data-l="ruby"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg"> Ruby</div>
       <div class="chip" data-v="Swift"      data-c="FA7343" data-l="swift"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg"> Swift</div>
@@ -303,22 +643,22 @@ footer a{color:var(--accent);text-decoration:none}
 
     <div class="slabel">DevOps &amp; Cloud</div>
     <div class="chips" id="cops">
-      <div class="chip" data-v="Docker"          data-c="2496ED" data-l="docker"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"> Docker</div>
-      <div class="chip" data-v="Kubernetes"      data-c="326CE5" data-l="kubernetes"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-plain.svg"> Kubernetes</div>
-      <div class="chip" data-v="AWS"             data-c="FF9900" data-l="amazonaws" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg"> AWS</div>
-      <div class="chip" data-v="Google Cloud"    data-c="4285F4" data-l="googlecloud"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg"> GCP</div>
-      <div class="chip" data-v="Azure"           data-c="0078D4" data-l="microsoftazure"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"> Azure</div>
-      <div class="chip" data-v="Vercel"          data-c="000000" data-l="vercel"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg"> Vercel</div>
-      <div class="chip" data-v="Nginx"           data-c="009639" data-l="nginx"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg"> Nginx</div>
-      <div class="chip" data-v="Git"             data-c="F05032" data-l="git"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"> Git</div>
-      <div class="chip" data-v="GitHub Actions"  data-c="2088FF" data-l="githubactions"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg"> GH Actions</div>
-      <div class="chip" data-v="Linux"           data-c="FCC624" data-l="linux" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg"> Linux</div>
-      <div class="chip" data-v="VS Code"         data-c="007ACC" data-l="visualstudiocode"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"> VS Code</div>
-      <div class="chip" data-v="Vim"             data-c="019733" data-l="vim"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vim/vim-original.svg"> Vim</div>
-      <div class="chip" data-v="Figma"           data-c="F24E1E" data-l="figma"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg"> Figma</div>
-      <div class="chip" data-v="Terraform"       data-c="7B42BC" data-l="terraform"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg"> Terraform</div>
-      <div class="chip" data-v="Ansible"         data-c="EE0000" data-l="ansible"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ansible/ansible-original.svg"> Ansible</div>
-      <div class="chip" data-v="Jenkins"         data-c="D33833" data-l="jenkins"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg"> Jenkins</div>
+      <div class="chip" data-v="Docker"        data-c="2496ED" data-l="docker"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"> Docker</div>
+      <div class="chip" data-v="Kubernetes"    data-c="326CE5" data-l="kubernetes"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-plain.svg"> Kubernetes</div>
+      <div class="chip" data-v="AWS"           data-c="FF9900" data-l="amazonaws" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg"> AWS</div>
+      <div class="chip" data-v="Google Cloud"  data-c="4285F4" data-l="googlecloud"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg"> GCP</div>
+      <div class="chip" data-v="Azure"         data-c="0078D4" data-l="microsoftazure"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"> Azure</div>
+      <div class="chip" data-v="Vercel"        data-c="000000" data-l="vercel"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg"> Vercel</div>
+      <div class="chip" data-v="Nginx"         data-c="009639" data-l="nginx"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg"> Nginx</div>
+      <div class="chip" data-v="Git"           data-c="F05032" data-l="git"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"> Git</div>
+      <div class="chip" data-v="GitHub Actions" data-c="2088FF" data-l="githubactions"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg"> GH Actions</div>
+      <div class="chip" data-v="Linux"         data-c="FCC624" data-l="linux" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg"> Linux</div>
+      <div class="chip" data-v="VS Code"       data-c="007ACC" data-l="visualstudiocode"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"> VS Code</div>
+      <div class="chip" data-v="Vim"           data-c="019733" data-l="vim"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vim/vim-original.svg"> Vim</div>
+      <div class="chip" data-v="Figma"         data-c="F24E1E" data-l="figma"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg"> Figma</div>
+      <div class="chip" data-v="Terraform"     data-c="7B42BC" data-l="terraform"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg"> Terraform</div>
+      <div class="chip" data-v="Ansible"       data-c="EE0000" data-l="ansible"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ansible/ansible-original.svg"> Ansible</div>
+      <div class="chip" data-v="Jenkins"       data-c="D33833" data-l="jenkins"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg"> Jenkins</div>
     </div>
 
     <div class="slabel">AI / ML</div>
@@ -331,26 +671,25 @@ footer a{color:var(--accent);text-decoration:none}
       <div class="chip" data-v="NumPy"      data-c="013243" data-l="numpy"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg"> NumPy</div>
       <div class="chip" data-v="Matplotlib" data-c="11557C" data-l="matplotlib"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"> Matplotlib</div>
     </div>
-
   </div>
 </div>
 
-<!-- 03 LANGUAGES -->
+<!-- ── 03 LANGUAGES ── -->
 <div class="card">
   <div class="card-head">
     <div class="badge">03</div>
     <div class="cht"><div class="title">Spoken Languages</div><div class="sub">// languages you speak</div></div>
   </div>
   <div class="card-body">
-    <div style="display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:14px">
-      <span>Language name</span><span>1 = Basic &nbsp;·&nbsp; 5 = Native</span>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:14px">
+      <span>Language</span><span>1 — Basic &nbsp;·&nbsp; 5 — Native</span>
     </div>
     <div id="ll"></div>
     <button class="add-btn" onclick="addLang()">+ Add Language</button>
   </div>
 </div>
 
-<!-- 04 SOCIAL -->
+<!-- ── 04 SOCIAL ── -->
 <div class="card">
   <div class="card-head">
     <div class="badge">04</div>
@@ -360,35 +699,35 @@ footer a{color:var(--accent);text-decoration:none}
     <div class="sgrid">
       <div class="srow">
         <span class="sico"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg"></span>
-        <input id="sli" placeholder="linkedin.com/in/username">
+        <input id="sli" placeholder="linkedin.com/in/…">
       </div>
       <div class="srow">
         <span class="sico" style="color:#1D9BF0"><i class="fa-brands fa-x-twitter"></i></span>
-        <input id="stw" placeholder="twitter.com/username">
+        <input id="stw" placeholder="twitter.com/…">
       </div>
       <div class="srow">
         <span class="sico" style="color:#2CA5E0"><i class="fa-brands fa-telegram"></i></span>
-        <input id="stg" placeholder="t.me/username">
+        <input id="stg" placeholder="t.me/…">
       </div>
       <div class="srow">
         <span class="sico" style="color:#FF0000"><i class="fa-brands fa-youtube"></i></span>
-        <input id="syt" placeholder="youtube.com/@channel">
+        <input id="syt" placeholder="youtube.com/@…">
       </div>
       <div class="srow">
         <span class="sico" style="color:#9146FF"><i class="fa-brands fa-twitch"></i></span>
-        <input id="stv" placeholder="twitch.tv/username">
+        <input id="stv" placeholder="twitch.tv/…">
       </div>
       <div class="srow">
-        <span class="sico" style="color:#0A0A0A"><i class="fa-brands fa-dev" style="color:#fff"></i></span>
-        <input id="sdev" placeholder="dev.to/username">
+        <span class="sico"><i class="fa-brands fa-dev" style="color:#fff"></i></span>
+        <input id="sdev" placeholder="dev.to/…">
       </div>
       <div class="srow">
         <span class="sico"><i class="fa-brands fa-medium" style="color:#fff"></i></span>
-        <input id="smed" placeholder="medium.com/@username">
+        <input id="smed" placeholder="medium.com/@…">
       </div>
       <div class="srow">
         <span class="sico" style="color:#EA4335"><i class="fa-solid fa-envelope"></i></span>
-        <input id="sem" placeholder="you@email.com">
+        <input id="sem" placeholder="email">
       </div>
       <div class="srow">
         <span class="sico" style="color:#4CAF50"><i class="fa-solid fa-globe"></i></span>
@@ -396,17 +735,17 @@ footer a{color:var(--accent);text-decoration:none}
       </div>
       <div class="srow">
         <span class="sico" style="color:#FFDD00"><i class="fa-solid fa-mug-hot"></i></span>
-        <input id="sbmc" placeholder="buymeacoffee.com/username">
+        <input id="sbmc" placeholder="buymeacoffee.com/…">
       </div>
     </div>
   </div>
 </div>
 
-<!-- 05 THEME & EXTRAS -->
+<!-- ── 05 THEME & WIDGETS ── -->
 <div class="card">
   <div class="card-head">
     <div class="badge">05</div>
-    <div class="cht"><div class="title">Theme &amp; Widgets</div><div class="sub">// customize your style</div></div>
+    <div class="cht"><div class="title">Theme &amp; Widgets</div><div class="sub">// style your readme</div></div>
   </div>
   <div class="card-body">
 
@@ -426,108 +765,110 @@ footer a{color:var(--accent);text-decoration:none}
       <div class="tcard" data-t="aura"><div class="tprev" style="background:#1b1e2e;color:#a277ff">Aura</div><div class="tname">aura</div></div>
       <div class="tcard" data-t="github_dark"><div class="tprev" style="background:#0d1117;color:#58a6ff">GitHub Dark</div><div class="tname">github_dark</div></div>
       <div class="tcard" data-t="material_palenight"><div class="tprev" style="background:#292d3e;color:#c792ea">Palenight</div><div class="tname">material_palenight</div></div>
-      <div class="tcard" data-t="calm"><div class="tprev" style="background:#e4dfd0;color:#55877d">Calm</div><div class="tname">calm</div></div>
+      <div class="tcard" data-t="calm"><div class="tprev" style="background:#c8d8e4;color:#2d6a8f">Calm</div><div class="tname">calm</div></div>
       <div class="tcard" data-t="solarized-light"><div class="tprev" style="background:#fdf6e3;color:#268bd2">Solarized</div><div class="tname">solarized-light</div></div>
     </div>
 
     <div class="slabel">Widgets</div>
     <div class="togs">
-      <div class="tog on"  data-k="typing">  <div><div class="tn">Typing Animation</div><div class="td">animated header text</div></div><div class="sw"></div></div>
+      <div class="tog on"  data-k="typing">  <div><div class="tn">Typing Animation</div><div class="td">animated header</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="stats">   <div><div class="tn">GitHub Stats</div><div class="td">commits, stars & PRs</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="streak">  <div><div class="tn">Streak Stats</div><div class="td">contribution streak</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="langs">   <div><div class="tn">Top Languages</div><div class="td">most used languages</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="trophies"><div><div class="tn">Trophies</div><div class="td">github achievements</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="activity"><div><div class="tn">Activity Graph</div><div class="td">contribution chart</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="quote">   <div><div class="tn">Dev Quote</div><div class="td">random dev wisdom</div></div><div class="sw"></div></div>
-      <div class="tog"     data-k="views">   <div><div class="tn">Profile Views</div><div class="td">visitor counter badge</div></div><div class="sw"></div></div>
+      <div class="tog"     data-k="views">   <div><div class="tn">Profile Views</div><div class="td">visitor counter</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="snake">   <div><div class="tn">Snake Animation</div><div class="td">eats your commits 🐍</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="waka">    <div><div class="tn">WakaTime Stats</div><div class="td">weekly coding time</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="spotify"> <div><div class="tn">Spotify Widget</div><div class="td">now playing track</div></div><div class="sw"></div></div>
-      <div class="tog"     data-k="bmc">     <div><div class="tn">Buy Me a Coffee</div><div class="td">support link button</div></div><div class="sw"></div></div>
+      <div class="tog"     data-k="bmc">     <div><div class="tn">Buy Me a Coffee</div><div class="td">support link</div></div><div class="sw"></div></div>
     </div>
 
   </div>
 </div>
-
 </div><!-- /steps -->
 
+<!-- GENERATE -->
 <div class="genwrap">
   <button class="genbtn" onclick="gen()">✨ &nbsp;Generate README</button>
   <div class="genhint">// generates a complete, ready-to-paste README.md</div>
 </div>
 
+<!-- OUTPUT -->
 <div class="out" id="out">
   <div class="outhead">
     <h2>Your <em>README.md</em></h2>
-    <button class="copybtn" id="cb" onclick="copyIt()"><i class="fa-regular fa-copy"></i>&nbsp; Copy to clipboard</button>
+    <button class="copybtn" id="cb" onclick="copyIt()"><i class="fa-regular fa-copy"></i>&nbsp; Copy</button>
   </div>
   <pre class="codeblk" id="co"></pre>
 </div>
 
 <footer>
-  <strong style="color:var(--accent)">ReadmeForge</strong> &nbsp;·&nbsp;
+  <strong>ReadmeForge</strong> &nbsp;·&nbsp;
   ⭐ <a href="https://github.com/lebedevnet/ReadmeForge" target="_blank">Star on GitHub</a> &nbsp;·&nbsp;
   🍴 <a href="https://github.com/lebedevnet/ReadmeForge/fork" target="_blank">Fork it</a> &nbsp;·&nbsp;
   Free &amp; Open Source &nbsp;·&nbsp;
   <a href="https://github.com/lebedevnet/ReadmeForge/issues" target="_blank">Report an issue</a>
 </footer>
 
-</div>
+</div><!-- /wrap -->
 
 <script>
-// Chip toggle
+// ── CHIP TOGGLE ──
 document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>c.classList.toggle('on')));
 
-// Theme
+// ── THEME SELECT ──
 let theme='tokyonight';
 document.querySelectorAll('.tcard').forEach(t=>{
   t.addEventListener('click',()=>{
     document.querySelectorAll('.tcard').forEach(x=>x.classList.remove('on'));
-    t.classList.add('on'); theme=t.dataset.t;
+    t.classList.add('on');theme=t.dataset.t;
   });
 });
 
-// Toggles
+// ── TOGGLES ──
 const T={typing:true,stats:true,streak:true,langs:true,trophies:true,activity:true,quote:true,views:false,snake:false,waka:false,spotify:false,bmc:false};
 document.querySelectorAll('.tog').forEach(el=>{
-  el.addEventListener('click',()=>{
-    T[el.dataset.k]=!T[el.dataset.k];
-    el.classList.toggle('on',T[el.dataset.k]);
-  });
+  el.addEventListener('click',()=>{T[el.dataset.k]=!T[el.dataset.k];el.classList.toggle('on',T[el.dataset.k]);});
 });
 
-// Spoken langs
+// ── SPOKEN LANGS ──
 let lc=0;
 function addLang(nm='',lv=3){
   lc++;const id='lr'+lc;
-  const d=document.createElement('div');
-  d.className='lang-row';d.id=id;
-  d.innerHTML=`<input class="ln" type="text" placeholder="e.g. English, Русский, Deutsch" value="${nm}">
-  <div class="dots">${[1,2,3,4,5].map(i=>`<div class="dot ${i<=lv?'on':''}" onclick="setLv('${id}',${i})"></div>`).join('')}</div>
+  const d=document.createElement('div');d.className='lang-row';d.id=id;
+  d.innerHTML=`<input class="ln" type="text" placeholder="e.g. English, Русский…" value="${nm}">
+  <div class="dots">${[1,2,3,4,5].map(i=>`<div class="dot${i<=lv?' on':''}" onclick="setLv('${id}',${i})"></div>`).join('')}</div>
   <button class="rm" onclick="document.getElementById('${id}').remove()">×</button>`;
   document.getElementById('ll').appendChild(d);
 }
 function setLv(id,lv){document.querySelectorAll('#'+id+' .dot').forEach((d,i)=>d.classList.toggle('on',i<lv));}
-addLang('English',5); addLang('',3);
+addLang('English',5);addLang('',3);
 
-// Helpers
+// ── SCROLL REVEAL ──
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}}),{threshold:.1});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+// ── HELPERS ──
 const v=id=>document.getElementById(id)?.value?.trim()||'';
 function chips(id){return[...document.querySelectorAll('#'+id+' .chip.on')].map(c=>({nm:c.dataset.d||c.dataset.v,v:c.dataset.v,c:c.dataset.c,l:c.dataset.l,lc:c.dataset.lc||'white'}));}
 function badge(nm,c,l,lc='white'){return`![${nm}](https://img.shields.io/badge/${encodeURIComponent(nm)}-${c}?style=for-the-badge&logo=${l}&logoColor=${lc})`;}
 function sbadge(nm,c,l,url){return`[![${nm}](https://img.shields.io/badge/${nm.replace(/-/g,'--')}-${c}?style=for-the-badge&logo=${l}&logoColor=white)](${toU(url)})`;}
 function toU(u){if(!u)return'#';return u.startsWith('http')?u:'https://'+u;}
 
+// ── GENERATE ──
 function gen(){
-  const name=v('fn')||'Your Name', user=v('fu')||'YOUR_USERNAME',
-    role=v('fr'), loc=v('fl'), bio=v('fb'), learn=v('fle'), fun=v('ff'),
+  const name=v('fn')||'Your Name',user=v('fu')||'YOUR_USERNAME',
+    role=v('fr'),loc=v('fl'),bio=v('fb'),learn=v('fle'),fun=v('ff'),
     lines=v('ft').split('\n').filter(Boolean);
 
   const stacks=[
-    {lb:'Languages',        cs:chips('cl')},
-    {lb:'Frontend',         cs:chips('cfe')},
-    {lb:'Backend & Databases', cs:chips('cbe')},
-    {lb:'DevOps & Cloud',   cs:chips('cops')},
-    {lb:'AI / ML',          cs:chips('cai')},
+    {lb:'Languages',cs:chips('cl')},
+    {lb:'Frontend',cs:chips('cfe')},
+    {lb:'Backend & Databases',cs:chips('cbe')},
+    {lb:'DevOps & Cloud',cs:chips('cops')},
+    {lb:'AI / ML',cs:chips('cai')},
   ].filter(s=>s.cs.length);
 
   const slangs=[...document.querySelectorAll('.lang-row')].map(r=>{
@@ -551,26 +892,22 @@ function gen(){
   let o='';
   o+=`<div align="center">\n\n# Hi there, I'm ${name} 👋\n\n`;
   if(T.typing&&lines.length){
-    const enc=lines.map(l=>encodeURIComponent(l)).join(';');
-    o+=`[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=6C63FF&center=true&vCenter=true&width=600&lines=${enc})](https://git.io/typing-svg)\n\n`;
+    o+=`[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=22&pause=1000&color=6C63FF&center=true&vCenter=true&width=600&lines=${lines.map(l=>encodeURIComponent(l)).join(';')})](https://git.io/typing-svg)\n\n`;
   }
   if(T.views) o+=`![Profile Views](https://komarev.com/ghpvc/?username=${user}&color=6C63FF&style=flat-square)\n`;
   o+=`\n</div>\n\n---\n\n`;
 
-  o+=`## 🧑‍💻 About Me\n\n\`\`\`yaml\nname:     "${name}"\n`;
-  if(role)  o+=`role:     "${role}"\n`;
+  o+=`## 🧑‍💻 About Me\n\n\`\`\`yaml\nname: "${name}"\n`;
+  if(role)  o+=`role: "${role}"\n`;
   if(loc)   o+=`location: "${loc}"\n`;
-  if(bio)   o+=`bio:      "${bio}"\n`;
+  if(bio)   o+=`bio: "${bio}"\n`;
   if(learn) o+=`learning: "${learn}"\n`;
   if(fun)   o+=`fun_fact: "${fun}"\n`;
   o+=`\`\`\`\n\n---\n\n`;
 
   if(stacks.length){
     o+=`## 🛠️ Tech Stack\n\n`;
-    for(const s of stacks){
-      o+=`**${s.lb}:**\n\n`;
-      o+=s.cs.map(c=>badge(c.nm,c.c,c.l,c.lc)).join('\n')+'\n\n';
-    }
+    for(const s of stacks){o+=`**${s.lb}:**\n\n${s.cs.map(c=>badge(c.nm,c.c,c.l,c.lc)).join('\n')}\n\n`;}
     o+=`---\n\n`;
   }
 
@@ -589,41 +926,25 @@ function gen(){
   }
   if(T.streak) o+=`<div align="center">\n\n[![GitHub Streak](https://streak-stats.demolab.com?user=${user}&theme=${theme}&hide_border=true)](https://git.io/streak-stats)\n\n</div>\n\n`;
   if(T.stats||T.langs||T.streak) o+=`---\n\n`;
-
-  if(T.trophies){
-    o+=`## 🏆 Trophies\n\n<div align="center">\n\n[![trophy](https://github-profile-trophy.vercel.app/?username=${user}&theme=${theme}&column=7&no-frame=true)](https://github.com/ryo-ma/github-profile-trophy)\n\n</div>\n\n---\n\n`;
-  }
-  if(T.activity){
-    o+=`## 📈 Activity Graph\n\n[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${user}&theme=${theme})](https://github.com/ashutosh00710/github-readme-activity-graph)\n\n---\n\n`;
-  }
-  if(T.waka){
-    o+=`## ⏱️ Coding Time\n\n[![WakaTime](https://github-readme-stats.vercel.app/api/wakatime?username=${user}&theme=${theme})](https://wakatime.com/@${user})\n\n---\n\n`;
-  }
-  if(T.spotify){
-    o+=`## 🎵 Now Playing\n\n[![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com)\n\n---\n\n`;
-  }
-  if(socs.length){
-    o+=`## 🤝 Connect With Me\n\n<div align="center">\n\n${socs.join('\n')}\n\n</div>\n\n---\n\n`;
-  }
-  if(T.snake){
-    o+=`## 🐍 Contribution Snake\n\n<div align="center">\n\n<picture>\n  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake-dark.svg">\n  <img alt="snake" src="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake.svg">\n</picture>\n\n</div>\n\n---\n\n`;
-  }
-  if(T.quote){
-    o+=`<div align="center">\n\n### 💬 Dev Quote\n\n![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=${theme})\n\n---\n\n⭐️ From [${user}](https://github.com/${user}) — **Feel free to fork and customize!**\n\n</div>\n`;
-  }
+  if(T.trophies) o+=`## 🏆 Trophies\n\n<div align="center">\n\n[![trophy](https://github-profile-trophy.vercel.app/?username=${user}&theme=${theme}&column=7&no-frame=true)](https://github.com/ryo-ma/github-profile-trophy)\n\n</div>\n\n---\n\n`;
+  if(T.activity) o+=`## 📈 Activity Graph\n\n[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${user}&theme=${theme})](https://github.com/ashutosh00710/github-readme-activity-graph)\n\n---\n\n`;
+  if(T.waka)     o+=`## ⏱️ Coding Time\n\n[![WakaTime](https://github-readme-stats.vercel.app/api/wakatime?username=${user}&theme=${theme})](https://wakatime.com/@${user})\n\n---\n\n`;
+  if(T.spotify)  o+=`## 🎵 Now Playing\n\n[![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com)\n\n---\n\n`;
+  if(socs.length) o+=`## 🤝 Connect With Me\n\n<div align="center">\n\n${socs.join('\n')}\n\n</div>\n\n---\n\n`;
+  if(T.snake)    o+=`## 🐍 Contribution Snake\n\n<div align="center">\n\n<picture>\n  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake-dark.svg">\n  <img alt="snake" src="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake.svg">\n</picture>\n\n</div>\n\n---\n\n`;
+  if(T.quote)    o+=`<div align="center">\n\n### 💬 Dev Quote\n\n![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=${theme})\n\n---\n\n⭐️ From [${user}](https://github.com/${user}) — **Feel free to fork and customize!**\n\n</div>\n`;
 
   document.getElementById('co').textContent=o;
   const el=document.getElementById('out');
   el.classList.add('show');
-  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),50);
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);
 }
 
 function copyIt(){
   navigator.clipboard.writeText(document.getElementById('co').textContent).then(()=>{
     const b=document.getElementById('cb');
-    b.innerHTML='<i class="fa-solid fa-check"></i>&nbsp; Copied!';
-    b.classList.add('ok');
-    setTimeout(()=>{b.innerHTML='<i class="fa-regular fa-copy"></i>&nbsp; Copy to clipboard';b.classList.remove('ok');},2000);
+    b.innerHTML='<i class="fa-solid fa-check"></i>&nbsp; Copied!';b.classList.add('ok');
+    setTimeout(()=>{b.innerHTML='<i class="fa-regular fa-copy"></i>&nbsp; Copy';b.classList.remove('ok');},2000);
   });
 }
 </script>
