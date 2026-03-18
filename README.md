@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=220&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=36&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0,7,16,0d1f2d,00e87a&height=220&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=36&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn" width="100%"/>
 </div>
 
 <div align="center">
@@ -37,10 +37,16 @@ Pick your stack → choose a theme → copy. No coding, no sign-up.
 
 Free, browser-based tool that generates a fully customized `README.md` for your GitHub profile. Fill in a form — click Generate — copy and paste. Done in under 2 minutes. No backend, no npm, no sign-up.
 
-📍 **Hosted** &nbsp; lebedevnet.github.io/ReadmeForge
-⌗ **Stack** &nbsp; Pure HTML · CSS · JavaScript
-◎ **License** &nbsp; MIT — free to use, fork, modify
-⟳ **Status** &nbsp; Active
+<table>
+<tr>
+<td><b>Hosted</b></td><td>lebedevnet.github.io/ReadmeForge</td>
+<td><b>Stack</b></td><td>Pure HTML · CSS · JavaScript</td>
+</tr>
+<tr>
+<td><b>License</b></td><td>MIT — free to use, fork, modify</td>
+<td><b>Status</b></td><td>Active</td>
+</tr>
+</table>
 
 ---
 
@@ -50,7 +56,7 @@ Free, browser-based tool that generates a fully customized `README.md` for your 
 |:---:|:---|:---|
 | ⟡ | **60+ Technologies** | Languages, Frontend, Backend, DevOps, AI/ML with real logos via skillicons.dev |
 | ⟡ | **16 Stats Themes** | Tokyo Night, Dracula, Nord, Synthwave, Aura, Midnight Purple and more |
-| ⟡ | **6 Accent Colors** | Emerald, Violet, Blue, Orange, Pink, Cyan — changes the entire UI |
+| ⟡ | **6 Accent Colors** | Emerald, Violet, Blue, Orange, Pink, Cyan — changes the entire UI live |
 | ⟡ | **12 Widgets** | GitHub Stats, Streak, Trophies, Activity Graph, WakaTime, Spotify and more |
 | ⟡ | **Live Preview** | See exactly how your README will look on GitHub as you type |
 | ⟡ | **Spoken Languages** | Show the languages you speak with a color-coded level badge |
@@ -65,7 +71,7 @@ Free, browser-based tool that generates a fully customized `README.md` for your 
 **Online — no install needed:**
 
 ```
-lebedevnet.github.io/ReadmeForge
+https://lebedevnet.github.io/ReadmeForge
 ```
 
 **Or run locally:**
@@ -113,25 +119,30 @@ git push origin feat/your-feature
 
 | Type | Examples |
 |:---|:---|
-| 🆕 New technologies | Missing frameworks, tools, languages |
-| 🎨 New themes | More color themes for stats cards |
-| 🌐 Localization | Russian, Spanish, Chinese, Portuguese |
-| 🐛 Bug fixes | UI glitches, edge cases in generation |
-| ✨ New features | `.md` download, PWA, more widgets |
+| New technologies | Missing frameworks, tools, languages |
+| New themes | More color themes for stats cards |
+| Localization | Russian, Spanish, Chinese, Portuguese |
+| Bug fixes | UI glitches, edge cases in generation |
+| New features | `.md` download, PWA, more widgets |
 
 ---
 
 ## Roadmap
 
-- [x] 60+ technologies with skillicons.dev
-- [x] 16 themes · 6 accent colors
-- [x] Live preview panel
-- [x] Custom quote
-- [x] Spoken languages with level badges
-- [ ] Export as `.md` file download
-- [ ] PWA support — works fully offline
-- [ ] Localization — RU, ZH, ES, PT
-- [ ] More widgets — LeetCode, Codeforces
+**Done**
+
+- 60+ technologies with skillicons.dev
+- 16 themes · 6 accent colors
+- Live preview panel
+- Custom quote
+- Spoken languages with level badges
+
+**Planned**
+
+- Export as `.md` file download
+- PWA support — works fully offline
+- Localization — RU, ZH, ES, PT
+- More widgets — LeetCode, Codeforces
 
 ---
 
@@ -147,6 +158,8 @@ MIT © [lebedevnet](https://github.com/lebedevnet) — free to use, fork, and mo
 
 [![Star](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=social)](https://github.com/lebedevnet/ReadmeForge)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=120&section=footer" width="100%"/>
+<br/>
+
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0,7,16,0d1f2d,00e87a&height=120&section=footer" width="100%"/>
 
 </div>
