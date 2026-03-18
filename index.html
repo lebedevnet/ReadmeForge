@@ -61,7 +61,9 @@ body::before{
 }
 
 /* ── HEADER ── */
-header{padding:0 0 32px;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,0.06)}
+header{padding:0 0 0;margin-bottom:32px;position:relative}
+.header-wave{display:block;width:100%;margin-top:20px;overflow:visible}
+.header-wave path{transition:fill .4s ease, d .4s ease}
 .hrow{display:flex;align-items:center;gap:16px}
 .logo{
   width:42px;height:42px;background:var(--accent);border-radius:11px;
@@ -262,6 +264,18 @@ footer strong{color:var(--accent)}
       <p>// fill in → pick tech → generate → copy → paste &nbsp;·&nbsp; free & open source</p>
     </div>
   </div>
+  <svg class="header-wave" id="header-wave" viewBox="0 0 1200 100" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg" height="100">
+    <defs>
+      <linearGradient id="waveGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop id="wg1" offset="0%"   stop-color="#00e87a" stop-opacity="0.9"/>
+        <stop id="wg2" offset="50%"  stop-color="#00e87a" stop-opacity="0.4"/>
+        <stop id="wg3" offset="100%" stop-color="#00e87a" stop-opacity="0.12"/>
+      </linearGradient>
+    </defs>
+    <path id="wave-path1" d="M0,50 C150,15 350,85 600,45 C850,5 1050,72 1200,38 L1200,100 L0,100 Z" fill="url(#waveGrad)" opacity="0.65"/>
+    <path id="wave-path2" d="M0,65 C200,30 450,90 720,55 C920,25 1100,78 1200,55 L1200,100 L0,100 Z" fill="url(#waveGrad)" opacity="0.35"/>
+    <path id="wave-path3" d="M0,80 C300,58 550,98 800,72 C980,52 1100,88 1200,70 L1200,100 L0,100 Z" fill="url(#waveGrad)" opacity="0.18"/>
+  </svg>
 </header>
 
 <div class="steps">
@@ -577,6 +591,10 @@ document.querySelectorAll('.cs').forEach(el => {
     r.style.setProperty('--adim', `rgba(${accentR},${accentG},${accentB},0.1)`);
     r.style.setProperty('--aglow', `rgba(${accentR},${accentG},${accentB},0.25)`);
     r.style.setProperty('--border-h', `rgba(${accentR},${accentG},${accentB},0.45)`);
+    // Update wave gradient
+    document.getElementById('wg1').setAttribute('stop-color', accentColor);
+    document.getElementById('wg2').setAttribute('stop-color', accentColor);
+    document.getElementById('wg3').setAttribute('stop-color', accentColor);
     updatePreview();
   });
 });
