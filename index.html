@@ -907,7 +907,7 @@ function renderPreview() {
     });
     html += `</div>`;
   }
-  if (fun) html += `<div class="pv-blockquote">⚡ ${fun}</div>`;
+  if (fun) html += `<div style="font-size:11.5px;margin-bottom:10px"><span style="opacity:.4;margin-right:6px">✦</span><span style="color:rgba(255,255,255,0.3);font-size:9.5px;text-transform:uppercase;letter-spacing:.07em;margin-right:8px">Fun fact</span><span style="color:rgba(255,255,255,0.78)">${fun}</span></div>`;
 
   const hasTech = langSi || feSi || beSi || opsSi || aiSi;
   if (hasTech) {
@@ -1040,7 +1040,7 @@ function gen() {
   if (edu)   infoItems2.push(`◎ **Education** &nbsp; ${edu}`);
   if (learn) infoItems2.push(`⟳ **Learning** &nbsp; ${learn}`);
   if (infoItems2.length) o += infoItems2.join(' <br/>\n') + '\n\n';
-  if (fun) o += `> ⚡ ${fun}\n\n`;
+  if (fun) o += `✦ **Fun fact** &nbsp; ${fun}\n\n`;
 
   // STACK — one --- before this block only
   if (sections.length) {
