@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0,0d2a1a,00e87a&height=240&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=006633,00e87a&height=240&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>
 </div>
 
 <div align="center">
@@ -125,6 +125,6 @@ MIT © [lebedevnet](https://github.com/lebedevnet) — free to use, fork, and mo
 
 [![Star](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=social)](https://github.com/lebedevnet/ReadmeForge)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0,0d2a1a,00e87a&height=120&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=006633,00e87a&height=120&section=footer" width="100%"/>
 
 </div>
