@@ -23,563 +23,287 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
-/* ── TOKENS ── */
-:root {
-  --bg:        #070810;
-  --glass:     rgba(255,255,255,0.04);
-  --glass-b:   rgba(255,255,255,0.08);
-  --glass-h:   rgba(255,255,255,0.06);
-  --border:    rgba(255,255,255,0.08);
-  --border-h:  rgba(0,232,122,0.45);
-  --accent:    #00e87a;
-  --accent2:   #6366f1;
-  --adim:      rgba(0,232,122,0.12);
-  --aglow:     rgba(0,232,122,0.3);
-  --text:      #f0f1fa;
-  --text2:     #8889aa;
-  --muted:     #44455e;
-  --danger:    #ff4d6a;
+:root{
+  --bg:#070810;--surface:rgba(255,255,255,0.04);--surface2:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.12);
+  --accent:#00e87a;--accent-r:0;--accent-g:232;--accent-b:122;
+  --adim:rgba(0,232,122,0.1);--aglow:rgba(0,232,122,0.25);
+  --text:#f0f1fa;--text2:#8889aa;--muted:#44455e;--danger:#ff4d6a;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-  background:var(--bg);
-  color:var(--text);
-  font-family:'Syne',sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* ── STATIC BG gradients — no animation, no filter ── */
-.bg-orbs{display:none}
+body{background:var(--bg);color:var(--text);font-family:'Syne',sans-serif;min-height:100vh;overflow-x:hidden}
 
 body::before{
-  content:'';
-  position:fixed;inset:0;
+  content:'';position:fixed;inset:0;pointer-events:none;
   background:
-    radial-gradient(ellipse 700px 500px at 0% 0%,rgba(0,232,122,0.07) 0%,transparent 65%),
-    radial-gradient(ellipse 600px 500px at 100% 100%,rgba(99,102,241,0.06) 0%,transparent 65%);
-  pointer-events:none;z-index:0;
+    radial-gradient(ellipse 700px 500px at 0% 0%,rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.06) 0%,transparent 65%),
+    radial-gradient(ellipse 600px 500px at 100% 100%,rgba(99,102,241,0.05) 0%,transparent 65%);
 }
 
+/* ── PROGRESS ── */
+.pbar-wrap{position:fixed;top:0;left:0;right:0;z-index:200;height:2px;background:rgba(255,255,255,0.04)}
+.pbar{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.5));transition:width .4s ease}
+
 /* ── LAYOUT ── */
-.wrap{
-  max-width:820px;
-  margin:0 auto;
-  padding:0 24px 100px;
-  position:relative;z-index:1;
+.page{display:grid;grid-template-columns:1fr 380px;gap:0;min-height:100vh;position:relative;z-index:1}
+.form-col{padding:40px 32px 100px;max-width:840px}
+.preview-col{
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  background:rgba(0,0,0,0.3);
+  border-left:1px solid rgba(255,255,255,0.05);
+  padding:24px 20px;
+}
+
+@media(max-width:1100px){
+  .page{grid-template-columns:1fr}
+  .preview-col{display:none}
 }
 
 /* ── HEADER ── */
-header{
-  padding:32px 0 24px;
-  margin-bottom:28px;
-  position:relative;
-}
-
-.header-line{
-  display:flex;align-items:center;gap:16px;
-  margin-bottom:12px;
-}
-
+header{padding:0 0 32px;margin-bottom:32px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.hrow{display:flex;align-items:center;gap:16px}
 .logo{
-  width:44px;height:44px;
-  background:var(--accent);
-  border-radius:12px;
+  width:42px;height:42px;background:var(--accent);border-radius:11px;
   display:flex;align-items:center;justify-content:center;
-  font-family:'Space Mono',monospace;
-  font-size:15px;font-weight:700;
-  color:#070810;
-  flex-shrink:0;
-  box-shadow:0 0 24px var(--aglow);
+  font-family:'Space Mono',monospace;font-size:14px;font-weight:700;
+  color:#070810;flex-shrink:0;box-shadow:0 0 24px var(--aglow);
 }
-@keyframes logoPulse{
-  0%,100%{opacity:1}
-  50%{opacity:.8}
-}
+.htxt h1{font-size:clamp(18px,2.5vw,24px);font-weight:800;letter-spacing:-.02em}
+.htxt h1 em{color:var(--accent);font-style:normal}
+.htxt p{font-family:'Space Mono',monospace;font-size:10px;color:var(--muted);margin-top:4px;letter-spacing:.05em}
 
-h1{font-size:clamp(20px,3vw,26px);font-weight:800;letter-spacing:-0.02em;line-height:1.1}
-h1 em{color:var(--accent);font-style:normal}
-
-.tagline{
-  font-family:'Space Mono',monospace;
-  font-size:11px;color:var(--muted);
-  letter-spacing:.06em;margin-left:60px;
-}
-
-.header-divider{
-  height:1px;
-  background:linear-gradient(90deg,rgba(0,232,122,0.3),rgba(99,102,241,0.2),transparent);
-  margin-top:20px;
-}
-
-/* ── GLASS CARD ── */
-.card{
-  background:rgba(255,255,255,0.045);
-  border:1px solid var(--border);
-  border-radius:20px;
-  overflow:hidden;
-  margin-bottom:20px;
-  transition:border-color .3s, box-shadow .3s;
-  opacity:0;
-  transform:translateY(20px);
-  animation:cardIn .45s ease forwards;
-  will-change:transform,opacity;
-}
-.card:nth-child(1){animation-delay:.05s}
-.card:nth-child(2){animation-delay:.12s}
-.card:nth-child(3){animation-delay:.18s}
-.card:nth-child(4){animation-delay:.24s}
-.card:nth-child(5){animation-delay:.30s}
-
-@keyframes cardIn{
-  to{opacity:1;transform:translateY(0)}
-}
-
-.card.done{will-change:auto}
-
-.card:hover{
-  border-color:rgba(255,255,255,0.12);
-  box-shadow:0 8px 40px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.04);
-}
-.card:focus-within{
-  border-color:var(--border-h);
-  box-shadow:0 0 0 1px rgba(0,232,122,0.15), 0 12px 48px rgba(0,0,0,0.4);
-}
-
-.card-head{
-  display:flex;align-items:center;gap:14px;
-  padding:20px 26px;
-  background:rgba(255,255,255,0.04);
-  border-bottom:1px solid var(--border);
-  position:relative;overflow:hidden;
-}
-
-.card-head::after{
-  content:'';
-  position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,rgba(0,232,122,0.2),transparent);
-}
-
-.badge{
-  width:28px;height:28px;
-  border-radius:8px;
-  background:linear-gradient(135deg,var(--accent),rgba(0,200,100,0.7));
-  color:#070810;
-  font-family:'Space Mono',monospace;
-  font-size:10px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-  box-shadow:0 2px 12px rgba(0,232,122,0.4);
-}
-
+/* ── CARDS ── */
+.steps{display:flex;flex-direction:column;gap:20px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;opacity:0;transform:translateY(16px);animation:cIn .4s ease forwards}
+.card:nth-child(1){animation-delay:.05s}.card:nth-child(2){animation-delay:.1s}.card:nth-child(3){animation-delay:.15s}
+.card:nth-child(4){animation-delay:.2s}.card:nth-child(5){animation-delay:.25s}.card:nth-child(6){animation-delay:.3s}
+@keyframes cIn{to{opacity:1;transform:translateY(0)}}
+.card:hover{border-color:rgba(255,255,255,0.1)}
+.card:focus-within{border-color:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.3);box-shadow:0 0 0 1px rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.1)}
+.card-head{display:flex;align-items:center;gap:14px;padding:18px 24px;background:var(--surface2);border-bottom:1px solid var(--border)}
+.badge{width:26px;height:26px;border-radius:7px;background:var(--accent);color:#070810;font-family:'Space Mono',monospace;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .cht .title{font-size:14px;font-weight:700}
-.cht .sub{font-size:10.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
-
-.card-body{padding:26px}
+.cht .sub{font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:1px}
+.counter{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);margin-left:6px}
+.counter-num{background:var(--accent);color:#070810;font-size:9px;font-weight:700;padding:1px 6px;border-radius:20px;transition:transform .2s}
+.counter-num.bump{transform:scale(1.4)}
+.card-body{padding:24px}
 
 /* ── FORM ── */
 .row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
-.row.one{grid-template-columns:1fr}
-.row:last-child{margin-bottom:0}
-
+.row.one{grid-template-columns:1fr}.row:last-child{margin-bottom:0}
 .field{display:flex;flex-direction:column;gap:6px}
-
-label{
-  font-size:9.5px;
-  font-family:'Space Mono',monospace;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.1em;
-  font-weight:700;
-  transition:color .2s;
-}
+label{font-size:9.5px;font-family:'Space Mono',monospace;color:var(--muted);text-transform:uppercase;letter-spacing:.09em;font-weight:700;transition:color .2s}
 .field:focus-within label{color:var(--accent)}
+input,textarea{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;color:var(--text);font-family:'Space Mono',monospace;font-size:13px;padding:12px 14px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s;width:100%}
+input::placeholder,textarea::placeholder{color:var(--muted);font-size:11.5px}
+input:focus,textarea:focus{background:rgba(255,255,255,0.05);border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.1)}
+textarea{resize:vertical;min-height:80px;line-height:1.6}
 
-input,textarea{
-  background:rgba(255,255,255,0.03);
-  border:1px solid var(--border);
-  border-radius:10px;
-  color:var(--text);
-  font-family:'Space Mono',monospace;
-  font-size:13px;
-  padding:13px 16px;
-  outline:none;
-  transition:border-color .2s, box-shadow .2s, background .2s;
-  width:100%;
-}
-input::placeholder,textarea::placeholder{color:var(--muted);font-size:12px}
-input:focus,textarea:focus{
-  background:rgba(255,255,255,0.05);
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(0,232,122,0.1), 0 0 20px rgba(0,232,122,0.05);
-}
-textarea{resize:vertical;min-height:84px;line-height:1.6}
-
-/* ── PROGRESS BAR ── */
-.progress-wrap{
-  position:fixed;top:0;left:0;right:0;z-index:100;
-  height:3px;background:rgba(255,255,255,0.06);
-}
-.progress-bar{
-  height:100%;width:0%;
-  background:linear-gradient(90deg,var(--accent),#00c9ff);
-  transition:width .4s ease;
-  box-shadow:0 0 8px var(--accent);
-}
-
-/* ── SECTION HEADER ROW ── */
-.slabel-row{
-  display:flex;align-items:center;justify-content:space-between;
-  margin:22px 0 12px;
-}
+/* ── SECTION LABEL ── */
+.slabel-row{display:flex;align-items:center;justify-content:space-between;margin:20px 0 11px}
 .slabel-row:first-child{margin-top:0}
-.slabel{
-  display:flex;align-items:center;gap:10px;
-  font-size:9px;
-  font-family:'Space Mono',monospace;
-  text-transform:uppercase;letter-spacing:.12em;font-weight:700;
-  color:var(--muted);
-  flex:1;
-}
-.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.07),transparent)}
-
-.clear-btn{
-  font-size:9.5px;
-  font-family:'Space Mono',monospace;
-  color:var(--muted);
-  background:none;border:none;cursor:pointer;
-  padding:2px 6px;border-radius:4px;
-  transition:color .15s,background .15s;
-  white-space:nowrap;flex-shrink:0;margin-left:10px;
-}
+.slabel{display:flex;align-items:center;gap:8px;font-size:9px;font-family:'Space Mono',monospace;text-transform:uppercase;letter-spacing:.12em;font-weight:700;color:var(--muted);flex:1}
+.slabel::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.06),transparent)}
+.clear-btn{font-size:9px;font-family:'Space Mono',monospace;color:var(--muted);background:none;border:none;cursor:pointer;padding:2px 8px;border-radius:4px;transition:all .15s;flex-shrink:0;margin-left:8px}
 .clear-btn:hover{color:var(--danger);background:rgba(255,77,106,0.08)}
 
-/* ── TECH COUNTER BADGE ── */
-.counter{
-  display:inline-flex;align-items:center;gap:6px;
-  font-size:11px;font-family:'Space Mono',monospace;color:var(--muted);
-  margin-left:8px;
-}
-.counter-num{
-  background:var(--accent);color:#070810;
-  font-size:10px;font-weight:700;
-  padding:1px 7px;border-radius:20px;
-  min-width:22px;text-align:center;
-  transition:transform .2s;
-}
-.counter-num.bump{transform:scale(1.3)}
-
 /* ── CHIPS ── */
-.chips{display:flex;flex-wrap:wrap;gap:8px}
-
-.chip{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:8px 14px;
-  border-radius:100px;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,0.04);
-  cursor:pointer;
-  font-size:13px;
-  font-family:'Space Mono',monospace;
-  color:var(--text2);
-  transition:border-color .15s, color .15s, background .15s, transform .15s, box-shadow .15s;
-  user-select:none;line-height:1;
-}
-.chip:hover{
-  border-color:rgba(0,232,122,0.5);
-  color:var(--accent);
-  background:var(--adim);
-  transform:translateY(-1px);
-  box-shadow:0 4px 16px rgba(0,0,0,0.2);
-}
-.chip.on{
-  border-color:var(--accent);
-  background:linear-gradient(135deg,rgba(0,232,122,0.15),rgba(0,232,122,0.08));
-  color:var(--accent);
-  box-shadow:0 0 12px rgba(0,232,122,0.2);
-}
-.chip img{width:16px;height:16px;object-fit:contain;flex-shrink:0;border-radius:2px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 13px;border-radius:100px;border:1px solid var(--border);background:rgba(255,255,255,0.03);cursor:pointer;font-size:12.5px;font-family:'Space Mono',monospace;color:var(--text2);transition:all .15s;user-select:none;line-height:1}
+.chip:hover{border-color:var(--accent);color:var(--accent);background:var(--adim);transform:translateY(-1px)}
+.chip.on{border-color:var(--accent);background:var(--adim);color:var(--accent);box-shadow:0 0 10px rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.15)}
+.chip img{width:15px;height:15px;object-fit:contain;flex-shrink:0;border-radius:2px}
 
 /* ── SPOKEN LANGS ── */
-.lang-row{
-  display:flex;align-items:center;gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid var(--border);
-}
+.lang-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border)}
 .lang-row:last-child{border-bottom:none}
 .lang-row input{flex:1}
 .dots{display:flex;gap:4px}
-.dot{
-  width:20px;height:20px;
-  border-radius:5px;
-  border:1.5px solid var(--muted);
-  background:transparent;
-  cursor:pointer;
-  transition:all .15s;flex-shrink:0;
-}
-.dot.on{
-  background:var(--accent);
-  border-color:var(--accent);
-  box-shadow:0 0 8px rgba(0,232,122,0.5);
-}
-.rm{
-  width:28px;height:28px;
-  border-radius:7px;border:1px solid var(--border);
-  background:transparent;color:var(--muted);
-  cursor:pointer;font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .15s;flex-shrink:0;
-}
+.dot{width:20px;height:20px;border-radius:5px;border:1.5px solid rgba(255,255,255,0.1);background:transparent;cursor:pointer;transition:all .15s;flex-shrink:0}
+.dot.on{background:var(--accent);border-color:var(--accent);box-shadow:0 0 6px var(--aglow)}
+.rm{width:28px;height:28px;border-radius:7px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0}
 .rm:hover{border-color:var(--danger);color:var(--danger);background:rgba(255,77,106,.08)}
-.add-btn{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:9px 16px;
-  border-radius:10px;
-  border:1.5px dashed rgba(255,255,255,0.1);
-  background:transparent;color:var(--muted);
-  cursor:pointer;font-size:11.5px;
-  font-family:'Space Mono',monospace;
-  transition:all .2s;margin-top:12px;
-}
+.add-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;border:1.5px dashed rgba(255,255,255,0.1);background:transparent;color:var(--muted);cursor:pointer;font-size:11.5px;font-family:'Space Mono',monospace;transition:all .2s;margin-top:12px}
 .add-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim)}
 
 /* ── SOCIAL ── */
-.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.srow{
-  display:flex;align-items:center;gap:10px;
-  background:rgba(255,255,255,0.04);
-  border:1px solid var(--border);
-  border-radius:10px;padding:10px 14px;
-  transition:border-color .2s,box-shadow .2s,background .2s;
-}
-.srow:hover{border-color:rgba(255,255,255,0.1)}
-.srow:focus-within{
-  border-color:var(--accent);
-  box-shadow:0 0 0 3px rgba(0,232,122,0.1);
-  background:rgba(0,232,122,0.03);
-}
-.sico{
-  width:18px;height:18px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;flex-shrink:0;
-}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.srow{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:9px;padding:10px 13px;transition:all .2s}
+.srow:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.08)}
+.sico{width:17px;height:17px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
 .sico img{width:15px;height:15px;object-fit:contain}
-.srow input{
-  background:transparent;border:none;padding:0;
-  font-size:12px;box-shadow:none!important;
-  border-color:transparent!important;
-}
+.srow input{background:transparent;border:none;padding:0;font-size:12px;box-shadow:none!important;border-color:transparent!important}
 
-/* ── THEMES ── */
-.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(106px,1fr));gap:10px}
-.tcard{
-  border:1.5px solid var(--border);
-  border-radius:12px;overflow:hidden;
-  cursor:pointer;
-  transition:border-color .2s, transform .2s, box-shadow .2s;
+/* ── COLOR SCHEMES ── */
+.color-schemes{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:20px}
+.cs{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px;border-radius:10px;
+  border:1.5px solid var(--border);background:rgba(255,255,255,0.03);
+  cursor:pointer;transition:all .2s;flex:1;min-width:140px;
 }
-.tcard:hover{border-color:rgba(0,232,122,0.5);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
-.tcard.on{
-  border-color:var(--accent);
-  box-shadow:0 0 0 1px rgba(0,232,122,0.3),0 8px 32px rgba(0,0,0,0.4);
-}
-.tprev{height:50px;display:flex;align-items:center;justify-content:center;font-size:10.5px;font-family:'Space Mono',monospace;font-weight:700;padding:4px;text-align:center;line-height:1.3}
-.tname{text-align:center;font-size:9px;padding:5px 4px;color:var(--muted);background:rgba(0,0,0,0.3);border-top:1px solid rgba(255,255,255,0.05);font-family:'Space Mono',monospace}
+.cs:hover{border-color:rgba(255,255,255,0.15)}
+.cs.on{border-color:var(--cs-color)!important;background:rgba(0,0,0,0.2);box-shadow:0 0 0 1px var(--cs-color)}
+.cs-dot{width:20px;height:20px;border-radius:50%;flex-shrink:0}
+.cs-name{font-size:12px;font-weight:600}
+.cs-sub{font-size:10px;font-family:'Space Mono',monospace;color:var(--muted);margin-top:1px}
+
+/* ── STATS THEMES ── */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:9px;margin-bottom:20px}
+.tcard{border:1.5px solid var(--border);border-radius:11px;overflow:hidden;cursor:pointer;transition:all .2s}
+.tcard:hover{border-color:rgba(255,255,255,0.2);transform:translateY(-1px)}
+.tcard.on{border-color:var(--accent);box-shadow:0 0 12px var(--aglow)}
+.tprev{height:48px;display:flex;align-items:center;justify-content:center;font-size:10px;font-family:'Space Mono',monospace;font-weight:700;padding:4px;text-align:center;line-height:1.3}
+.tname{text-align:center;font-size:9px;padding:4px;color:var(--muted);background:rgba(0,0,0,0.25);border-top:1px solid rgba(255,255,255,0.05);font-family:'Space Mono',monospace}
 
 /* ── TOGGLES ── */
-.togs{display:grid;grid-template-columns:repeat(auto-fill,minmax(205px,1fr));gap:10px}
-.tog{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;
-  padding:14px 16px;
-  border:1px solid var(--border);
-  border-radius:12px;
-  background:rgba(255,255,255,0.03);
-  cursor:pointer;
-  transition:border-color .2s, background .2s;
-}
-.tog:hover{border-color:rgba(255,255,255,0.1);background:rgba(255,255,255,0.04)}
-.tog.on{
-  border-color:rgba(0,232,122,0.4);
-  background:linear-gradient(135deg,rgba(0,232,122,0.07),rgba(0,232,122,0.03));
-}
-.tn{font-size:12.5px;font-weight:600}
-.td{font-size:9.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
-.sw{
-  width:38px;height:21px;
-  border-radius:12px;
-  background:var(--muted);
-  position:relative;transition:background .25s;flex-shrink:0;
-}
-.sw::after{
-  content:'';position:absolute;
-  width:15px;height:15px;border-radius:50%;
-  background:#fff;opacity:.5;
-  top:3px;left:3px;transition:all .25s;
-}
-.tog.on .sw{background:var(--accent);box-shadow:0 0 10px rgba(0,232,122,0.4)}
-.tog.on .sw::after{left:20px;opacity:1}
+.togs{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:9px}
+.tog{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:13px 15px;border:1px solid var(--border);border-radius:11px;background:rgba(255,255,255,0.025);cursor:pointer;transition:all .2s}
+.tog:hover{border-color:rgba(255,255,255,0.1)}
+.tog.on{border-color:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.4);background:rgba(var(--accent-r),var(--accent-g),var(--accent-b),0.05)}
+.tn{font-size:12.5px;font-weight:600}.td{font-size:9.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-top:2px}
+.sw{width:36px;height:20px;border-radius:10px;background:var(--muted);position:relative;transition:background .2s;flex-shrink:0}
+.sw::after{content:'';position:absolute;width:14px;height:14px;border-radius:50%;background:#fff;opacity:.5;top:3px;left:3px;transition:all .2s}
+.tog.on .sw{background:var(--accent)}.tog.on .sw::after{left:19px;opacity:1}
 
-/* ── GENERATE BUTTON ── */
-.genwrap{
-  margin-top:48px;
-  display:flex;flex-direction:column;align-items:center;gap:14px;
-}
-
+/* ── GENERATE ── */
+.genwrap{margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:12px}
 .genbtn{
-  display:inline-flex;align-items:center;gap:12px;
-  padding:18px 56px;
-  background:linear-gradient(135deg,var(--accent),#00c96a);
-  color:#070810;border:none;border-radius:16px;
-  font-family:'Syne',sans-serif;font-size:16px;font-weight:800;
-  cursor:pointer;
-  position:relative;overflow:hidden;
-  transition:all .3s;
-  box-shadow:0 4px 24px rgba(0,232,122,0.35), 0 0 0 1px rgba(0,232,122,0.2);
+  display:inline-flex;align-items:center;gap:10px;
+  padding:16px 48px;background:var(--accent);color:#070810;
+  border:none;border-radius:14px;font-family:'Syne',sans-serif;
+  font-size:15px;font-weight:800;cursor:pointer;transition:all .25s;
+  box-shadow:0 4px 20px var(--aglow);position:relative;overflow:hidden;
 }
-.genbtn::before{
-  content:'';position:absolute;inset:0;
-  background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);
-  opacity:0;transition:opacity .3s;
-}
-.genbtn:hover{
-  transform:translateY(-3px);
-  box-shadow:0 12px 40px rgba(0,232,122,0.45), 0 0 0 1px rgba(0,232,122,0.3);
-}
-.genbtn:hover::before{opacity:1}
-.genbtn:active{transform:translateY(-1px)}
-
-/* Shimmer on button */
-.genbtn::after{
-  content:'';position:absolute;
-  top:0;left:-100%;
-  width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.25),transparent);
-  transform:skewX(-20deg);
-  animation:shimmer 3s infinite;
-}
-@keyframes shimmer{
-  0%  {left:-100%}
-  60%,100%{left:150%}
-}
-
-.genhint{font-size:11px;color:var(--muted);font-family:'Space Mono',monospace}
+.genbtn::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transform:skewX(-20deg);animation:shimmer 3s infinite}
+@keyframes shimmer{0%{left:-100%}60%,100%{left:150%}}
+.genbtn:hover{transform:translateY(-2px);box-shadow:0 10px 32px var(--aglow)}
+.genbtn:active{transform:translateY(0)}
+.genhint{font-size:10.5px;color:var(--muted);font-family:'Space Mono',monospace}
 
 /* ── OUTPUT ── */
-.out{display:none;margin-top:52px}
-.out.show{display:block;animation:fadeUp .4s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
-
-.outhead{
-  display:flex;align-items:center;justify-content:space-between;
-  margin-bottom:16px;gap:12px;flex-wrap:wrap;
-}
+.out{display:none;margin-top:40px}
+.out.show{display:block;animation:fadeUp .35s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.outhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:10px}
 .outhead h2{font-size:18px;font-weight:800}
 .outhead h2 em{color:var(--accent);font-style:normal}
+.copybtn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;color:var(--text2);font-family:'Space Mono',monospace;font-size:11.5px;cursor:pointer;transition:all .15s}
+.copybtn:hover{border-color:var(--accent);color:var(--accent)}
+.copybtn.ok{border-color:var(--accent);color:var(--accent);background:var(--adim)}
+.codeblk{background:rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.06);border-radius:14px;padding:24px;font-family:'Space Mono',monospace;font-size:11px;line-height:1.8;color:#5dffaa;white-space:pre;overflow:auto;max-height:500px}
 
-.copybtn{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:10px 20px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid var(--border);
-  border-radius:10px;
-  color:var(--text2);
-  font-family:'Space Mono',monospace;font-size:11.5px;
-  cursor:pointer;transition:border-color .2s,color .2s,background .2s;
-}
-.copybtn:hover{border-color:var(--accent);color:var(--accent);background:var(--adim)}
-.copybtn.ok{border-color:var(--accent);color:var(--accent);background:rgba(0,232,122,0.1)}
+/* ── LIVE PREVIEW ── */
+.preview-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.06)}
+.preview-header .title{font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.preview-header .live-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--aglow);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.preview-header-right{display:flex;align-items:center;gap:8px}
 
-.codeblk{
-  background:rgba(0,0,0,0.5);
-  border:1px solid rgba(255,255,255,0.07);
-  border-radius:16px;padding:28px;
-  font-family:'Space Mono',monospace;font-size:11px;line-height:1.8;
-  color:#5dffaa;white-space:pre;overflow:auto;max-height:500px;
-}
+/* Preview content */
+.pv{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:13px;line-height:1.6;color:#e6edf3}
+.pv-banner{width:100%;height:90px;border-radius:10px;background:linear-gradient(135deg,#0a1628,#0a2118,#130d2a);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;margin-bottom:12px}
+.pv-banner::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,0.012) 0,rgba(255,255,255,0.012) 1px,transparent 1px,transparent 40px),repeating-linear-gradient(0deg,rgba(255,255,255,0.012) 0,rgba(255,255,255,0.012) 1px,transparent 1px,transparent 40px)}
+.pv-name{font-size:20px;font-weight:700;color:#fff;letter-spacing:-.02em;position:relative}
+.pv-name span{color:var(--accent)}
+.pv-role{font-size:9px;color:rgba(255,255,255,0.35);letter-spacing:.15em;text-transform:uppercase;margin-top:4px;position:relative}
+.pv-wave{position:absolute;bottom:0;left:0;right:0;height:16px}
+.pv-badges{display:flex;justify-content:center;gap:5px;flex-wrap:wrap;margin-bottom:12px}
+.pv-bdg{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:10px;font-weight:500}
+.pv-sec{display:flex;align-items:center;gap:8px;margin:12px 0 8px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.3)}
+.pv-sec span:first-child{color:var(--accent);font-family:'Space Mono',monospace}
+.pv-sec::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(255,255,255,0.06),transparent)}
+.pv-bio{font-size:11.5px;line-height:1.7;color:rgba(255,255,255,0.55);margin-bottom:10px}
+.pv-bio b{color:rgba(255,255,255,0.85);font-weight:500}
+.pv-bio .hl{color:var(--accent)}
+.pv-info{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:10px}
+.pv-info-item{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:8px 10px;display:flex;align-items:flex-start;gap:7px}
+.pv-info-sym{font-size:12px;opacity:.4;flex-shrink:0;margin-top:1px}
+.pv-info-label{font-size:7.5px;color:rgba(255,255,255,0.25);text-transform:uppercase;letter-spacing:.08em;font-weight:600;margin-bottom:2px}
+.pv-info-value{font-size:10.5px;color:rgba(255,255,255,0.75);line-height:1.3}
+.pv-info-item.full{grid-column:span 2}
+.pv-skills{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.pv-skill{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.04);display:flex;align-items:center;justify-content:center;padding:6px}
+.pv-skill img{width:100%;height:100%;object-fit:contain}
+.pv-lang{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:8px;padding:7px 12px;margin-bottom:5px}
+.pv-lflag{font-size:15px;flex-shrink:0}
+.pv-lname{font-size:11px;font-weight:500;color:rgba(255,255,255,0.8)}
+.pv-llvl{font-size:9px;color:rgba(255,255,255,0.28);margin-top:1px}
+.pv-lbar{display:flex;gap:2px;flex-shrink:0}
+.pv-ld{width:14px;height:4px;border-radius:2px}
+.pv-ld.on{background:var(--accent)}
+.pv-ld.off{background:rgba(255,255,255,0.08)}
+.pv-stats-row{display:flex;gap:6px}
+.pv-stats-row img{flex:1;min-width:0;border-radius:7px;border:1px solid rgba(255,255,255,0.06)}
+.pv-empty{font-size:11px;color:rgba(255,255,255,0.2);font-family:'Space Mono',monospace;text-align:center;padding:20px;border:1px dashed rgba(255,255,255,0.07);border-radius:10px}
 
 /* ── FOOTER ── */
-footer{
-  margin-top:64px;padding-top:28px;
-  border-top:1px solid var(--border);
-  text-align:center;font-size:11px;
-  color:var(--muted);font-family:'Space Mono',monospace;
-  line-height:2;
-}
-footer a{color:var(--accent);text-decoration:none;transition:opacity .2s}
-footer a:hover{opacity:.7}
+footer{margin-top:48px;padding-top:24px;border-top:1px solid var(--border);text-align:center;font-size:11px;color:var(--muted);font-family:'Space Mono',monospace;line-height:2}
+footer a{color:var(--accent);text-decoration:none}
 footer strong{color:var(--accent)}
 
-/* ── SCROLL REVEAL ── */
-.reveal{
-  opacity:0;transform:translateY(20px);
-  transition:opacity .5s ease, transform .5s ease;
-}
-.reveal.visible{opacity:1;transform:translateY(0)}
-
-/* ── RESPONSIVE ── */
 @media(max-width:580px){
-  .row{grid-template-columns:1fr}
-  .sgrid{grid-template-columns:1fr}
-  .tgrid{grid-template-columns:repeat(3,1fr)}
-  .togs{grid-template-columns:1fr}
-  .wrap{padding:0 16px 60px}
-  .card-body{padding:18px}
-  header{padding:36px 0 28px}
+  .row{grid-template-columns:1fr}.sgrid{grid-template-columns:1fr}
+  .tgrid{grid-template-columns:repeat(3,1fr)}.togs{grid-template-columns:1fr}
+  .form-col{padding:24px 16px 60px}
 }
 </style>
 </head>
 <body>
+<div class="pbar-wrap"><div class="pbar" id="pbar"></div></div>
 
-<div class="progress-wrap"><div class="progress-bar" id="pbar"></div></div>
-<div class="wrap">
+<div class="page">
 
-<!-- HEADER -->
+<!-- ═══ FORM COLUMN ═══ -->
+<div class="form-col">
+
 <header>
-  <div class="header-line">
+  <div class="hrow">
     <div class="logo">RF</div>
-    <div>
+    <div class="htxt">
       <h1><em>ReadmeForge</em> — GitHub Profile README Generator</h1>
+      <p>// fill in → pick tech → generate → copy → paste &nbsp;·&nbsp; free & open source</p>
     </div>
   </div>
-  <div class="tagline">// free & open source · no sign-up · ready in 2 minutes</div>
-  <div class="header-divider"></div>
 </header>
 
 <div class="steps">
 
-<!-- ── 01 ABOUT ── -->
+<!-- 01 ABOUT -->
 <div class="card">
-  <div class="card-head">
-    <div class="badge">01</div>
-    <div class="cht"><div class="title">About You</div><div class="sub">// name, role & bio</div></div>
-  </div>
+  <div class="card-head"><div class="badge">01</div><div class="cht"><div class="title">About You</div><div class="sub">// name, role & bio</div></div></div>
   <div class="card-body">
     <div class="row">
-      <div class="field"><label>Name</label><input id="fn" placeholder="Your name"></div>
-      <div class="field"><label>GitHub Username</label><input id="fu" placeholder="username"></div>
+      <div class="field"><label>Name</label><input id="fn" placeholder="Your name" oninput="updatePreview()"></div>
+      <div class="field"><label>GitHub Username</label><input id="fu" placeholder="username" oninput="updatePreview()"></div>
     </div>
     <div class="row">
-      <div class="field"><label>Role</label><input id="fr" placeholder="Full-Stack Developer"></div>
-      <div class="field"><label>Location</label><input id="fl" placeholder="City, Country"></div>
+      <div class="field"><label>Role</label><input id="fr" placeholder="Full-Stack Developer" oninput="updatePreview()"></div>
+      <div class="field"><label>Location</label><input id="fl" placeholder="City, Country" oninput="updatePreview()"></div>
     </div>
     <div class="row one">
-      <div class="field"><label>Bio</label><textarea id="fb" placeholder="A short sentence about yourself..."></textarea></div>
+      <div class="field"><label>Bio</label><textarea id="fb" placeholder="A short sentence about yourself..." oninput="updatePreview()"></textarea></div>
     </div>
     <div class="row">
-      <div class="field"><label>Currently Learning</label><input id="fle" placeholder="Rust, AI, etc."></div>
-      <div class="field"><label>Fun Fact</label><input id="ff" placeholder="Something interesting..."></div>
+      <div class="field"><label>Experience</label><input id="fexp" placeholder="3+ yrs @ Company" oninput="updatePreview()"></div>
+      <div class="field"><label>Education</label><input id="fedu" placeholder="University Name" oninput="updatePreview()"></div>
+    </div>
+    <div class="row">
+      <div class="field"><label>Currently Learning</label><input id="fle" placeholder="Rust, AI, etc." oninput="updatePreview()"></div>
+      <div class="field"><label>Fun Fact</label><input id="ff" placeholder="Something interesting..." oninput="updatePreview()"></div>
     </div>
     <div class="row one">
       <div class="field">
         <label>Typing Lines <span style="color:var(--muted);font-weight:400;text-transform:none;letter-spacing:0">(one per line)</span></label>
-        <textarea id="ft" style="min-height:80px" placeholder="Full-Stack Developer 🚀&#10;Open Source Enthusiast ✨"></textarea>
+        <textarea id="ft" style="min-height:76px" placeholder="Full-Stack Developer 🚀&#10;Open Source Enthusiast" oninput="updatePreview()"></textarea>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── 02 TECH STACK ── -->
+<!-- 02 TECH -->
 <div class="card">
   <div class="card-head">
     <div class="badge">02</div>
@@ -589,180 +313,149 @@ footer strong{color:var(--accent)}
     </div>
   </div>
   <div class="card-body">
-
     <div class="slabel-row"><span class="slabel">Languages</span><button class="clear-btn" onclick="clearGroup('cl')">clear</button></div>
     <div class="chips" id="cl">
-      <div class="chip" data-v="Python"     data-c="3776AB" data-l="python"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"> Python</div>
+      <div class="chip" data-v="Python" data-c="3776AB" data-l="python"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/python/python-original.svg"> Python</div>
       <div class="chip" data-v="JavaScript" data-c="F7DF1E" data-l="javascript" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/javascript/javascript-original.svg"> JavaScript</div>
       <div class="chip" data-v="TypeScript" data-c="3178C6" data-l="typescript"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/typescript/typescript-original.svg"> TypeScript</div>
-      <div class="chip" data-v="Go"         data-c="00ADD8" data-l="go"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"> Go</div>
-      <div class="chip" data-v="Rust"       data-c="CE422B" data-l="rust"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg"> Rust</div>
-      <div class="chip" data-v="Java"       data-c="ED8B00" data-l="java"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"> Java</div>
-      <div class="chip" data-v="C%2B%2B"   data-c="00599C" data-l="cplusplus" data-d="C++"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg"> C++</div>
-      <div class="chip" data-v="C%23"       data-c="239120" data-l="csharp" data-d="C#"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg"> C#</div>
-      <div class="chip" data-v="PHP"        data-c="777BB4" data-l="php"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg"> PHP</div>
-      <div class="chip" data-v="Ruby"       data-c="CC342D" data-l="ruby"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg"> Ruby</div>
-      <div class="chip" data-v="Swift"      data-c="FA7343" data-l="swift"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg"> Swift</div>
-      <div class="chip" data-v="Kotlin"     data-c="7F52FF" data-l="kotlin"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg"> Kotlin</div>
-      <div class="chip" data-v="Dart"       data-c="0175C2" data-l="dart"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"> Dart</div>
-      <div class="chip" data-v="Scala"      data-c="DC322F" data-l="scala"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/scala/scala-original.svg"> Scala</div>
-      <div class="chip" data-v="HTML5"      data-c="E34F26" data-l="html5"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"> HTML</div>
-      <div class="chip" data-v="CSS3"       data-c="1572B6" data-l="css3"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"> CSS</div>
-      <div class="chip" data-v="Bash"       data-c="4EAA25" data-l="gnubash"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bash/bash-original.svg"> Bash</div>
-      <div class="chip" data-v="Lua"        data-c="2C2D72" data-l="lua"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/lua/lua-original.svg"> Lua</div>
-      <div class="chip" data-v="Elixir"     data-c="6E4A7E" data-l="elixir"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/elixir/elixir-original.svg"> Elixir</div>
-      <div class="chip" data-v="Haskell"    data-c="5D4F85" data-l="haskell"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/haskell/haskell-original.svg"> Haskell</div>
-      <div class="chip" data-v="R"          data-c="276DC3" data-l="r"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/r/r-original.svg"> R</div>
+      <div class="chip" data-v="Go" data-c="00ADD8" data-l="go"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/go/go-original.svg"> Go</div>
+      <div class="chip" data-v="Rust" data-c="CE422B" data-l="rust"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/rust/rust-original.svg"> Rust</div>
+      <div class="chip" data-v="Java" data-c="ED8B00" data-l="java"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/java/java-original.svg"> Java</div>
+      <div class="chip" data-v="C%2B%2B" data-c="00599C" data-l="cplusplus" data-d="C++"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/cplusplus/cplusplus-original.svg"> C++</div>
+      <div class="chip" data-v="C%23" data-c="239120" data-l="csharp" data-d="C#"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/csharp/csharp-original.svg"> C#</div>
+      <div class="chip" data-v="PHP" data-c="777BB4" data-l="php"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/php/php-original.svg"> PHP</div>
+      <div class="chip" data-v="Ruby" data-c="CC342D" data-l="ruby"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ruby/ruby-original.svg"> Ruby</div>
+      <div class="chip" data-v="Swift" data-c="FA7343" data-l="swift"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/swift/swift-original.svg"> Swift</div>
+      <div class="chip" data-v="Kotlin" data-c="7F52FF" data-l="kotlin"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kotlin/kotlin-original.svg"> Kotlin</div>
+      <div class="chip" data-v="Dart" data-c="0175C2" data-l="dart"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/dart/dart-original.svg"> Dart</div>
+      <div class="chip" data-v="HTML5" data-c="E34F26" data-l="html5"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/html5/html5-original.svg"> HTML</div>
+      <div class="chip" data-v="CSS3" data-c="1572B6" data-l="css3"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/css3/css3-original.svg"> CSS</div>
+      <div class="chip" data-v="Bash" data-c="4EAA25" data-l="gnubash"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bash/bash-original.svg"> Bash</div>
+      <div class="chip" data-v="Lua" data-c="2C2D72" data-l="lua"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/lua/lua-original.svg"> Lua</div>
+      <div class="chip" data-v="R" data-c="276DC3" data-l="r"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/r/r-original.svg"> R</div>
     </div>
-
     <div class="slabel-row"><span class="slabel">Frontend</span><button class="clear-btn" onclick="clearGroup('cfe')">clear</button></div>
     <div class="chips" id="cfe">
-      <div class="chip" data-v="React"       data-c="20232A" data-l="react" data-lc="61DAFB"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"> React</div>
-      <div class="chip" data-v="Next.js"     data-c="000000" data-l="nextdotjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg"> Next.js</div>
-      <div class="chip" data-v="Vue.js"      data-c="35495E" data-l="vuedotjs" data-lc="4FC08D"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg"> Vue</div>
-      <div class="chip" data-v="Nuxt.js"     data-c="002E3B" data-l="nuxtdotjs" data-lc="00DC82"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nuxtjs/nuxtjs-original.svg"> Nuxt</div>
-      <div class="chip" data-v="Angular"     data-c="DD0031" data-l="angular"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angularjs/angularjs-original.svg"> Angular</div>
-      <div class="chip" data-v="Svelte"      data-c="FF3E00" data-l="svelte"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/svelte/svelte-original.svg"> Svelte</div>
-      <div class="chip" data-v="Astro"       data-c="BC52EE" data-l="astro"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/astro/astro-original.svg"> Astro</div>
+      <div class="chip" data-v="React" data-c="20232A" data-l="react" data-lc="61DAFB"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/react/react-original.svg"> React</div>
+      <div class="chip" data-v="Next.js" data-c="000000" data-l="nextdotjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nextjs/nextjs-original.svg"> Next.js</div>
+      <div class="chip" data-v="Vue.js" data-c="35495E" data-l="vuedotjs" data-lc="4FC08D"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vuejs/vuejs-original.svg"> Vue</div>
+      <div class="chip" data-v="Angular" data-c="DD0031" data-l="angular"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/angularjs/angularjs-original.svg"> Angular</div>
+      <div class="chip" data-v="Svelte" data-c="FF3E00" data-l="svelte"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/svelte/svelte-original.svg"> Svelte</div>
+      <div class="chip" data-v="Astro" data-c="BC52EE" data-l="astro"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/astro/astro-original.svg"> Astro</div>
       <div class="chip" data-v="TailwindCSS" data-c="06B6D4" data-l="tailwindcss"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tailwindcss/tailwindcss-original.svg"> Tailwind</div>
-      <div class="chip" data-v="Bootstrap"   data-c="7952B3" data-l="bootstrap"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg"> Bootstrap</div>
-      <div class="chip" data-v="Vite"        data-c="646CFF" data-l="vite"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vite/vite-original.svg"> Vite</div>
-      <div class="chip" data-v="Webpack"     data-c="8DD6F9" data-l="webpack" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/webpack/webpack-original.svg"> Webpack</div>
-      <div class="chip" data-v="Three.js"    data-c="000000" data-l="threedotjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/threejs/threejs-original.svg"> Three.js</div>
-      <div class="chip" data-v="Flutter"     data-c="0175C2" data-l="flutter"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg"> Flutter</div>
-      <div class="chip" data-v="Remix"       data-c="000000" data-l="remix"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/remix/remix-original.svg"> Remix</div>
+      <div class="chip" data-v="Bootstrap" data-c="7952B3" data-l="bootstrap"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bootstrap/bootstrap-original.svg"> Bootstrap</div>
+      <div class="chip" data-v="Vite" data-c="646CFF" data-l="vite"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vite/vite-original.svg"> Vite</div>
+      <div class="chip" data-v="Nuxt.js" data-c="002E3B" data-l="nuxtdotjs" data-lc="00DC82"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nuxtjs/nuxtjs-original.svg"> Nuxt</div>
+      <div class="chip" data-v="Flutter" data-c="0175C2" data-l="flutter"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flutter/flutter-original.svg"> Flutter</div>
     </div>
-
     <div class="slabel-row"><span class="slabel">Backend &amp; Databases</span><button class="clear-btn" onclick="clearGroup('cbe')">clear</button></div>
     <div class="chips" id="cbe">
-      <div class="chip" data-v="Node.js"    data-c="339933" data-l="nodedotjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg"> Node.js</div>
+      <div class="chip" data-v="Node.js" data-c="339933" data-l="nodedotjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nodejs/nodejs-original.svg"> Node.js</div>
       <div class="chip" data-v="Express.js" data-c="404D59" data-l="express"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/express/express-original.svg"> Express</div>
-      <div class="chip" data-v="FastAPI"    data-c="009688" data-l="fastapi"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg"> FastAPI</div>
-      <div class="chip" data-v="Django"     data-c="092E20" data-l="django" data-lc="44B78B"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg"> Django</div>
-      <div class="chip" data-v="Flask"      data-c="000000" data-l="flask"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flask/flask-original.svg"> Flask</div>
-      <div class="chip" data-v="NestJS"     data-c="E0234E" data-l="nestjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg"> NestJS</div>
-      <div class="chip" data-v="Spring"     data-c="6DB33F" data-l="spring"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg"> Spring</div>
-      <div class="chip" data-v="Laravel"    data-c="FF2D20" data-l="laravel"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/laravel/laravel-original.svg"> Laravel</div>
-      <div class="chip" data-v="GraphQL"    data-c="E10098" data-l="graphql"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/graphql/graphql-plain.svg"> GraphQL</div>
+      <div class="chip" data-v="FastAPI" data-c="009688" data-l="fastapi"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/fastapi/fastapi-original.svg"> FastAPI</div>
+      <div class="chip" data-v="Django" data-c="092E20" data-l="django" data-lc="44B78B"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/django/django-plain.svg"> Django</div>
+      <div class="chip" data-v="Flask" data-c="000000" data-l="flask"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/flask/flask-original.svg"> Flask</div>
+      <div class="chip" data-v="NestJS" data-c="E0234E" data-l="nestjs"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nestjs/nestjs-original.svg"> NestJS</div>
+      <div class="chip" data-v="Spring" data-c="6DB33F" data-l="spring"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/spring/spring-original.svg"> Spring</div>
       <div class="chip" data-v="PostgreSQL" data-c="336791" data-l="postgresql"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/postgresql/postgresql-original.svg"> PostgreSQL</div>
-      <div class="chip" data-v="MySQL"      data-c="4479A1" data-l="mysql"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg"> MySQL</div>
-      <div class="chip" data-v="MongoDB"    data-c="47A248" data-l="mongodb"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg"> MongoDB</div>
-      <div class="chip" data-v="Redis"      data-c="DC382D" data-l="redis"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg"> Redis</div>
-      <div class="chip" data-v="SQLite"     data-c="003B57" data-l="sqlite"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/sqlite/sqlite-original.svg"> SQLite</div>
-      <div class="chip" data-v="Supabase"   data-c="3ECF8E" data-l="supabase" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg"> Supabase</div>
-      <div class="chip" data-v="Firebase"   data-c="FFCA28" data-l="firebase" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-plain.svg"> Firebase</div>
-      <div class="chip" data-v="Prisma"     data-c="2D3748" data-l="prisma"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg"> Prisma</div>
+      <div class="chip" data-v="MySQL" data-c="4479A1" data-l="mysql"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mysql/mysql-original.svg"> MySQL</div>
+      <div class="chip" data-v="MongoDB" data-c="47A248" data-l="mongodb"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/mongodb/mongodb-original.svg"> MongoDB</div>
+      <div class="chip" data-v="Redis" data-c="DC382D" data-l="redis"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/redis/redis-original.svg"> Redis</div>
+      <div class="chip" data-v="Supabase" data-c="3ECF8E" data-l="supabase" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/supabase/supabase-original.svg"> Supabase</div>
+      <div class="chip" data-v="Firebase" data-c="FFCA28" data-l="firebase" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-plain.svg"> Firebase</div>
+      <div class="chip" data-v="Prisma" data-c="2D3748" data-l="prisma"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/prisma/prisma-original.svg"> Prisma</div>
     </div>
-
     <div class="slabel-row"><span class="slabel">DevOps &amp; Cloud</span><button class="clear-btn" onclick="clearGroup('cops')">clear</button></div>
     <div class="chips" id="cops">
-      <div class="chip" data-v="Docker"        data-c="2496ED" data-l="docker"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"> Docker</div>
-      <div class="chip" data-v="Kubernetes"    data-c="326CE5" data-l="kubernetes"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-plain.svg"> Kubernetes</div>
-      <div class="chip" data-v="AWS"           data-c="FF9900" data-l="amazonaws" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg"> AWS</div>
-      <div class="chip" data-v="Google Cloud"  data-c="4285F4" data-l="googlecloud"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg"> GCP</div>
-      <div class="chip" data-v="Azure"         data-c="0078D4" data-l="microsoftazure"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"> Azure</div>
-      <div class="chip" data-v="Vercel"        data-c="000000" data-l="vercel"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg"> Vercel</div>
-      <div class="chip" data-v="Nginx"         data-c="009639" data-l="nginx"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg"> Nginx</div>
-      <div class="chip" data-v="Git"           data-c="F05032" data-l="git"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"> Git</div>
+      <div class="chip" data-v="Docker" data-c="2496ED" data-l="docker"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/docker/docker-original.svg"> Docker</div>
+      <div class="chip" data-v="Kubernetes" data-c="326CE5" data-l="kubernetes"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/kubernetes/kubernetes-plain.svg"> Kubernetes</div>
+      <div class="chip" data-v="AWS" data-c="FF9900" data-l="amazonaws" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/amazonwebservices/amazonwebservices-plain-wordmark.svg"> AWS</div>
+      <div class="chip" data-v="Google Cloud" data-c="4285F4" data-l="googlecloud"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/googlecloud/googlecloud-original.svg"> GCP</div>
+      <div class="chip" data-v="Azure" data-c="0078D4" data-l="microsoftazure"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/azure/azure-original.svg"> Azure</div>
+      <div class="chip" data-v="Vercel" data-c="000000" data-l="vercel"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vercel/vercel-original.svg"> Vercel</div>
+      <div class="chip" data-v="Git" data-c="F05032" data-l="git"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/git/git-original.svg"> Git</div>
+      <div class="chip" data-v="Linux" data-c="FCC624" data-l="linux" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg"> Linux</div>
+      <div class="chip" data-v="VS Code" data-c="007ACC" data-l="visualstudiocode"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"> VS Code</div>
+      <div class="chip" data-v="Nginx" data-c="009639" data-l="nginx"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/nginx/nginx-original.svg"> Nginx</div>
+      <div class="chip" data-v="Figma" data-c="F24E1E" data-l="figma"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg"> Figma</div>
+      <div class="chip" data-v="Terraform" data-c="7B42BC" data-l="terraform"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg"> Terraform</div>
       <div class="chip" data-v="GitHub Actions" data-c="2088FF" data-l="githubactions"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/githubactions/githubactions-original.svg"> GH Actions</div>
-      <div class="chip" data-v="Linux"         data-c="FCC624" data-l="linux" data-lc="black"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linux/linux-original.svg"> Linux</div>
-      <div class="chip" data-v="VS Code"       data-c="007ACC" data-l="visualstudiocode"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vscode/vscode-original.svg"> VS Code</div>
-      <div class="chip" data-v="Vim"           data-c="019733" data-l="vim"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/vim/vim-original.svg"> Vim</div>
-      <div class="chip" data-v="Figma"         data-c="F24E1E" data-l="figma"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/figma/figma-original.svg"> Figma</div>
-      <div class="chip" data-v="Terraform"     data-c="7B42BC" data-l="terraform"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/terraform/terraform-original.svg"> Terraform</div>
-      <div class="chip" data-v="Ansible"       data-c="EE0000" data-l="ansible"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/ansible/ansible-original.svg"> Ansible</div>
-      <div class="chip" data-v="Jenkins"       data-c="D33833" data-l="jenkins"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jenkins/jenkins-original.svg"> Jenkins</div>
     </div>
-
     <div class="slabel-row"><span class="slabel">AI / ML</span><button class="clear-btn" onclick="clearGroup('cai')">clear</button></div>
     <div class="chips" id="cai">
       <div class="chip" data-v="TensorFlow" data-c="FF6F00" data-l="tensorflow"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/tensorflow/tensorflow-original.svg"> TensorFlow</div>
-      <div class="chip" data-v="PyTorch"    data-c="EE4C2C" data-l="pytorch"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pytorch/pytorch-original.svg"> PyTorch</div>
-      <div class="chip" data-v="Pandas"     data-c="150458" data-l="pandas"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg"> Pandas</div>
-      <div class="chip" data-v="OpenCV"     data-c="5C3EE8" data-l="opencv"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opencv/opencv-original.svg"> OpenCV</div>
-      <div class="chip" data-v="Jupyter"    data-c="F37626" data-l="jupyter"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jupyter/jupyter-original.svg"> Jupyter</div>
-      <div class="chip" data-v="NumPy"      data-c="013243" data-l="numpy"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg"> NumPy</div>
-      <div class="chip" data-v="Matplotlib" data-c="11557C" data-l="matplotlib"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/matplotlib/matplotlib-original.svg"> Matplotlib</div>
+      <div class="chip" data-v="PyTorch" data-c="EE4C2C" data-l="pytorch"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pytorch/pytorch-original.svg"> PyTorch</div>
+      <div class="chip" data-v="Pandas" data-c="150458" data-l="pandas"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/pandas/pandas-original.svg"> Pandas</div>
+      <div class="chip" data-v="OpenCV" data-c="5C3EE8" data-l="opencv"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/opencv/opencv-original.svg"> OpenCV</div>
+      <div class="chip" data-v="Jupyter" data-c="F37626" data-l="jupyter"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/jupyter/jupyter-original.svg"> Jupyter</div>
+      <div class="chip" data-v="NumPy" data-c="013243" data-l="numpy"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/numpy/numpy-original.svg"> NumPy</div>
     </div>
   </div>
 </div>
 
-<!-- ── 03 LANGUAGES ── -->
+<!-- 03 LANGUAGES -->
 <div class="card">
-  <div class="card-head">
-    <div class="badge">03</div>
-    <div class="cht"><div class="title">Spoken Languages</div><div class="sub">// languages you speak</div></div>
-  </div>
+  <div class="card-head"><div class="badge">03</div><div class="cht"><div class="title">Spoken Languages</div><div class="sub">// languages you speak</div></div></div>
   <div class="card-body">
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:14px">
-      <span>Language</span><span>1 — Basic &nbsp;·&nbsp; 5 — Native</span>
-    </div>
+    <div style="display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);font-family:'Space Mono',monospace;margin-bottom:12px"><span>Language</span><span>1 — Basic &nbsp;·&nbsp; 5 — Native</span></div>
     <div id="ll"></div>
     <button class="add-btn" onclick="addLang()">+ Add Language</button>
   </div>
 </div>
 
-<!-- ── 04 SOCIAL ── -->
+<!-- 04 SOCIAL -->
 <div class="card">
-  <div class="card-head">
-    <div class="badge">04</div>
-    <div class="cht"><div class="title">Social Links</div><div class="sub">// where to find you online</div></div>
-  </div>
+  <div class="card-head"><div class="badge">04</div><div class="cht"><div class="title">Social Links</div><div class="sub">// where to find you online</div></div></div>
   <div class="card-body">
     <div class="sgrid">
-      <div class="srow">
-        <span class="sico"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg"></span>
-        <input id="sli" placeholder="linkedin.com/in/…">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#1D9BF0"><i class="fa-brands fa-x-twitter"></i></span>
-        <input id="stw" placeholder="twitter.com/…">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#2CA5E0"><i class="fa-brands fa-telegram"></i></span>
-        <input id="stg" placeholder="t.me/…">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#FF0000"><i class="fa-brands fa-youtube"></i></span>
-        <input id="syt" placeholder="youtube.com/@…">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#9146FF"><i class="fa-brands fa-twitch"></i></span>
-        <input id="stv" placeholder="twitch.tv/…">
-      </div>
-      <div class="srow">
-        <span class="sico"><i class="fa-brands fa-dev" style="color:#fff"></i></span>
-        <input id="sdev" placeholder="dev.to/…">
-      </div>
-      <div class="srow">
-        <span class="sico"><i class="fa-brands fa-medium" style="color:#fff"></i></span>
-        <input id="smed" placeholder="medium.com/@…">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#EA4335"><i class="fa-solid fa-envelope"></i></span>
-        <input id="sem" placeholder="email">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#4CAF50"><i class="fa-solid fa-globe"></i></span>
-        <input id="sweb" placeholder="yourwebsite.com">
-      </div>
-      <div class="srow">
-        <span class="sico" style="color:#FFDD00"><i class="fa-solid fa-mug-hot"></i></span>
-        <input id="sbmc" placeholder="buymeacoffee.com/…">
-      </div>
+      <div class="srow"><span class="sico"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/linkedin/linkedin-original.svg"></span><input id="sli" placeholder="linkedin.com/in/…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#1D9BF0"><i class="fa-brands fa-x-twitter"></i></span><input id="stw" placeholder="twitter.com/…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#2CA5E0"><i class="fa-brands fa-telegram"></i></span><input id="stg" placeholder="t.me/…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#FF0000"><i class="fa-brands fa-youtube"></i></span><input id="syt" placeholder="youtube.com/@…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#9146FF"><i class="fa-brands fa-twitch"></i></span><input id="stv" placeholder="twitch.tv/…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico"><i class="fa-brands fa-dev" style="color:#fff"></i></span><input id="sdev" placeholder="dev.to/…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico"><i class="fa-brands fa-medium" style="color:#fff"></i></span><input id="smed" placeholder="medium.com/@…" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#EA4335"><i class="fa-solid fa-envelope"></i></span><input id="sem" placeholder="email" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#4CAF50"><i class="fa-solid fa-globe"></i></span><input id="sweb" placeholder="yourwebsite.com" oninput="updatePreview()"></div>
+      <div class="srow"><span class="sico" style="color:#FFDD00"><i class="fa-solid fa-mug-hot"></i></span><input id="sbmc" placeholder="buymeacoffee.com/…" oninput="updatePreview()"></div>
     </div>
   </div>
 </div>
 
-<!-- ── 05 THEME & WIDGETS ── -->
+<!-- 05 STYLE & THEME -->
 <div class="card">
-  <div class="card-head">
-    <div class="badge">05</div>
-    <div class="cht"><div class="title">Theme &amp; Widgets</div><div class="sub">// style your readme</div></div>
-  </div>
+  <div class="card-head"><div class="badge">05</div><div class="cht"><div class="title">Style &amp; Theme</div><div class="sub">// customize your README color scheme</div></div></div>
   <div class="card-body">
 
-    <div class="slabel" style="margin-top:0">Stats Theme</div>
+    <div class="slabel-row" style="margin-top:0"><span class="slabel">Accent Color</span></div>
+    <div class="color-schemes" id="cs-grid">
+      <div class="cs on" data-color="#00e87a" data-r="0" data-g="232" data-b="122" style="--cs-color:#00e87a">
+        <div class="cs-dot" style="background:#00e87a;box-shadow:0 0 10px rgba(0,232,122,0.5)"></div>
+        <div><div class="cs-name">Emerald</div><div class="cs-sub">#00e87a · default</div></div>
+      </div>
+      <div class="cs" data-color="#6366f1" data-r="99" data-g="102" data-b="241" style="--cs-color:#6366f1">
+        <div class="cs-dot" style="background:#6366f1;box-shadow:0 0 10px rgba(99,102,241,0.5)"></div>
+        <div><div class="cs-name">Violet</div><div class="cs-sub">#6366f1</div></div>
+      </div>
+      <div class="cs" data-color="#3b82f6" data-r="59" data-g="130" data-b="246" style="--cs-color:#3b82f6">
+        <div class="cs-dot" style="background:#3b82f6;box-shadow:0 0 10px rgba(59,130,246,0.5)"></div>
+        <div><div class="cs-name">Blue</div><div class="cs-sub">#3b82f6</div></div>
+      </div>
+      <div class="cs" data-color="#f97316" data-r="249" data-g="115" data-b="22" style="--cs-color:#f97316">
+        <div class="cs-dot" style="background:#f97316;box-shadow:0 0 10px rgba(249,115,22,0.5)"></div>
+        <div><div class="cs-name">Orange</div><div class="cs-sub">#f97316</div></div>
+      </div>
+      <div class="cs" data-color="#ec4899" data-r="236" data-g="72" data-b="153" style="--cs-color:#ec4899">
+        <div class="cs-dot" style="background:#ec4899;box-shadow:0 0 10px rgba(236,72,153,0.5)"></div>
+        <div><div class="cs-name">Pink</div><div class="cs-sub">#ec4899</div></div>
+      </div>
+      <div class="cs" data-color="#06b6d4" data-r="6" data-g="182" data-b="212" style="--cs-color:#06b6d4">
+        <div class="cs-dot" style="background:#06b6d4;box-shadow:0 0 10px rgba(6,182,212,0.5)"></div>
+        <div><div class="cs-name">Cyan</div><div class="cs-sub">#06b6d4</div></div>
+      </div>
+    </div>
+
+    <div class="slabel-row"><span class="slabel">Stats Theme</span></div>
     <div class="tgrid" id="tg">
       <div class="tcard on" data-t="tokyonight"><div class="tprev" style="background:#1a1b27;color:#7aa2f7">Tokyo Night</div><div class="tname">tokyonight</div></div>
       <div class="tcard" data-t="radical"><div class="tprev" style="background:#141321;color:#fe428e">Radical</div><div class="tname">radical</div></div>
@@ -774,15 +467,15 @@ footer strong{color:var(--accent)}
       <div class="tcard" data-t="synthwave"><div class="tprev" style="background:#2b213a;color:#e2d9f3">Synthwave</div><div class="tname">synthwave</div></div>
       <div class="tcard" data-t="merko"><div class="tprev" style="background:#0a0f0b;color:#68b587">Merko</div><div class="tname">merko</div></div>
       <div class="tcard" data-t="midnight_purple"><div class="tprev" style="background:#09091b;color:#9f4bba">Midnight</div><div class="tname">midnight_purple</div></div>
-      <div class="tcard" data-t="ocean_dark"><div class="tprev" style="background:#0f1923;color:#66d9e8">Ocean Dark</div><div class="tname">ocean_dark</div></div>
       <div class="tcard" data-t="aura"><div class="tprev" style="background:#1b1e2e;color:#a277ff">Aura</div><div class="tname">aura</div></div>
       <div class="tcard" data-t="github_dark"><div class="tprev" style="background:#0d1117;color:#58a6ff">GitHub Dark</div><div class="tname">github_dark</div></div>
+      <div class="tcard" data-t="ocean_dark"><div class="tprev" style="background:#0f1923;color:#66d9e8">Ocean Dark</div><div class="tname">ocean_dark</div></div>
       <div class="tcard" data-t="material_palenight"><div class="tprev" style="background:#292d3e;color:#c792ea">Palenight</div><div class="tname">material_palenight</div></div>
       <div class="tcard" data-t="calm"><div class="tprev" style="background:#c8d8e4;color:#2d6a8f">Calm</div><div class="tname">calm</div></div>
       <div class="tcard" data-t="solarized-light"><div class="tprev" style="background:#fdf6e3;color:#268bd2">Solarized</div><div class="tname">solarized-light</div></div>
     </div>
 
-    <div class="slabel">Widgets</div>
+    <div class="slabel-row"><span class="slabel">Widgets</span></div>
     <div class="togs">
       <div class="tog on"  data-k="typing">  <div><div class="tn">Typing Animation</div><div class="td">animated header</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="stats">   <div><div class="tn">GitHub Stats</div><div class="td">commits, stars & PRs</div></div><div class="sw"></div></div>
@@ -792,9 +485,9 @@ footer strong{color:var(--accent)}
       <div class="tog on"  data-k="activity"><div><div class="tn">Activity Graph</div><div class="td">contribution chart</div></div><div class="sw"></div></div>
       <div class="tog on"  data-k="quote">   <div><div class="tn">Dev Quote</div><div class="td">random dev wisdom</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="views">   <div><div class="tn">Profile Views</div><div class="td">visitor counter</div></div><div class="sw"></div></div>
-      <div class="tog"     data-k="snake">   <div><div class="tn">Snake Animation</div><div class="td">eats your commits 🐍</div></div><div class="sw"></div></div>
-      <div class="tog"     data-k="waka">    <div><div class="tn">WakaTime Stats</div><div class="td">weekly coding time</div></div><div class="sw"></div></div>
-      <div class="tog"     data-k="spotify"> <div><div class="tn">Spotify Widget</div><div class="td">now playing track</div></div><div class="sw"></div></div>
+      <div class="tog"     data-k="snake">   <div><div class="tn">Snake Animation</div><div class="td">⚠️ needs Actions setup</div></div><div class="sw"></div></div>
+      <div class="tog"     data-k="waka">    <div><div class="tn">WakaTime Stats</div><div class="td">⚠️ needs wakatime.com</div></div><div class="sw"></div></div>
+      <div class="tog"     data-k="spotify"> <div><div class="tn">Spotify Widget</div><div class="td">⚠️ needs novatorem</div></div><div class="sw"></div></div>
       <div class="tog"     data-k="bmc">     <div><div class="tn">Buy Me a Coffee</div><div class="td">support link</div></div><div class="sw"></div></div>
     </div>
 
@@ -802,13 +495,11 @@ footer strong{color:var(--accent)}
 </div>
 </div><!-- /steps -->
 
-<!-- GENERATE -->
 <div class="genwrap">
-  <button class="genbtn" onclick="gen()">✨ &nbsp;Generate README</button>
+  <button class="genbtn" onclick="gen()">✦ &nbsp;Generate README</button>
   <div class="genhint">// generates a complete, ready-to-paste README.md</div>
 </div>
 
-<!-- OUTPUT -->
 <div class="out" id="out">
   <div class="outhead">
     <h2>Your <em>README.md</em></h2>
@@ -825,129 +516,280 @@ footer strong{color:var(--accent)}
   <a href="https://github.com/lebedevnet/ReadmeForge/issues" target="_blank">Report an issue</a>
 </footer>
 
-</div><!-- /wrap -->
+</div><!-- /form-col -->
+
+<!-- ═══ PREVIEW COLUMN ═══ -->
+<div class="preview-col">
+  <div class="preview-header">
+    <span class="title">Live Preview</span>
+    <div class="preview-header-right">
+      <div class="live-dot"></div>
+    </div>
+  </div>
+  <div id="preview-content" class="pv">
+    <div class="pv-empty">Fill in your details to see a live preview →</div>
+  </div>
+</div>
+
+</div><!-- /page -->
 
 <script>
-// ── PROGRESS BAR ──
-function updateProgress(){
-  const fields = ['fn','fu','fr','fl','fb'];
-  const filled = fields.filter(id => document.getElementById(id)?.value?.trim()).length;
-  const techOn = document.querySelectorAll('.chip.on').length;
-  const hasSocial = ['sli','stw','stg','syt','stv','sdev','smed','sem','sweb','sbmc'].some(id=>document.getElementById(id)?.value?.trim());
-  let score = 0;
-  score += (filled / fields.length) * 40;
-  score += Math.min(techOn / 5, 1) * 40;
-  score += hasSocial ? 20 : 0;
-  document.getElementById('pbar').style.width = Math.min(score, 100) + '%';
-}
-document.querySelectorAll('input,textarea').forEach(el => el.addEventListener('input', updateProgress));
+// ── COLOR SCHEME ──
+let accentColor='#00e87a', accentR=0, accentG=232, accentB=122;
 
-// ── CHIP TOGGLE + COUNTER ──
-function updateCounter(){
-  const n = document.querySelectorAll('.chip.on').length;
-  const el = document.getElementById('tech-count');
-  el.textContent = n;
-  el.classList.add('bump');
-  setTimeout(()=>el.classList.remove('bump'), 200);
-  updateProgress();
-}
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => {
-  c.classList.toggle('on');
-  updateCounter();
-}));
+document.querySelectorAll('.cs').forEach(el=>{
+  el.addEventListener('click',()=>{
+    document.querySelectorAll('.cs').forEach(x=>x.classList.remove('on'));
+    el.classList.add('on');
+    accentColor = el.dataset.color;
+    accentR = parseInt(el.dataset.r);
+    accentG = parseInt(el.dataset.g);
+    accentB = parseInt(el.dataset.b);
+    const root = document.documentElement;
+    root.style.setProperty('--accent', accentColor);
+    root.style.setProperty('--accent-r', accentR);
+    root.style.setProperty('--accent-g', accentG);
+    root.style.setProperty('--accent-b', accentB);
+    root.style.setProperty('--adim', `rgba(${accentR},${accentG},${accentB},0.1)`);
+    root.style.setProperty('--aglow', `rgba(${accentR},${accentG},${accentB},0.25)`);
+    root.style.setProperty('--border-h', `rgba(${accentR},${accentG},${accentB},0.45)`);
+    updatePreview();
+  });
+});
 
-// ── CLEAR GROUP ──
-function clearGroup(id){
-  document.querySelectorAll('#'+id+' .chip.on').forEach(c=>c.classList.remove('on'));
-  updateCounter();
-}
-
-// ── THEME SELECT ──
+// ── THEME ──
 let theme='tokyonight';
 document.querySelectorAll('.tcard').forEach(t=>{
   t.addEventListener('click',()=>{
     document.querySelectorAll('.tcard').forEach(x=>x.classList.remove('on'));
-    t.classList.add('on');theme=t.dataset.t;
+    t.classList.add('on'); theme=t.dataset.t;
+    updatePreview();
   });
 });
 
 // ── TOGGLES ──
 const T={typing:true,stats:true,streak:true,langs:true,trophies:true,activity:true,quote:true,views:false,snake:false,waka:false,spotify:false,bmc:false};
 document.querySelectorAll('.tog').forEach(el=>{
-  el.addEventListener('click',()=>{T[el.dataset.k]=!T[el.dataset.k];el.classList.toggle('on',T[el.dataset.k]);});
+  el.addEventListener('click',()=>{
+    T[el.dataset.k]=!T[el.dataset.k];
+    el.classList.toggle('on',T[el.dataset.k]);
+    updatePreview();
+  });
 });
+
+// ── PROGRESS ──
+function updateProgress(){
+  const fields=['fn','fu','fr','fl','fb'];
+  const filled=fields.filter(id=>document.getElementById(id)?.value?.trim()).length;
+  const techOn=document.querySelectorAll('.chip.on').length;
+  const hasSocial=['sli','stw','stg','syt','stv','sdev','smed','sem','sweb','sbmc'].some(id=>document.getElementById(id)?.value?.trim());
+  let s=0;
+  s+=(filled/fields.length)*40;
+  s+=Math.min(techOn/5,1)*40;
+  s+=hasSocial?20:0;
+  document.getElementById('pbar').style.width=Math.min(s,100)+'%';
+}
+document.querySelectorAll('input,textarea').forEach(el=>el.addEventListener('input',()=>{updateProgress();updatePreview();}));
+
+// ── CHIPS ──
+function updateCounter(){
+  const n=document.querySelectorAll('.chip.on').length;
+  const el=document.getElementById('tech-count');
+  el.textContent=n;
+  el.classList.add('bump');
+  setTimeout(()=>el.classList.remove('bump'),200);
+  updateProgress(); updatePreview();
+}
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{c.classList.toggle('on');updateCounter();}));
+function clearGroup(id){document.querySelectorAll('#'+id+' .chip.on').forEach(c=>c.classList.remove('on'));updateCounter();}
 
 // ── SPOKEN LANGS ──
 let lc=0;
 function addLang(nm='',lv=3){
   lc++;const id='lr'+lc;
   const d=document.createElement('div');d.className='lang-row';d.id=id;
-  d.innerHTML=`<input class="ln" type="text" placeholder="e.g. English, Русский…" value="${nm}">
+  d.innerHTML=`<input class="ln" type="text" placeholder="e.g. English, Русский…" value="${nm}" oninput="updatePreview()">
   <div class="dots">${[1,2,3,4,5].map(i=>`<div class="dot${i<=lv?' on':''}" onclick="setLv('${id}',${i})"></div>`).join('')}</div>
-  <button class="rm" onclick="document.getElementById('${id}').remove()">×</button>`;
+  <button class="rm" onclick="document.getElementById('${id}').remove();updatePreview()">×</button>`;
   document.getElementById('ll').appendChild(d);
 }
-function setLv(id,lv){document.querySelectorAll('#'+id+' .dot').forEach((d,i)=>d.classList.toggle('on',i<lv));}
-addLang('English',5);addLang('',3);
-
-// ── SCROLL REVEAL ──
-const ro=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}}),{threshold:.1});
-document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+function setLv(id,lv){
+  document.querySelectorAll('#'+id+' .dot').forEach((d,i)=>d.classList.toggle('on',i<lv));
+  updatePreview();
+}
+addLang('English',5); addLang('',3);
 
 // ── HELPERS ──
 const v=id=>document.getElementById(id)?.value?.trim()||'';
-function chips(id){return[...document.querySelectorAll('#'+id+' .chip.on')].map(c=>({nm:c.dataset.d||c.dataset.v,v:c.dataset.v,c:c.dataset.c,l:c.dataset.l,lc:c.dataset.lc||'white'}));}
+function chips(id){return[...document.querySelectorAll('#'+id+' .chip.on')].map(c=>({nm:c.dataset.d||c.dataset.v,v:c.dataset.v,c:c.dataset.c,l:c.dataset.l,lc:c.dataset.lc||'white',icon:c.querySelector('img')?.src}));}
+function allChips(){return[...document.querySelectorAll('.chip.on')].map(c=>({nm:c.dataset.d||c.dataset.v,icon:c.querySelector('img')?.src}));}
 function badge(nm,c,l,lc='white'){return`![${nm}](https://img.shields.io/badge/${encodeURIComponent(nm)}-${c}?style=for-the-badge&logo=${l}&logoColor=${lc})`;}
 function sbadge(nm,c,l,url){return`[![${nm}](https://img.shields.io/badge/${nm.replace(/-/g,'--')}-${c}?style=for-the-badge&logo=${l}&logoColor=white)](${toU(url)})`;}
 function toU(u){if(!u)return'#';return u.startsWith('http')?u:'https://'+u;}
-
-// Map language names to flag emojis
 function langFlag(nm){
   const n=nm.toLowerCase();
-  if(n.includes('russian')||n.includes('русский')) return '🇷🇺';
-  if(n.includes('english')) return '🇬🇧';
-  if(n.includes('german')||n.includes('deutsch')||n.includes('немецкий')) return '🇩🇪';
-  if(n.includes('french')||n.includes('français')) return '🇫🇷';
-  if(n.includes('spanish')||n.includes('español')) return '🇪🇸';
-  if(n.includes('chinese')||n.includes('中文')) return '🇨🇳';
-  if(n.includes('japanese')||n.includes('日本語')) return '🇯🇵';
-  if(n.includes('korean')) return '🇰🇷';
-  if(n.includes('portuguese')||n.includes('português')) return '🇧🇷';
-  if(n.includes('italian')||n.includes('italiano')) return '🇮🇹';
-  if(n.includes('arabic')||n.includes('عربي')) return '🇸🇦';
-  if(n.includes('turkish')||n.includes('türkçe')) return '🇹🇷';
-  return '🌐';
+  if(n.includes('russian')||n.includes('русский'))return'🇷🇺';
+  if(n.includes('english'))return'🇬🇧';
+  if(n.includes('german')||n.includes('deutsch')||n.includes('немецкий'))return'🇩🇪';
+  if(n.includes('french')||n.includes('français'))return'🇫🇷';
+  if(n.includes('spanish')||n.includes('español'))return'🇪🇸';
+  if(n.includes('chinese')||n.includes('中文'))return'🇨🇳';
+  if(n.includes('japanese'))return'🇯🇵';
+  if(n.includes('portuguese'))return'🇧🇷';
+  if(n.includes('arabic'))return'🇸🇦';
+  if(n.includes('turkish'))return'🇹🇷';
+  return'🌐';
+}
+const bars=['','🟥⬛⬛⬛⬛','🟧🟧⬛⬛⬛','🟨🟨🟨⬛⬛','🟩🟩🟩🟩⬛','🟩🟩🟩🟩🟩'];
+
+// ── LIVE PREVIEW ──
+let previewTimer;
+function updatePreview(){
+  clearTimeout(previewTimer);
+  previewTimer = setTimeout(renderPreview, 80);
 }
 
-// Proficiency bars
-const bars=['','🟥⬛⬛⬛⬛','🟧🟧⬛⬛⬛','🟨🟨🟨⬛⬛','🟩🟩🟩🟩⬛','🟩🟩🟩🟩🟩'];
+function renderPreview(){
+  const name=v('fn')||'Your Name';
+  const user=v('fu')||'username';
+  const role=v('fr')||'Developer';
+  const loc=v('fl');
+  const bio=v('fb');
+  const exp=v('fexp');
+  const edu=v('fedu');
+  const learn=v('fle');
+  const fun=v('ff');
+
+  const slangs=[...document.querySelectorAll('.lang-row')].map(r=>{
+    const nm=r.querySelector('.ln')?.value?.trim();if(!nm)return null;
+    const lv=[...r.querySelectorAll('.dot')].filter(d=>d.classList.contains('on')).length;
+    return{nm,lv,lb:['','Basic','Conversational','Intermediate','Advanced','Native'][lv]||'Fluent'};
+  }).filter(Boolean);
+
+  const techList=allChips().slice(0,12);
+  const hasSocials=['sli','stw','stg','syt'].some(id=>v(id));
+  const accent=accentColor;
+
+  // Social badges preview
+  const socialItems=[];
+  if(v('sli')) socialItems.push({label:'LinkedIn',color:'rgba(0,119,181,0.15)',bcolor:'rgba(0,119,181,0.3)',textcolor:'#4da6d4'});
+  if(v('stw')) socialItems.push({label:'Twitter',color:'rgba(29,161,242,0.15)',bcolor:'rgba(29,161,242,0.3)',textcolor:'#5bc0e8'});
+  if(v('stg')) socialItems.push({label:'Telegram',color:'rgba(44,165,224,0.15)',bcolor:'rgba(44,165,224,0.3)',textcolor:'#5bc0e8'});
+  if(v('syt')) socialItems.push({label:'YouTube',color:'rgba(255,0,0,0.15)',bcolor:'rgba(255,0,0,0.3)',textcolor:'#ff6b6b'});
+  if(v('sem')) socialItems.push({label:'Email',color:'rgba(234,67,53,0.15)',bcolor:'rgba(234,67,53,0.3)',textcolor:'#ff7b7b'});
+  if(v('sweb')) socialItems.push({label:'Portfolio',color:'rgba(76,175,80,0.15)',bcolor:'rgba(76,175,80,0.3)',textcolor:'#6abf6e'});
+
+  // Info items
+  const infoItems=[];
+  if(loc) infoItems.push({sym:'📍',label:'Location',value:loc});
+  if(exp) infoItems.push({sym:'⌗',label:'Experience',value:exp});
+  if(edu) infoItems.push({sym:'◎',label:'Education',value:edu});
+  if(learn) infoItems.push({sym:'⟳',label:'Learning',value:learn});
+  if(fun) infoItems.push({sym:'⚡',label:'Fun Fact',value:fun,full:true});
+
+  const isEmpty = !v('fn') && !v('fu') && !v('fr') && !bio && techList.length===0;
+  if(isEmpty){
+    document.getElementById('preview-content').innerHTML='<div class="pv-empty">Fill in your details to see a live preview →</div>';
+    return;
+  }
+
+  const nameParts=name.trim().split(' ');
+  const firstName=nameParts.slice(0,-1).join(' ')||name;
+  const lastName=nameParts.length>1?nameParts[nameParts.length-1]:'';
+
+  let html=`
+  <div class="pv-banner">
+    <div class="pv-name">${firstName} <span>${lastName}</span></div>
+    <div class="pv-role">${role}</div>
+    <svg class="pv-wave" viewBox="0 0 400 16" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,10 Q100,2 200,8 Q300,14 400,4 L400,16 L0,16 Z" fill="#070810"/>
+    </svg>
+  </div>`;
+
+  if(socialItems.length){
+    html+=`<div class="pv-badges">`;
+    socialItems.forEach(s=>{
+      html+=`<span class="pv-bdg" style="background:${s.color};border:1px solid ${s.bcolor};color:${s.textcolor}">${s.label}</span>`;
+    });
+    html+=`</div>`;
+  }
+
+  // About
+  html+=`<div class="pv-sec"><span>01</span><span>About</span></div>`;
+  if(bio){
+    html+=`<div class="pv-bio">${bio.replace(/\n/g,' ')}</div>`;
+  }
+  if(infoItems.length){
+    html+=`<div class="pv-info">`;
+    infoItems.forEach(item=>{
+      html+=`<div class="pv-info-item${item.full?' full':''}">
+        <span class="pv-info-sym">${item.sym}</span>
+        <div><div class="pv-info-label">${item.label}</div><div class="pv-info-value">${item.value}</div></div>
+      </div>`;
+    });
+    html+=`</div>`;
+  }
+
+  // Stack
+  if(techList.length){
+    html+=`<div class="pv-sec"><span>02</span><span>Stack</span></div>`;
+    html+=`<div class="pv-skills">`;
+    techList.forEach(t=>{
+      if(t.icon) html+=`<div class="pv-skill"><img src="${t.icon}" alt="${t.nm}"></div>`;
+    });
+    if(allChips().length>12) html+=`<div class="pv-skill" style="font-size:9px;color:rgba(255,255,255,0.3);font-family:'Space Mono',monospace">+${allChips().length-12}</div>`;
+    html+=`</div>`;
+  }
+
+  // Languages
+  if(slangs.length){
+    html+=`<div class="pv-sec"><span>03</span><span>Languages</span></div>`;
+    slangs.forEach(l=>{
+      const dotsHtml=[1,2,3,4,5].map(i=>`<div class="pv-ld ${i<=l.lv?'on':'off'}"></div>`).join('');
+      html+=`<div class="pv-lang">
+        <span class="pv-lflag">${langFlag(l.nm)}</span>
+        <div class="pv-linfo"><div class="pv-lname">${l.nm}</div><div class="pv-llvl">${l.lb}</div></div>
+        <div class="pv-lbar">${dotsHtml}</div>
+      </div>`;
+    });
+  }
+
+  // Stats
+  if(T.stats||T.langs){
+    html+=`<div class="pv-sec"><span>04</span><span>GitHub Stats</span></div>`;
+    html+=`<div class="pv-stats-row">`;
+    if(T.stats) html+=`<img src="https://github-readme-stats.vercel.app/api?username=${user}&show_icons=true&theme=${theme}&hide_border=true" alt="stats">`;
+    if(T.langs) html+=`<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=${user}&layout=compact&theme=${theme}&hide_border=true" alt="langs">`;
+    html+=`</div>`;
+  }
+
+  document.getElementById('preview-content').innerHTML=html;
+
+  // Update pv-name span color to match accent
+  document.querySelectorAll('#preview-content .pv-name span').forEach(el=>el.style.color=accent);
+  document.querySelectorAll('#preview-content .pv-sec span:first-child').forEach(el=>el.style.color=accent);
+  document.querySelectorAll('#preview-content .pv-ld.on').forEach(el=>el.style.background=accent);
+}
 
 // ── GENERATE ──
 function gen(){
-  const name  = v('fn')||'Your Name';
-  const user  = v('fu')||'YOUR_USERNAME';
-  const role  = v('fr')||'Developer';
-  const loc   = v('fl');
-  const bio   = v('fb');
-  const learn = v('fle');
-  const fun   = v('ff');
-  const lines = v('ft').split('\n').filter(Boolean);
+  const name=v('fn')||'Your Name', user=v('fu')||'YOUR_USERNAME',
+    role=v('fr')||'Developer', loc=v('fl'), bio=v('fb'),
+    exp=v('fexp'), edu=v('fedu'), learn=v('fle'), fun=v('ff'),
+    lines=v('ft').split('\n').filter(Boolean);
 
-  const allChips=[
-    {lb:'Languages',        cs:chips('cl')},
-    {lb:'Frontend',         cs:chips('cfe')},
-    {lb:'Backend & Databases', cs:chips('cbe')},
-    {lb:'DevOps & Cloud',   cs:chips('cops')},
-    {lb:'AI / ML',          cs:chips('cai')},
+  const stacks=[
+    {lb:'Languages',cs:chips('cl')},{lb:'Frontend',cs:chips('cfe')},
+    {lb:'Backend & Databases',cs:chips('cbe')},{lb:'DevOps & Cloud',cs:chips('cops')},
+    {lb:'AI / ML',cs:chips('cai')},
   ].filter(s=>s.cs.length);
 
   const slangs=[...document.querySelectorAll('.lang-row')].map(r=>{
-    const nm=r.querySelector('.ln')?.value?.trim(); if(!nm) return null;
+    const nm=r.querySelector('.ln')?.value?.trim();if(!nm)return null;
     const lv=[...r.querySelectorAll('.dot')].filter(d=>d.classList.contains('on')).length;
-    return{nm, lv, lb:['','Basic','Conversational','Intermediate','Advanced','Native'][lv]||'Fluent'};
+    return{nm,lv,lb:['','Basic','Conversational','Intermediate','Advanced','Native'][lv]||'Fluent'};
   }).filter(Boolean);
 
-  // Social badges — all inline
   const socs=[];
   const li=v('sli');   if(li)  socs.push(sbadge('LinkedIn','0077B5','linkedin',li));
   const tw=v('stw');   if(tw)  socs.push(sbadge('Twitter','1DA1F2','twitter',tw));
@@ -960,164 +802,144 @@ function gen(){
   const wb=v('sweb');  if(wb)  socs.push(sbadge('Portfolio','FF5722','googlechrome',wb));
   const bm=v('sbmc');  if(bm&&T.bmc) socs.push(sbadge('Buy%20Me%20a%20Coffee','FFDD00','buymeacoffee',bm));
 
-  let o = '';
+  // Convert accent hex to the format needed for shields.io
+  const accentHex = accentColor.replace('#','');
 
-  // ── 1. BANNER ──
-  const bannerDesc = encodeURIComponent(role);
-  o += `<div align="center">\n`;
-  o += `  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(name)}&fontSize=60&fontColor=ffffff&fontAlignY=36&desc=${bannerDesc}&descSize=18&descAlignY=58&descColor=ffffffcc&animation=fadeIn" width="100%"/>\n`;
-  o += `</div>\n\n`;
+  let o='';
 
-  // ── 2. TYPING + BADGES ──
-  o += `<div align="center">\n\n`;
+  // 1. BANNER
+  o+=`<div align="center">\n`;
+  o+=`  <img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=200&section=header&text=${encodeURIComponent(name)}&fontSize=60&fontColor=ffffff&fontAlignY=36&desc=${encodeURIComponent(role)}&descSize=18&descAlignY=58&descColor=ffffffcc&animation=fadeIn" width="100%"/>\n`;
+  o+=`</div>\n\n`;
 
+  // 2. TYPING
+  o+=`<div align="center">\n\n`;
   if(T.typing && lines.length){
-    const enc = lines.map(l=>encodeURIComponent(l)).join(';');
-    o += `[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1000&color=00E87A&center=true&vCenter=true&width=600&lines=${enc})](https://git.io/typing-svg)\n\n`;
+    const enc=lines.map(l=>encodeURIComponent(l)).join(';');
+    o+=`[![Typing SVG](https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1000&color=${accentHex}&center=true&vCenter=true&width=600&lines=${enc})](https://git.io/typing-svg)\n\n`;
   }
+  o+=`<br/>\n\n`;
 
-  o += `<br/>\n\n`;
-
-  // Social badges inline
+  // 3. SOCIAL BADGES (under typing)
   if(socs.length){
-    o += socs.join('\n&nbsp;\n') + '\n';
+    o+=socs.join('\n&nbsp;\n')+'\n\n';
   }
-
-  // Profile views
   if(T.views){
-    o += `\n[![Profile Views](https://komarev.com/ghpvc/?username=${user}&color=00e87a&style=for-the-badge&label=PROFILE+VIEWS)](https://github.com/${user})\n`;
+    o+=`[![Profile Views](https://komarev.com/ghpvc/?username=${user}&color=${accentHex}&style=for-the-badge&label=PROFILE+VIEWS)](https://github.com/${user})\n\n`;
+  }
+  o+=`</div>\n\n---\n\n`;
+
+  // 4. ABOUT
+  o+=`## 01 — About\n\n`;
+  if(bio) o+=`${bio}\n\n`;
+
+  // Info table using HTML (works on GitHub)
+  const infoRows=[];
+  if(loc)   infoRows.push(['📍','Location',loc]);
+  if(exp)   infoRows.push(['⌗','Experience',exp]);
+  if(edu)   infoRows.push(['◎','Education',edu]);
+  if(learn) infoRows.push(['⟳','Learning',learn]);
+
+  if(infoRows.length || fun){
+    o+=`<table>\n<tr>\n`;
+    infoRows.forEach(([sym,label,val])=>{
+      o+=`<td><b>${sym} ${label}</b><br/>${val}</td>\n`;
+    });
+    o+=`</tr>\n</table>\n\n`;
+    if(fun) o+=`> ⚡ **Fun fact:** ${fun}\n\n`;
   }
 
-  o += `\n</div>\n\n---\n\n`;
+  o+=`---\n\n`;
 
-  // ── 3. ABOUT ME ──
-  o += `## 👋 About Me\n\n`;
-
-  // Intro paragraph if bio exists
-  if(bio){
-    o += `${bio}\n\n`;
-  }
-
-  // yaml card
-  o += '```yaml\n';
-  o += `name:     "${name}"\n`;
-  if(role)  o += `role:     "${role}"\n`;
-  if(loc)   o += `location: "${loc}"\n`;
-  if(learn) o += `learning: "${learn}"\n`;
-  if(fun)   o += `fun_fact: "${fun}"\n`;
-  o += '```\n\n---\n\n';
-
-  // ── 4. TECH STACK ──
-  if(allChips.length){
-    o += `## 🛠️ Tech Stack\n\n`;
-    for(const s of allChips){
-      o += `**${s.lb}:**\n\n`;
-      // badges on same line with spaces between
-      o += s.cs.map(c => badge(c.nm, c.c, c.l, c.lc)).join('\n') + '\n\n';
+  // 5. TECH STACK
+  if(stacks.length){
+    o+=`## 02 — Stack\n\n`;
+    for(const s of stacks){
+      o+=`**${s.lb}:**\n\n`;
+      o+=s.cs.map(c=>badge(c.nm,c.c,c.l,c.lc)).join('\n')+'\n\n';
     }
-    o += `---\n\n`;
+    o+=`---\n\n`;
   }
 
-  // ── 5. LANGUAGES ──
+  // 6. SPOKEN LANGUAGES
   if(slangs.length){
-    o += `## 🌍 Languages\n\n`;
-    o += `<div align="center">\n\n`;
-    o += `| Language | Level | Proficiency |\n|:---:|:---:|:---:|\n`;
+    o+=`## 03 — Languages\n\n`;
+    o+=`<div align="center">\n\n`;
+    o+=`| Language | Level | Proficiency |\n|:---:|:---:|:---:|\n`;
     for(const l of slangs){
-      o += `| ${langFlag(l.nm)} ${l.nm} | ${l.lb} | ${bars[l.lv]||''} |\n`;
+      o+=`| ${langFlag(l.nm)} ${l.nm} | ${l.lb} | ${bars[l.lv]||''} |\n`;
     }
-    o += `\n</div>\n\n---\n\n`;
+    o+=`\n</div>\n\n---\n\n`;
   }
 
-  // ── 6. GITHUB STATS ──
-  if(T.stats || T.langs){
-    o += `## 📊 GitHub Stats\n\n<div align="center">\n\n`;
-    if(T.stats) o += `<img height="180em" src="https://github-readme-stats.vercel.app/api?username=${user}&show_icons=true&theme=${theme}&include_all_commits=true&count_private=true&hide_border=true"/>\n&nbsp;\n`;
-    if(T.langs) o += `<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=${user}&layout=compact&langs_count=8&theme=${theme}&hide_border=true"/>\n`;
-    o += `\n</div>\n\n`;
+  // 7. STATS
+  if(T.stats||T.langs){
+    o+=`## 04 — GitHub Stats\n\n<div align="center">\n\n`;
+    if(T.stats) o+=`<img height="180em" src="https://github-readme-stats.vercel.app/api?username=${user}&show_icons=true&theme=${theme}&include_all_commits=true&count_private=true&hide_border=true"/>\n&nbsp;\n`;
+    if(T.langs) o+=`<img height="180em" src="https://github-readme-stats.vercel.app/api/top-langs/?username=${user}&layout=compact&langs_count=8&theme=${theme}&hide_border=true"/>\n`;
+    o+=`\n</div>\n\n`;
   }
-
   if(T.streak){
-    o += `<div align="center">\n\n`;
-    o += `[![GitHub Streak](https://streak-stats.demolab.com?user=${user}&theme=${theme}&hide_border=true)](https://git.io/streak-stats)\n\n`;
-    o += `</div>\n\n`;
+    o+=`<div align="center">\n\n[![GitHub Streak](https://streak-stats.demolab.com?user=${user}&theme=${theme}&hide_border=true)](https://git.io/streak-stats)\n\n</div>\n\n`;
   }
+  if(T.stats||T.langs||T.streak) o+=`---\n\n`;
 
-  if(T.stats || T.langs || T.streak) o += `---\n\n`;
-
-  // ── 7. TROPHIES ──
+  // 8. TROPHIES
   if(T.trophies){
-    // trophy widget supports limited themes
-    const trophyThemes=['flat','onedark','gruvbox','dracula','monokai','chalk',
-      'nord','alduin','darkhub','juicyfresh','buddhism','radical','onestar',
-      'discord','algolia','gitdimmed','tokyonight','matrix','apprentice',
-      'dark_dimmed','midnight_purple','kimbie_dark'];
-    const trophyTheme = trophyThemes.includes(theme) ? theme : 'tokyonight';
-    o += `## 🏆 GitHub Trophies\n\n`;
-    o += `<div align="center">\n\n`;
-    o += `[![trophy](https://github-profile-trophy.vercel.app/?username=${user}&theme=${trophyTheme}&column=6&no-frame=true&margin-w=8)](https://github.com/ryo-ma/github-profile-trophy)\n\n`;
-    o += `</div>\n\n---\n\n`;
+    const trophyThemes=['flat','onedark','gruvbox','dracula','monokai','chalk','nord','alduin','darkhub','juicyfresh','buddhism','radical','onestar','discord','algolia','gitdimmed','tokyonight','matrix','apprentice','dark_dimmed','midnight_purple','kimbie_dark'];
+    const trophyTheme=trophyThemes.includes(theme)?theme:'tokyonight';
+    o+=`## 05 — Trophies\n\n<div align="center">\n\n`;
+    o+=`<a href="https://github.com/ryo-ma/github-profile-trophy">\n  <img src="https://github-profile-trophy.vercel.app/?username=${user}&theme=${trophyTheme}&column=6&no-frame=true&margin-w=8" alt="trophies"/>\n</a>\n\n`;
+    o+=`</div>\n\n---\n\n`;
   }
 
-  // ── 8. ACTIVITY GRAPH ──
+  // 9. ACTIVITY
   if(T.activity){
-    // activity-graph uses different theme names than github-readme-stats
-    const agThemeMap={
-      'tokyonight':'tokyo-night','radical':'redical','dracula':'dracula',
-      'nord':'nord-dark','gruvbox':'github','onedark':'react-dark',
-      'cobalt':'cobalt','synthwave':'synthwave','merko':'merko',
-      'midnight_purple':'midnight-purple','ocean_dark':'ocean-dark',
-      'aura':'aura','github_dark':'github-dark',
-      'material_palenight':'material_palenight','calm':'minimal',
-      'solarized-light':'minimal'
-    };
-    const agTheme = agThemeMap[theme] || 'tokyo-night';
-    o += `## 📈 Contribution Graph\n\n`;
-    o += `[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${user}&theme=${agTheme}&hide_border=true&area=true)](https://github.com/ashutosh00710/github-readme-activity-graph)\n\n---\n\n`;
+    const agThemeMap={'tokyonight':'tokyo-night','radical':'redical','dracula':'dracula','nord':'nord-dark','gruvbox':'github','onedark':'react-dark','cobalt':'cobalt','synthwave':'synthwave','merko':'merko','midnight_purple':'midnight-purple','ocean_dark':'ocean-dark','aura':'aura','github_dark':'github-dark','material_palenight':'material_palenight','calm':'minimal','solarized-light':'minimal'};
+    const agTheme=agThemeMap[theme]||'tokyo-night';
+    o+=`## 06 — Activity\n\n`;
+    o+=`[![Activity Graph](https://github-readme-activity-graph.vercel.app/graph?username=${user}&theme=${agTheme}&hide_border=true&area=true)](https://github.com/ashutosh00710/github-readme-activity-graph)\n\n---\n\n`;
   }
 
-  // ── 9. WAKATIME ──
+  // 10. WAKATIME
   if(T.waka){
-    o += `## ⏱️ Coding Time\n\n<div align="center">\n\n`;
-    o += `[![WakaTime](https://github-readme-stats.vercel.app/api/wakatime?username=${user}&theme=${theme}&hide_border=true)](https://wakatime.com/@${user})\n\n`;
-    o += `</div>\n\n> ⚠️ Requires a public WakaTime profile at wakatime.com/@${user}\n\n---\n\n`;
+    o+=`## ⏱️ Coding Time\n\n<div align="center">\n\n`;
+    o+=`[![WakaTime](https://github-readme-stats.vercel.app/api/wakatime?username=${user}&theme=${theme}&hide_border=true)](https://wakatime.com/@${user})\n\n`;
+    o+=`</div>\n\n> ⚠️ Requires a public WakaTime profile\n\n---\n\n`;
   }
 
-  // ── 10. SPOTIFY ──
+  // 11. SPOTIFY
   if(T.spotify){
-    o += `## 🎵 Now Playing\n\n<div align="center">\n\n`;
-    o += `[![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com)\n\n`;
-    o += `</div>\n\n> ⚠️ Requires [Novatorem](https://github.com/novatorem/novatorem) setup\n\n---\n\n`;
+    o+=`## 🎵 Now Playing\n\n<div align="center">\n\n`;
+    o+=`[![Spotify](https://novatorem.vercel.app/api/spotify)](https://open.spotify.com)\n\n`;
+    o+=`</div>\n\n> ⚠️ Requires [Novatorem](https://github.com/novatorem/novatorem) setup\n\n---\n\n`;
   }
 
-  // ── 11. SNAKE ──
+  // 12. SNAKE
   if(T.snake){
-    o += `## 🐍 Contribution Snake\n\n<div align="center">\n\n`;
-    o += `<picture>\n`;
-    o += `  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake-dark.svg">\n`;
-    o += `  <img alt="snake" src="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake.svg">\n`;
-    o += `</picture>\n\n`;
-    o += `</div>\n\n> ⚠️ Requires GitHub Actions workflow setup in your profile repo\n\n---\n\n`;
+    o+=`## 🐍 Contribution Snake\n\n<div align="center">\n\n<picture>\n`;
+    o+=`  <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake-dark.svg">\n`;
+    o+=`  <img alt="snake" src="https://raw.githubusercontent.com/${user}/${user}/output/github-contribution-grid-snake.svg">\n`;
+    o+=`</picture>\n\n</div>\n\n> ⚠️ Requires GitHub Actions setup\n\n---\n\n`;
   }
 
-  // ── 12. DEV QUOTE ──
+  // 13. DEV QUOTE
   if(T.quote){
-    o += `<div align="center">\n\n`;
-    o += `### 💬 Dev Quote\n\n`;
-    o += `![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=${theme})\n\n`;
-    o += `</div>\n\n---\n\n`;
+    o+=`<div align="center">\n\n`;
+    o+=`![Quote](https://quotes-github-readme.vercel.app/api?type=horizontal&theme=${theme})\n\n`;
+    o+=`</div>\n\n---\n\n`;
   }
 
-  // ── 13. FOOTER ──
-  o += `<div align="center">\n\n`;
-  o += `⭐️ From [${user}](https://github.com/${user}) — **thanks for visiting!**\n\n`;
-  o += `<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>\n\n`;
-  o += `</div>\n`;
+  // 14. FOOTER
+  o+=`<div align="center">\n\n`;
+  o+=`⭐ From [${user}](https://github.com/${user}) — thanks for visiting!\n\n`;
+  o+=`<img src="https://capsule-render.vercel.app/api?type=waving&color=gradient&customColorList=6,11,20&height=100&section=footer" width="100%"/>\n\n`;
+  o+=`</div>\n`;
 
-  document.getElementById('co').textContent = o;
-  const el = document.getElementById('out');
+  document.getElementById('co').textContent=o;
+  const el=document.getElementById('out');
   el.classList.add('show');
-  setTimeout(()=>el.scrollIntoView({behavior:'smooth', block:'start'}), 60);
+  setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),60);
 }
 
 function copyIt(){
@@ -1127,6 +949,9 @@ function copyIt(){
     setTimeout(()=>{b.innerHTML='<i class="fa-regular fa-copy"></i>&nbsp; Copy';b.classList.remove('ok');},2000);
   });
 }
+
+// Initial preview render
+updatePreview();
 </script>
 </body>
 </html>
