@@ -1,11 +1,11 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=006633,00e87a&height=240&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=006633,00e87a&height=240&v=2&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>
 </div>
 
 <div align="center">
 
 <a href="https://lebedevnet.github.io/ReadmeForge/">
-  <img src="https://img.shields.io/badge/🚀%20Open%20App%20→-00e87a?style=for-the-badge&logoColor=black" height="36" alt="Open App"/>
+  <img src="https://capsule-render.vercel.app/api?type=rect&color=00e87a&height=60&text=🚀%20Open%20ReadmeForge&fontSize=22&fontColor=000000&fontAlignY=50&desc=lebedevnet.github.io%2FReadmeForge&descSize=13&descAlignY=75&descColor=00000088" width="420" alt="Open ReadmeForge"/>
 </a>
 
 &nbsp;
@@ -125,6 +125,6 @@ MIT © [lebedevnet](https://github.com/lebedevnet) — free to use, fork, and mo
 
 [![Star](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=social)](https://github.com/lebedevnet/ReadmeForge)
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=006633,00e87a&height=120&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=006633,00e87a&height=120&v=2&section=footer" width="100%"/>
 
 </div>
