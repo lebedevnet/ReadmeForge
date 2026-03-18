@@ -1,27 +1,22 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0,7,16,0d2a1a,00e87a&height=220&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=36&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0d2a1a,00e87a&height=240&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>
 </div>
 
 <div align="center">
 
-[![Live Demo](https://img.shields.io/badge/Open%20App-00e87a?style=flat-square&labelColor=0d1117)](https://lebedevnet.github.io/ReadmeForge/)
-&nbsp;
-[![Stars](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=flat-square&color=ffd700&labelColor=0d1117&logo=github)](https://github.com/lebedevnet/ReadmeForge/stargazers)
-&nbsp;
-[![Forks](https://img.shields.io/github/forks/lebedevnet/ReadmeForge?style=flat-square&color=6366f1&labelColor=0d1117&logo=github)](https://github.com/lebedevnet/ReadmeForge/network/members)
-&nbsp;
-[![License](https://img.shields.io/badge/MIT-3b82f6?style=flat-square&labelColor=0d1117)](LICENSE)
+[![Live Demo](https://img.shields.io/badge/Open%20App-00e87a?style=flat-square&logo=googlechrome&logoColor=black)](https://lebedevnet.github.io/ReadmeForge/)
+[![Stars](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=flat-square&color=ffd700&logo=github&logoColor=white)](https://github.com/lebedevnet/ReadmeForge/stargazers)
+[![Forks](https://img.shields.io/github/forks/lebedevnet/ReadmeForge?style=flat-square&color=6366f1&logo=github&logoColor=white)](https://github.com/lebedevnet/ReadmeForge/network/members)
+[![License](https://img.shields.io/badge/MIT-3b82f6?style=flat-square)](LICENSE)
 
-<br/>
-
-**The most beautiful, free way to build your GitHub profile README.**
-Pick your stack → choose a theme → copy. No coding, no sign-up.
+**The most beautiful, free way to build your GitHub profile README.** <br/>
+Pick your stack → choose a theme → generate → copy. No coding, no sign-up, no backend.
 
 </div>
 
 ---
 
-## Preview
+### Preview
 
 <div align="center">
 
@@ -33,40 +28,32 @@ Pick your stack → choose a theme → copy. No coding, no sign-up.
 
 ---
 
-## About
+### About
 
-Free, browser-based tool that generates a fully customized `README.md` for your GitHub profile. Fill in a form — click Generate — copy and paste. Done in under 2 minutes. No backend, no npm, no sign-up.
+Free, browser-based tool that generates a fully customized `README.md` for your GitHub profile. Fill in a form — click Generate — copy and paste. Done in under 2 minutes.
 
-<table>
-<tr>
-<td><b>Hosted</b></td><td>lebedevnet.github.io/ReadmeForge</td>
-<td><b>Stack</b></td><td>Pure HTML · CSS · JavaScript</td>
-</tr>
-<tr>
-<td><b>License</b></td><td>MIT — free to use, fork, modify</td>
-<td><b>Status</b></td><td>Active</td>
-</tr>
-</table>
+⌖ **Hosted** &nbsp; lebedevnet.github.io/ReadmeForge <br/>
+⌗ **Stack** &nbsp; Pure HTML · CSS · JavaScript — zero dependencies <br/>
+◎ **License** &nbsp; MIT — free to use, fork, modify <br/>
+⟳ **Status** &nbsp; Active
 
 ---
 
-## Features
+### Features
 
-| | Feature | Description |
-|:---:|:---|:---|
-| ⟡ | **60+ Technologies** | Languages, Frontend, Backend, DevOps, AI/ML with real logos via skillicons.dev |
-| ⟡ | **16 Stats Themes** | Tokyo Night, Dracula, Nord, Synthwave, Aura, Midnight Purple and more |
-| ⟡ | **6 Accent Colors** | Emerald, Violet, Blue, Orange, Pink, Cyan — changes the entire UI live |
-| ⟡ | **12 Widgets** | GitHub Stats, Streak, Trophies, Activity Graph, WakaTime, Spotify and more |
-| ⟡ | **Live Preview** | See exactly how your README will look on GitHub as you type |
-| ⟡ | **Spoken Languages** | Show the languages you speak with a color-coded level badge |
-| ⟡ | **10 Social Platforms** | LinkedIn, Twitter/X, Telegram, YouTube, Twitch, Dev.to and more |
-| ⟡ | **Custom Quote** | Write your own or use a random dev quote |
-| ⟡ | **One-click Copy** | Your complete `README.md` is ready to paste instantly |
+**60+ Technologies** &nbsp; Languages, Frontend, Backend, DevOps, AI/ML with real logos via skillicons.dev <br/>
+**18 Accent Colors** &nbsp; 12 solid colors + 6 gradients — Aurora, Ocean, Matrix, Sunset, Cosmic, Candy <br/>
+**16 Stats Themes** &nbsp; Tokyo Night, Dracula, Nord, Synthwave, Aura, Midnight Purple and more <br/>
+**12 Widgets** &nbsp; Stats, Streak, Trophies, Activity Graph, WakaTime, Spotify, Snake and more <br/>
+**Live Preview** &nbsp; See exactly how your README looks on GitHub as you type <br/>
+**Header Info** &nbsp; Availability status, currently building, timezone — right in the header <br/>
+**Spoken Languages** &nbsp; Show what you speak with a color-coded level badge <br/>
+**Custom Quote** &nbsp; Write your own or get a random dev quote <br/>
+**One-click Copy** &nbsp; Your complete `README.md` ready to paste instantly
 
 ---
 
-## Quick Start
+### Quick Start
 
 **Online — no install needed:**
 
@@ -86,27 +73,21 @@ No npm. No build step. No config.
 
 ---
 
-## How It Works
+### Stack
 
-| Step 1 | Step 2 | Step 3 | Step 4 |
-|:---:|:---:|:---:|:---:|
-| **Fill in your info** | **Select your stack** | **Choose style** | **Copy & paste** |
-| Name, role, bio, socials | 60+ technologies | 16 themes · 6 accent colors | README.md is ready |
+<img src="https://skillicons.dev/icons?i=html,css,js,github&theme=dark" alt="Stack"/>
 
 ---
 
-## Built With
+### Roadmap
 
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=flat-square&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=flat-square&logo=javascript&logoColor=black)
-![GitHub Pages](https://img.shields.io/badge/GitHub_Pages-0d1117?style=flat-square&logo=github&logoColor=white)
+**Done** &nbsp; 60+ technologies · 18 accent colors & gradients · 16 stat themes · live preview · header info card · custom quote · spoken languages
 
-Zero dependencies. Runs entirely in the browser.
+**Planned** &nbsp; Export as `.md` file download · PWA offline support · Localization (RU, ZH, ES) · More widgets
 
 ---
 
-## Contributing
+### Contributing
 
 Fork the repo, make your changes, open a Pull Request.
 
@@ -117,36 +98,11 @@ git commit -m "feat: describe your change"
 git push origin feat/your-feature
 ```
 
-| Type | Examples |
-|:---|:---|
-| New technologies | Missing frameworks, tools, languages |
-| New themes | More color themes for stats cards |
-| Localization | Russian, Spanish, Chinese, Portuguese |
-| Bug fixes | UI glitches, edge cases in generation |
-| New features | `.md` download, PWA, more widgets |
+Good first issues: missing tech stacks · new color themes · localization · bug fixes
 
 ---
 
-## Roadmap
-
-**Done**
-
-- 60+ technologies with skillicons.dev
-- 16 themes · 6 accent colors
-- Live preview panel
-- Custom quote
-- Spoken languages with level badges
-
-**Planned**
-
-- Export as `.md` file download
-- PWA support — works fully offline
-- Localization — RU, ZH, ES, PT
-- More widgets — LeetCode, Codeforces
-
----
-
-## License
+### License
 
 MIT © [lebedevnet](https://github.com/lebedevnet) — free to use, fork, and modify.
 
@@ -154,12 +110,10 @@ MIT © [lebedevnet](https://github.com/lebedevnet) — free to use, fork, and mo
 
 <div align="center">
 
-<sub>If this helped you, a star goes a long way.</sub>
+<sub>If this saved you time, a ⭐ goes a long way</sub>
 
 [![Star](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=social)](https://github.com/lebedevnet/ReadmeForge)
 
-<br/>
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0,7,16,0d2a1a,00e87a&height=120&section=footer" width="100%"/>
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0d2a1a,00e87a&height=120&section=footer" width="100%"/>
 
 </div>
