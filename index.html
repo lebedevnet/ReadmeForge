@@ -636,7 +636,7 @@ const siMap={
 };
 
 // ── COLOR SCHEME ──
-let accentColor='#00e87a', accentHex='00e87a', accentR=0, accentG=232, accentB=122, accentGradient='';
+let accentColor='#00e87a', accentHex='00e87a', accentR=0, accentG=232, accentB=122, accentGradient='', bannerColorParam='00e87a';
 
 document.querySelectorAll('.cs').forEach(el => {
   el.addEventListener('click', () => {
@@ -648,6 +648,7 @@ document.querySelectorAll('.cs').forEach(el => {
     accentG = parseInt(el.dataset.g);
     accentB = parseInt(el.dataset.b);
     accentGradient = el.dataset.gradient || '';
+    bannerColorParam = accentGradient || accentHex;
     const r = document.documentElement;
     r.style.setProperty('--accent', accentColor);
     r.style.setProperty('--accent-r', accentR);
@@ -821,7 +822,7 @@ function renderPreview() {
 
   let html = '';
 
-  html += `<div class="pv-banner"><img src="https://capsule-render.vercel.app/api?type=waving&color=${bannerColorParam || accentHex}&height=120&section=header&text=${encodeURIComponent(displayName)}&fontSize=34&fontColor=ffffff&fontAlignY=38&desc=${encodeURIComponent(role)}&descSize=13&descAlignY=60&descColor=ffffffcc&animation=fadeIn" alt="banner" style="width:100%;display:block"></div>`;
+  html += `<div class="pv-banner"><img src="https://capsule-render.vercel.app/api?type=waving&color=${bannerColorParam}&height=120&section=header&text=${encodeURIComponent(displayName)}&fontSize=34&fontColor=ffffff&fontAlignY=38&desc=${encodeURIComponent(role)}&descSize=13&descAlignY=60&descColor=ffffffcc&animation=fadeIn" alt="banner" style="width:100%;display:block"></div>`;
 
   if (T.typing && lines.length && user) {
     const enc = lines.map(l => encodeURIComponent(l)).join(';');
@@ -950,9 +951,6 @@ function gen() {
   const bm  = v('sbmc'); if (bm && T.bmc) socs.push(`[![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=flat-square&logo=buymeacoffee&logoColor=black)](${toU(bm)})`);
 
   let o = '';
-
-  // Banner: use gradient param if available, else solid hex
-  const bannerColorParam = accentGradient || accentHex;
 
   // BANNER
   o += `<div align="center">\n  <img src="https://capsule-render.vercel.app/api?type=waving&color=${bannerColorParam}&height=240&section=header&text=${encodeURIComponent(name)}&fontSize=68&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=${encodeURIComponent(role)}&descSize=20&descAlignY=58&descColor=ffffffaa&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>\n</div>\n\n`;
