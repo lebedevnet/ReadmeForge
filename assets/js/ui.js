@@ -8,6 +8,7 @@ export function applyAccentTheme(theme) {
   const root = document.documentElement;
 
   root.style.setProperty("--accent", theme.color);
+  root.style.setProperty("--accent-ink", getContrastInk(theme.color));
   root.style.setProperty("--accent-r", `${rgb.r}`);
   root.style.setProperty("--accent-g", `${rgb.g}`);
   root.style.setProperty("--accent-b", `${rgb.b}`);
@@ -104,21 +105,32 @@ export function renderStatusOptions(container, currentStatus) {
 export function renderAccentThemes(container, currentAccentId) {
   container.replaceChildren();
 
-  ACCENT_THEMES.forEach((theme) => {
-    const button = createElement("button", "theme-chip");
-    button.type = "button";
-    button.dataset.action = "select-accent";
-    button.dataset.accentId = theme.id;
-    button.setAttribute("aria-pressed", `${theme.id === currentAccentId}`);
-    button.classList.toggle("is-active", theme.id === currentAccentId);
+  const groups = [
+    {
+      title: "Solid accents",
+      copy: "Quieter single-color accents for lower visual noise.",
+      items: ACCENT_THEMES.filter((theme) => !theme.gradient),
+    },
+    {
+      title: "Gradient accents",
+      copy: "Higher-energy blends for the banner and primary CTA.",
+      items: ACCENT_THEMES.filter((theme) => theme.gradient),
+    },
+  ];
 
-    const swatch = createElement("span", "theme-swatch");
-    swatch.style.background = theme.gradient ? `linear-gradient(135deg, ${gradientToCss(theme.gradient)})` : theme.color;
+  groups.forEach((group) => {
+    const section = createElement("section", "theme-group");
+    const header = createElement("div", "theme-group-header");
+    header.append(createElement("p", "theme-group-title", group.title), createElement("p", "theme-group-copy", group.copy));
+    section.append(header);
 
-    const meta = createElement("span", "theme-meta");
-    meta.append(createElement("span", "theme-name", theme.name), createElement("span", "theme-subtitle", theme.subtitle));
-    button.append(swatch, meta);
-    container.append(button);
+    const grid = createElement("div", "theme-grid");
+    group.items.forEach((theme) => {
+      grid.append(createAccentThemeButton(theme, currentAccentId));
+    });
+
+    section.append(grid);
+    container.append(section);
   });
 }
 
@@ -209,8 +221,9 @@ export function renderTechGroups(container, state, searchQuery) {
       button.classList.toggle("is-active", selectedIds.has(item.id));
 
       button.append(createElement("span", "tech-chip-label", item.label));
-      if (item.aliases?.length) {
-        button.append(createElement("span", "tech-chip-meta", item.aliases[0]));
+      const chipMeta = getTechChipMeta(item.aliases);
+      if (chipMeta) {
+        button.append(createElement("span", "tech-chip-meta", chipMeta));
       }
 
       grid.append(button);
@@ -221,11 +234,9 @@ export function renderTechGroups(container, state, searchQuery) {
   });
 
   const customSection = createElement("section", "tech-group");
-  const customHeader = createElement("div", "section-head");
-  customHeader.append(
-    createElement("h3", "section-title", "Custom Tech"),
-    createElement("span", "section-caption", "Add anything missing from the built-in list")
-  );
+  const customHeader = createElement("div", "section-head section-head--stack");
+  customHeader.append(createElement("h3", "section-title", "Custom Tech"));
+  customHeader.append(createElement("p", "section-caption", "Add anything missing from the built-in list."));
   customSection.append(customHeader);
 
   const pillRow = createElement("div", "custom-tech-list");
@@ -401,6 +412,33 @@ function gradientToCss(gradient) {
     .split(",")
     .map((chunk) => chunk.split(":")[1])
     .join(", ");
+}
+
+function getContrastInk(hexColor) {
+  const { r, g, b } = hexToRgb(hexColor);
+  const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return luminance > 0.66 ? "#04110b" : "#f7fbff";
+}
+
+function getTechChipMeta(aliases = []) {
+  return aliases.find((alias) => alias.length <= 8 && !alias.includes(" ")) || "";
+}
+
+function createAccentThemeButton(theme, currentAccentId) {
+  const button = createElement("button", "theme-chip");
+  button.type = "button";
+  button.dataset.action = "select-accent";
+  button.dataset.accentId = theme.id;
+  button.setAttribute("aria-pressed", `${theme.id === currentAccentId}`);
+  button.classList.toggle("is-active", theme.id === currentAccentId);
+
+  const swatch = createElement("span", "theme-swatch");
+  swatch.style.background = theme.gradient ? `linear-gradient(135deg, ${gradientToCss(theme.gradient)})` : theme.color;
+
+  const meta = createElement("span", "theme-meta");
+  meta.append(createElement("span", "theme-name", theme.name), createElement("span", "theme-subtitle", theme.subtitle));
+  button.append(swatch, meta);
+  return button;
 }
 
 function createClearButton(groupId, disabled) {

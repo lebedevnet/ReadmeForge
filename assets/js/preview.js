@@ -40,8 +40,9 @@ function buildClassicPreview(model) {
 
   const hero = document.createElement("section");
   hero.className = "preview-hero preview-hero--center";
-  if (model.state.widgets.typing && model.typingUrl) {
-    hero.append(createImageBlock(model.typingUrl, "Typing animation", "preview-inline-image"));
+  const typingPreview = buildTypingPreview(model);
+  if (typingPreview) {
+    hero.append(typingPreview);
   }
   if (model.socials.length || (model.state.widgets.views && model.viewsUrl)) {
     hero.append(buildSocialBadgeRow(model, true));
@@ -70,8 +71,9 @@ function buildMinimalPreview(model) {
   role.textContent = model.role;
   intro.append(role);
 
-  if (model.state.widgets.typing && model.typingUrl) {
-    intro.append(createImageBlock(model.typingUrl, "Typing animation", "preview-inline-image"));
+  const typingPreview = buildTypingPreview(model);
+  if (typingPreview) {
+    intro.append(typingPreview);
   }
 
   if (model.state.profile.bio.trim()) {
@@ -110,8 +112,9 @@ function buildPortfolioPreview(model) {
   role.textContent = model.role;
   callout.append(role);
 
-  if (model.state.widgets.typing && model.typingUrl) {
-    callout.append(createImageBlock(model.typingUrl, "Typing animation", "preview-inline-image"));
+  const typingPreview = buildTypingPreview(model);
+  if (typingPreview) {
+    callout.append(typingPreview);
   }
 
   if (model.state.profile.bio.trim()) {
@@ -497,6 +500,34 @@ function createSection(title) {
   heading.textContent = title;
   section.append(heading);
   return section;
+}
+
+function buildTypingPreview(model) {
+  if (!model.state.widgets.typing || !model.typingLines.length) {
+    return null;
+  }
+
+  const shell = document.createElement("div");
+  shell.className = "preview-typing";
+  shell.setAttribute("aria-label", "Typing lines preview");
+
+  model.typingLines.forEach((line) => {
+    const row = document.createElement("div");
+    row.className = "preview-typing-line";
+
+    const prompt = document.createElement("span");
+    prompt.className = "preview-typing-prompt";
+    prompt.textContent = ">";
+
+    const text = document.createElement("span");
+    text.className = "preview-typing-text";
+    text.textContent = line;
+
+    row.append(prompt, text);
+    shell.append(row);
+  });
+
+  return shell;
 }
 
 function createImageBlock(src, alt, className) {
