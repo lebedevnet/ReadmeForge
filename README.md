@@ -1,25 +1,25 @@
 <div align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:006633,100:00e87a&height=240&v=4&section=header&text=ReadmeForge&fontSize=80&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%"/>
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:006633,100:00e87a&height=240&section=header&text=ReadmeForge&fontSize=78&fontColor=ffffff&fontAlignY=38&fontStyle=bold&desc=Static%20GitHub%20Profile%20README%20Generator&descSize=20&descAlignY=58&descColor=ffffffbb&animation=fadeIn&stroke=ffffff&strokeWidth=2" width="100%" alt="ReadmeForge banner"/>
 </div>
 
 <div align="center">
 
 <a href="https://lebedevnet.github.io/ReadmeForge/">
-  <img src="https://img.shields.io/badge/%20%20%20%20Open%20ReadmeForge%20%E2%86%92%20%20%20%20-238636?style=flat-square&logoColor=white" height="40" width="240" alt="Open ReadmeForge"/>
+  <img src="https://img.shields.io/badge/Open%20ReadmeForge-00e87a?style=for-the-badge&logo=github&logoColor=04110b" alt="Open ReadmeForge"/>
 </a>
 
 [![Stars](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=flat-square&color=ffd700&logo=github&logoColor=white)](https://github.com/lebedevnet/ReadmeForge/stargazers)
 [![Forks](https://img.shields.io/github/forks/lebedevnet/ReadmeForge?style=flat-square&color=6366f1&logo=github&logoColor=white)](https://github.com/lebedevnet/ReadmeForge/network/members)
 [![License](https://img.shields.io/badge/MIT-3b82f6?style=flat-square)](LICENSE)
 
-**The most beautiful, free way to build your GitHub profile README.** <br/>
-Pick your stack → choose a theme → generate → copy. No coding, no sign-up, no backend.
+**A cleaner, preview-trustworthy way to build your GitHub profile README.**  
+Static, browser-based, no sign-up, no backend, no build step.
 
 </div>
 
 ---
 
-### Preview
+## Preview
 
 <div align="center">
 
@@ -29,40 +29,43 @@ Pick your stack → choose a theme → generate → copy. No coding, no sign-up,
 
 ---
 
-### About
+## What's New
 
-Free, browser-based tool that generates a fully customized `README.md` for your GitHub profile. Fill in a form — click Generate — copy and paste. Done in under 2 minutes.
-
-⌖ **Hosted** &nbsp; lebedevnet.github.io/ReadmeForge <br/>
-⌗ **Stack** &nbsp; Pure HTML · CSS · JavaScript — zero dependencies <br/>
-◎ **License** &nbsp; MIT — free to use, fork, modify <br/>
-⟳ **Status** &nbsp; Active
-
----
-
-### Features
-
-**60+ Technologies** &nbsp; Languages, Frontend, Backend, DevOps, AI/ML with real logos via skillicons.dev <br/>
-**18 Accent Colors** &nbsp; 12 solid colors + 6 gradients — Aurora, Ocean, Matrix, Sunset, Cosmic, Candy <br/>
-**16 Stats Themes** &nbsp; Tokyo Night, Dracula, Nord, Synthwave, Aura, Midnight Purple and more <br/>
-**12 Widgets** &nbsp; Stats, Streak, Trophies, Activity Graph, WakaTime, Spotify, Snake and more <br/>
-**Live Preview** &nbsp; See exactly how your README looks on GitHub as you type <br/>
-**Header Info** &nbsp; Availability status, currently building, timezone — right in the header <br/>
-**Spoken Languages** &nbsp; Show what you speak with a color-coded level badge <br/>
-**Custom Quote** &nbsp; Write your own or get a random dev quote <br/>
-**One-click Copy** &nbsp; Your complete `README.md` ready to paste instantly
+- Unified state model: the editor, preview, and markdown output now read from the same canonical app state.
+- Local draft persistence: everything autosaves to `localStorage` and survives refreshes.
+- Config portability: export/import generator state as versioned JSON.
+- Better output workflow: copy, download `README.md`, export config, import config, and reset draft from one action bar.
+- Mobile-friendly preview: Form / Preview switch on smaller screens instead of hiding the preview.
+- Faster stack editing: searchable tech chips, clearer grouping, and support for custom tech entries.
+- Cleaner output styles: `Classic`, `Minimal`, and `Portfolio`.
+- Safer rendering: preview content is rendered through DOM APIs instead of unsafe user-content interpolation.
+- Modular static architecture: the old monolith is split into readable files under `assets/js` and `assets/css`.
 
 ---
 
-### Quick Start
+## Features
 
-**Online — no install needed:**
+- Live preview that tracks the generated markdown much more closely.
+- Starter presets for Developer, Frontend, Backend, AI/ML, Designer, Student, Founder, and Minimal setups.
+- Three README layout styles with one shared generator pipeline.
+- Accent themes, stats themes, widget toggles, and separate header-status controls.
+- Spoken languages with level badges.
+- Optional featured projects section.
+- Import/export JSON configs with schema versioning.
+- One-click `README.md` download.
+- Fully static deployment friendly to GitHub Pages.
 
+---
+
+## Quick Start
+
+### Online
+
+```text
+https://lebedevnet.github.io/ReadmeForge/
 ```
-https://lebedevnet.github.io/ReadmeForge
-```
 
-**Or run locally:**
+### Local
 
 ```bash
 git clone https://github.com/lebedevnet/ReadmeForge.git
@@ -70,59 +73,89 @@ cd ReadmeForge
 open index.html
 ```
 
-No npm. No build step. No config.
+No npm. No bundler. No server required.
 
 ---
 
-### Stack
+## Project Structure
 
-<img src="https://skillicons.dev/icons?i=html,css,js,github&theme=dark" alt="Stack"/>
+```text
+/
+  index.html
+  README.md
+  /assets
+    /css
+      styles.css
+    /js
+      app.js
+      data-options.js
+      data-tech.js
+      data-themes.js
+      generator.js
+      preview.js
+      presets.js
+      state.js
+      storage.js
+      ui.js
+      utils.js
+```
 
 ---
 
-### Contributing
+## How It Works
 
-All suggestions are welcome — I read every issue and pull request. If you have an idea for a new feature, a missing technology, or a bug fix, here's how to contribute:
+1. The form writes into one app state object.
+2. Preview and markdown generation both derive from that state.
+3. Draft changes autosave locally with a versioned storage key.
+4. Config export/import serializes the same normalized data structure.
 
-**1. Fork the repo** — click Fork at the top right of the GitHub page. This creates your own copy of ReadmeForge under your account.
+That keeps the product static while making the codebase much easier to extend.
 
-**2. Make your changes** — clone your fork, edit the files (everything is in `index.html`), and test it by opening the file in a browser.
+---
 
-**3. Open a Pull Request** — push your changes and click "Compare & pull request" on GitHub. Describe what you changed and why.
+## Contributing
+
+Suggestions and pull requests are welcome.
+
+If you want to make changes:
 
 ```bash
 git clone https://github.com/YOUR_USERNAME/ReadmeForge.git
-git checkout -b feat/your-feature
-git commit -m "feat: describe your change"
-git push origin feat/your-feature
+cd ReadmeForge
+git checkout -b feat/your-change
+open index.html
 ```
 
-Good first contributions: missing tech stacks · new gradient colors · language flags · bug fixes · localization (RU, ZH, ES)
+Helpful starting points:
 
-> Not sure how to start? Open an [Issue](https://github.com/lebedevnet/ReadmeForge/issues) describing your idea — I'll help figure out the implementation.
-
----
-
-### Roadmap
-
-**Done** &nbsp; 60+ technologies · 18 accent colors & gradients · 16 stat themes · live preview · header info card · custom quote · spoken languages
-
-**Planned** &nbsp; Export as `.md` file download · PWA offline support · Localization (RU, ZH, ES) · More widgets
+- Add more technologies or aliases in `assets/js/data-tech.js`
+- Add new presets in `assets/js/presets.js`
+- Improve markdown layouts in `assets/js/generator.js`
+- Improve preview parity in `assets/js/preview.js`
+- Tweak visual language in `assets/css/styles.css`
 
 ---
 
-### License
+## Roadmap
 
-MIT © [lebedevnet](https://github.com/lebedevnet) — free to use, fork, and modify.
+- Section reordering
+- More advanced featured project layouts
+- More tech aliases and custom icon support
+- Updated screenshots for the upgraded UI
+- Localization
+
+---
+
+## License
+
+MIT © [lebedevnet](https://github.com/lebedevnet)
 
 ---
 
 <div align="center">
 
-<sub>If this saved you time, a ⭐ goes a long way</sub>
+<sub>If ReadmeForge saved you time, a star helps more people find it.</sub>
 
 [![Star](https://img.shields.io/github/stars/lebedevnet/ReadmeForge?style=social)](https://github.com/lebedevnet/ReadmeForge)
-
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:006633,100:00e87a&height=120&v=4&section=footer" width="100%"/>
 
 </div>
