@@ -1,540 +1,453 @@
-import { LANGUAGE_LEVELS, LAYOUT_STYLES } from "./data-options.js";
-import { buildReadmeModel, getLanguageFlag } from "./generator.js";
-import { ensureUrl } from "./utils.js";
+const BLOCK_START_PATTERN = /^(#{1,6})\s+|^-\s+|^>\s?|^---+$|^<(div|picture|img|sub)\b/i;
+const ALLOWED_IMAGE_PROTOCOLS = new Set(["http:", "https:"]);
+const ALLOWED_LINK_PROTOCOLS = new Set(["http:", "https:", "mailto:"]);
 
-export function renderPreview(container, state) {
-  const model = buildReadmeModel(state);
+export function renderPreview(container, markdown, layoutStyle = "classic") {
   container.replaceChildren();
 
-  if (!model.hasMeaningfulContent) {
+  if (!markdown.trim()) {
     const empty = document.createElement("div");
     empty.className = "preview-empty";
-    empty.textContent = "Fill in your details to see a faithful README preview.";
+    empty.textContent = "Fill in your details to see the generated README rendered here.";
     container.append(empty);
     return;
   }
 
+  const surface = document.createElement("article");
+  surface.className = "preview-readme markdown-body";
+  surface.dataset.layoutStyle = layoutStyle;
+  surface.setAttribute("aria-label", "Generated README preview");
+  renderMarkdownInto(surface, markdown);
+  container.append(surface);
+}
+
+function renderMarkdownInto(parent, markdown) {
+  const lines = `${markdown || ""}`.replace(/\r\n?/g, "\n").split("\n");
+  let index = 0;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      index += 1;
+      continue;
+    }
+
+    if (/^<div\b/i.test(trimmed)) {
+      const { node, nextIndex } = consumeCenteredBlock(lines, index);
+      parent.append(node);
+      index = nextIndex;
+      continue;
+    }
+
+    if (/^<picture\b/i.test(trimmed)) {
+      const { html, nextIndex } = collectHtmlBlock(lines, index, "picture");
+      parent.append(sanitizeHtmlFragment(html));
+      index = nextIndex;
+      continue;
+    }
+
+    if (/^<(img|sub)\b/i.test(trimmed)) {
+      parent.append(sanitizeHtmlFragment(trimmed));
+      index += 1;
+      continue;
+    }
+
+    if (/^---+$/.test(trimmed)) {
+      parent.append(document.createElement("hr"));
+      index += 1;
+      continue;
+    }
+
+    const headingMatch = trimmed.match(/^(#{1,6})\s+(.*)$/);
+    if (headingMatch) {
+      const heading = document.createElement(`h${Math.min(headingMatch[1].length, 6)}`);
+      heading.append(renderInlineContent(headingMatch[2].trim()));
+      parent.append(heading);
+      index += 1;
+      continue;
+    }
+
+    if (/^-\s+/.test(trimmed)) {
+      const { node, nextIndex } = consumeList(lines, index);
+      parent.append(node);
+      index = nextIndex;
+      continue;
+    }
+
+    if (/^>\s?/.test(trimmed)) {
+      const { node, nextIndex } = consumeBlockquote(lines, index);
+      parent.append(node);
+      index = nextIndex;
+      continue;
+    }
+
+    const { node, nextIndex } = consumeParagraph(lines, index);
+    parent.append(node);
+    index = nextIndex;
+  }
+}
+
+function consumeCenteredBlock(lines, startIndex) {
+  const openLine = lines[startIndex].trim();
+  const innerLines = [];
+  let index = startIndex + 1;
+
+  while (index < lines.length && !/^<\/div>\s*$/i.test(lines[index].trim())) {
+    innerLines.push(lines[index]);
+    index += 1;
+  }
+
   const wrapper = document.createElement("div");
-  wrapper.className = `preview-readme preview-readme--${state.appearance.layoutStyle}`;
+  wrapper.className = "markdown-align-center";
 
-  const layoutMeta = LAYOUT_STYLES.find((item) => item.id === state.appearance.layoutStyle);
-  const layoutTag = document.createElement("div");
-  layoutTag.className = "preview-layout-tag";
-  layoutTag.textContent = `${layoutMeta?.label || "Classic"} preview`;
-  wrapper.append(layoutTag);
-
-  if (state.appearance.layoutStyle === "minimal") {
-    wrapper.append(buildMinimalPreview(model));
-  } else if (state.appearance.layoutStyle === "portfolio") {
-    wrapper.append(buildPortfolioPreview(model));
-  } else {
-    wrapper.append(buildClassicPreview(model));
+  if (/align\s*=\s*["']?center["']?/i.test(openLine)) {
+    wrapper.dataset.align = "center";
   }
 
-  container.append(wrapper);
+  renderMarkdownInto(wrapper, innerLines.join("\n"));
+
+  return {
+    node: wrapper,
+    nextIndex: index < lines.length ? index + 1 : index,
+  };
 }
 
-function buildClassicPreview(model) {
+function consumeList(lines, startIndex) {
+  const list = document.createElement("ul");
+  let index = startIndex;
+
+  while (index < lines.length) {
+    const line = lines[index].trim();
+
+    if (!/^-+\s+/.test(line)) {
+      break;
+    }
+
+    const item = document.createElement("li");
+    item.append(renderInlineContent(line.replace(/^-+\s+/, "")));
+    list.append(item);
+    index += 1;
+  }
+
+  return { node: list, nextIndex: index };
+}
+
+function consumeBlockquote(lines, startIndex) {
+  const quoteLines = [];
+  let index = startIndex;
+
+  while (index < lines.length) {
+    const line = lines[index].trim();
+
+    if (!/^>\s?/.test(line)) {
+      break;
+    }
+
+    quoteLines.push(line.replace(/^>\s?/, ""));
+    index += 1;
+  }
+
+  const blockquote = document.createElement("blockquote");
+  renderMarkdownInto(blockquote, quoteLines.join("\n"));
+  return { node: blockquote, nextIndex: index };
+}
+
+function consumeParagraph(lines, startIndex) {
+  const paragraphLines = [];
+  let index = startIndex;
+
+  while (index < lines.length) {
+    const line = lines[index];
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      break;
+    }
+
+    if (index !== startIndex && BLOCK_START_PATTERN.test(trimmed)) {
+      break;
+    }
+
+    paragraphLines.push(trimmed);
+    index += 1;
+  }
+
+  const paragraph = document.createElement("p");
+  paragraph.append(renderInlineContent(paragraphLines.join(" ")));
+  return { node: paragraph, nextIndex: index };
+}
+
+function collectHtmlBlock(lines, startIndex, tagName) {
+  const blockLines = [];
+  let index = startIndex;
+  const closePattern = new RegExp(`^<\\/${tagName}>\\s*$`, "i");
+
+  while (index < lines.length) {
+    blockLines.push(lines[index]);
+    if (closePattern.test(lines[index].trim())) {
+      index += 1;
+      break;
+    }
+    index += 1;
+  }
+
+  return { html: blockLines.join("\n"), nextIndex: index };
+}
+
+function renderInlineContent(text) {
   const fragment = document.createDocumentFragment();
-  fragment.append(createImageBlock(model.bannerUrl, `${model.displayName} banner`, "preview-banner"));
+  let buffer = "";
+  let cursor = 0;
 
-  const hero = document.createElement("section");
-  hero.className = "preview-hero preview-hero--center";
-  const typingPreview = buildTypingPreview(model);
-  if (typingPreview) {
-    hero.append(typingPreview);
-  }
-  if (model.socials.length || (model.state.widgets.views && model.viewsUrl)) {
-    hero.append(buildSocialBadgeRow(model, true));
-  }
-  if (model.headerBadges.length) {
-    hero.append(buildHeaderBadgeRow(model));
-  }
-  fragment.append(hero);
+  while (cursor < text.length) {
+    const remainder = text.slice(cursor);
 
-  appendBodySections(fragment, model);
-  return fragment;
-}
+    if (text[cursor] === "\\") {
+      buffer += text[cursor + 1] || "";
+      cursor += 2;
+      continue;
+    }
 
-function buildMinimalPreview(model) {
-  const fragment = document.createDocumentFragment();
-  const intro = document.createElement("section");
-  intro.className = "preview-section preview-section--minimal";
+    const linkedImageMatch = remainder.match(/^\[!\[([^\]]*)\]\(([^)]+)\)\]\(([^)]+)\)/);
+    if (linkedImageMatch) {
+      flushInlineBuffer(fragment, buffer);
+      buffer = "";
+      fragment.append(createLinkedImage(linkedImageMatch[1], linkedImageMatch[2], linkedImageMatch[3]));
+      cursor += linkedImageMatch[0].length;
+      continue;
+    }
 
-  const title = document.createElement("h1");
-  title.className = "preview-h1";
-  title.textContent = model.displayName;
-  intro.append(title);
+    const imageMatch = remainder.match(/^!\[([^\]]*)\]\(([^)]+)\)/);
+    if (imageMatch) {
+      flushInlineBuffer(fragment, buffer);
+      buffer = "";
+      fragment.append(createImageNode(imageMatch[1], imageMatch[2]));
+      cursor += imageMatch[0].length;
+      continue;
+    }
 
-  const role = document.createElement("p");
-  role.className = "preview-role";
-  role.textContent = model.role;
-  intro.append(role);
-
-  const typingPreview = buildTypingPreview(model);
-  if (typingPreview) {
-    intro.append(typingPreview);
-  }
-
-  if (model.state.profile.bio.trim()) {
-    const bio = document.createElement("p");
-    bio.className = "preview-copy";
-    bio.textContent = model.state.profile.bio.trim();
-    intro.append(bio);
-  }
-
-  if (model.socials.length || (model.state.widgets.views && model.viewsUrl)) {
-    intro.append(buildSocialBadgeRow(model, true));
-  }
-  if (model.headerBadges.length) {
-    intro.append(buildHeaderBadgeRow(model));
-  }
-
-  fragment.append(intro);
-  appendBodySections(fragment, model, { includeBioInAbout: false });
-  return fragment;
-}
-
-function buildPortfolioPreview(model) {
-  const fragment = document.createDocumentFragment();
-  fragment.append(createImageBlock(model.bannerUrl, `${model.displayName} banner`, "preview-banner"));
-
-  const callout = document.createElement("section");
-  callout.className = "preview-section preview-section--callout";
-
-  const heading = document.createElement("h2");
-  heading.className = "preview-h2 preview-h2--large";
-  heading.textContent = model.displayName;
-  callout.append(heading);
-
-  const role = document.createElement("p");
-  role.className = "preview-role";
-  role.textContent = model.role;
-  callout.append(role);
-
-  const typingPreview = buildTypingPreview(model);
-  if (typingPreview) {
-    callout.append(typingPreview);
-  }
-
-  if (model.state.profile.bio.trim()) {
-    const bio = document.createElement("p");
-    bio.className = "preview-copy";
-    bio.textContent = model.state.profile.bio.trim();
-    callout.append(bio);
-  }
-
-  if (model.socials.length || (model.state.widgets.views && model.viewsUrl)) {
-    callout.append(buildSocialBadgeRow(model, true));
-  }
-  if (model.headerBadges.length) {
-    callout.append(buildHeaderBadgeRow(model));
-  }
-
-  if (model.primaryContactUrl) {
-    const cta = document.createElement("p");
-    cta.className = "preview-callout-copy";
-    cta.textContent = "Building something interesting? This README pushes your contact and featured work higher up.";
-    callout.append(cta);
-  }
-
-  fragment.append(callout);
-  appendBodySections(fragment, model, { includeBioInAbout: false });
-  return fragment;
-}
-
-function appendBodySections(fragment, model, options = { includeBioInAbout: true }) {
-  const aboutSection = buildAboutSection(model, options.includeBioInAbout);
-  if (aboutSection) {
-    fragment.append(aboutSection);
-  }
-
-  const projectSection = buildFeaturedProjectsSection(model);
-  if (projectSection) {
-    fragment.append(projectSection);
-  }
-
-  const techSection = buildTechSection(model);
-  if (techSection) {
-    fragment.append(techSection);
-  }
-
-  const languagesSection = buildLanguagesSection(model);
-  if (languagesSection) {
-    fragment.append(languagesSection);
-  }
-
-  const statsSection = buildStatsSection(model);
-  if (statsSection) {
-    fragment.append(statsSection);
-  }
-
-  const optionalSection = buildOptionalWidgetsSection(model);
-  if (optionalSection) {
-    fragment.append(optionalSection);
-  }
-
-  const quoteSection = buildQuoteSection(model);
-  if (quoteSection) {
-    fragment.append(quoteSection);
-  }
-
-  fragment.append(buildFooterSection(model));
-}
-
-function buildAboutSection(model, includeBio = true) {
-  const facts = [
-    model.state.profile.location ? ["Location", model.state.profile.location.trim()] : null,
-    model.state.profile.experience ? ["Experience", model.state.profile.experience.trim()] : null,
-    model.state.profile.education ? ["Education", model.state.profile.education.trim()] : null,
-    model.state.profile.learning ? ["Learning", model.state.profile.learning.trim()] : null,
-    model.state.profile.funFact ? ["Fun fact", model.state.profile.funFact.trim()] : null,
-  ].filter(Boolean);
-
-  if ((!includeBio || !model.state.profile.bio.trim()) && !facts.length) {
-    return null;
-  }
-
-  const section = createSection("About");
-  if (includeBio && model.state.profile.bio.trim()) {
-    const copy = document.createElement("p");
-    copy.className = "preview-copy";
-    copy.textContent = model.state.profile.bio.trim();
-    section.append(copy);
-  }
-
-  if (facts.length) {
-    const list = document.createElement("ul");
-    list.className = "preview-list";
-    facts.forEach(([label, value]) => {
-      const item = document.createElement("li");
+    const strongMatch = remainder.match(/^\*\*([\s\S]+?)\*\*/);
+    if (strongMatch) {
+      flushInlineBuffer(fragment, buffer);
+      buffer = "";
       const strong = document.createElement("strong");
-      strong.textContent = `${label}: `;
-      item.append(strong, document.createTextNode(value));
-      list.append(item);
-    });
-    section.append(list);
-  }
-
-  return section;
-}
-
-function buildFeaturedProjectsSection(model) {
-  if (!model.featuredProjects.length) {
-    return null;
-  }
-
-  const section = createSection("Featured Projects");
-  const list = document.createElement("div");
-  list.className = "preview-projects";
-
-  model.featuredProjects.forEach((project) => {
-    const card = document.createElement("article");
-    card.className = "preview-project";
-
-    const title = document.createElement("h3");
-    title.className = "preview-project-title";
-    title.textContent = project.title.trim() || "Untitled project";
-    card.append(title);
-
-    if (project.description.trim()) {
-      const description = document.createElement("p");
-      description.className = "preview-copy";
-      description.textContent = project.description.trim();
-      card.append(description);
+      strong.append(renderInlineContent(strongMatch[1]));
+      fragment.append(strong);
+      cursor += strongMatch[0].length;
+      continue;
     }
 
-    if (project.url.trim()) {
-      const link = document.createElement("a");
-      link.className = "preview-link";
-      link.href = ensureUrl(project.url.trim());
-      link.target = "_blank";
-      link.rel = "noreferrer noopener";
-      link.textContent = project.url.trim();
-      card.append(link);
+    const linkMatch = remainder.match(/^\[([^\]]+)\]\(([^)]+)\)/);
+    if (linkMatch) {
+      flushInlineBuffer(fragment, buffer);
+      buffer = "";
+      fragment.append(createLinkNode(linkMatch[1], linkMatch[2]));
+      cursor += linkMatch[0].length;
+      continue;
     }
 
-    list.append(card);
-  });
+    buffer += text[cursor];
+    cursor += 1;
+  }
 
-  section.append(list);
-  return section;
+  flushInlineBuffer(fragment, buffer);
+  return fragment;
 }
 
-function buildTechSection(model) {
-  if (!model.techGroups.some((group) => group.items.length)) {
-    return null;
+function flushInlineBuffer(parent, buffer) {
+  if (!buffer) {
+    return;
   }
 
-  const section = createSection("Stack");
-  const groups = document.createElement("div");
-  groups.className = "preview-stack-groups";
-
-  model.techGroups.forEach((group) => {
-    if (!group.items.length) {
-      return;
-    }
-
-    const block = document.createElement("div");
-    block.className = "preview-stack-group";
-
-    const label = document.createElement("p");
-    label.className = "preview-muted-label";
-    label.textContent = group.label;
-    block.append(label);
-
-    if (group.skillIcons.length) {
-      block.append(
-        createImageBlock(
-          `https://skillicons.dev/icons?i=${group.skillIcons.join(",")}&theme=dark`,
-          `${group.label} skillicons`,
-          "preview-inline-image"
-        )
-      );
-    }
-
-    if (group.id === "custom" && group.items.length) {
-      const row = document.createElement("div");
-      row.className = "preview-chip-row";
-      group.items.forEach((item) => {
-        const pill = document.createElement("span");
-        pill.className = "preview-pill";
-        pill.textContent = item.label.trim();
-        row.append(pill);
-      });
-      block.append(row);
-    }
-
-    groups.append(block);
-  });
-
-  section.append(groups);
-  return section;
+  parent.append(document.createTextNode(decodeText(buffer)));
 }
 
-function buildLanguagesSection(model) {
-  if (!model.spokenLanguages.length) {
-    return null;
+function createLinkedImage(alt, src, href) {
+  const link = document.createElement("a");
+  const safeHref = sanitizeUrl(href, ALLOWED_LINK_PROTOCOLS);
+
+  if (safeHref) {
+    link.href = safeHref;
+    link.target = "_blank";
+    link.rel = "noreferrer noopener";
   }
 
-  const section = createSection("Languages");
-  const list = document.createElement("div");
-  list.className = "preview-language-list";
-
-  model.spokenLanguages.forEach((entry) => {
-    const row = document.createElement("div");
-    row.className = "preview-language";
-
-    const name = document.createElement("span");
-    name.className = "preview-language-name";
-    name.textContent = `${getLanguageFlag(entry.name)} ${entry.name.trim()}`;
-    row.append(name);
-
-    const badge = document.createElement("img");
-    const levelMeta = LANGUAGE_LEVELS.find((level) => level.value === Number(entry.level)) || LANGUAGE_LEVELS[2];
-    badge.src = `https://img.shields.io/badge/-${encodeURIComponent(levelMeta.label)}-${levelMeta.badgeColor}?style=flat-square`;
-    badge.alt = `${entry.name.trim()} ${levelMeta.label}`;
-    row.append(badge);
-
-    list.append(row);
-  });
-
-  section.append(list);
-  return section;
+  link.append(createImageNode(alt, src));
+  return link;
 }
 
-function buildStatsSection(model) {
-  if (!model.username) {
-    return null;
+function createLinkNode(label, href) {
+  const safeHref = sanitizeUrl(href, ALLOWED_LINK_PROTOCOLS);
+
+  if (!safeHref) {
+    return document.createTextNode(decodeText(label));
   }
 
-  const hasStats = model.state.widgets.stats || model.state.widgets.langs || model.state.widgets.streak;
-  if (!hasStats) {
-    return null;
-  }
-
-  const section = createSection("GitHub Stats");
-  const grid = document.createElement("div");
-  grid.className = "preview-stats-grid";
-
-  if (model.state.widgets.stats && model.statsUrl) {
-    grid.append(createImageBlock(model.statsUrl, "GitHub stats", "preview-card-image"));
-  }
-
-  if (model.state.widgets.langs && model.topLanguagesUrl) {
-    grid.append(createImageBlock(model.topLanguagesUrl, "Top languages", "preview-card-image"));
-  }
-
-  if (grid.childElementCount > 0) {
-    section.append(grid);
-  }
-
-  if (model.state.widgets.streak && model.streakUrl) {
-    section.append(createImageBlock(model.streakUrl, "GitHub streak", "preview-card-image preview-card-image--full"));
-  }
-
-  return section;
+  const link = document.createElement("a");
+  link.href = safeHref;
+  link.target = "_blank";
+  link.rel = "noreferrer noopener";
+  link.append(renderInlineContent(label));
+  return link;
 }
 
-function buildOptionalWidgetsSection(model) {
-  const blocks = [];
+function createImageNode(alt, src) {
+  const safeSrc = sanitizeUrl(src, ALLOWED_IMAGE_PROTOCOLS);
 
-  if (model.state.widgets.trophies && model.trophyUrl) {
-    blocks.push(["Trophies", createImageBlock(model.trophyUrl, "Trophies", "preview-card-image preview-card-image--full")]);
+  if (!safeSrc) {
+    return document.createTextNode("");
   }
 
-  if (model.state.widgets.activity && model.activityUrl) {
-    blocks.push(["Activity", createImageBlock(model.activityUrl, "Activity graph", "preview-card-image preview-card-image--full")]);
-  }
-
-  if (model.state.widgets.waka && model.wakaUrl) {
-    blocks.push(["Coding Time", createImageBlock(model.wakaUrl, "WakaTime chart", "preview-card-image preview-card-image--full")]);
-  }
-
-  if (model.state.widgets.spotify) {
-    blocks.push(["Now Playing", createImageBlock(model.spotifyUrl, "Spotify widget", "preview-card-image preview-card-image--full")]);
-  }
-
-  if (model.state.widgets.snake && model.username && model.snakeDarkUrl) {
-    // GitHub README supports a picture source set here. The preview uses the dark asset directly as a close visual approximation.
-    blocks.push([
-      "Contribution Snake",
-      createImageBlock(model.snakeDarkUrl, "Contribution snake", "preview-card-image preview-card-image--full"),
-    ]);
-  }
-
-  if (!blocks.length) {
-    return null;
-  }
-
-  const section = createSection("Extras");
-  blocks.forEach(([label, content]) => {
-    const block = document.createElement("div");
-    block.className = "preview-extra";
-    const heading = document.createElement("p");
-    heading.className = "preview-muted-label";
-    heading.textContent = label;
-    block.append(heading, content);
-    section.append(block);
-  });
-
-  return section;
-}
-
-function buildQuoteSection(model) {
-  if (!model.state.widgets.quote) {
-    return null;
-  }
-
-  const section = createSection("Quote");
-  if (model.quote) {
-    const quote = document.createElement("blockquote");
-    quote.className = "preview-quote";
-    quote.textContent = model.quote;
-    section.append(quote);
-    return section;
-  }
-
-  section.append(createImageBlock(model.quoteUrl, "Developer quote", "preview-card-image preview-card-image--full"));
-  return section;
-}
-
-function buildFooterSection(model) {
-  const section = document.createElement("section");
-  section.className = "preview-footer";
-
-  const line = document.createElement("p");
-  line.className = "preview-footer-copy";
-  line.textContent = model.username
-    ? `Made with ReadmeForge · github.com/${model.username}`
-    : "Made with ReadmeForge";
-  section.append(line);
-
-  if (model.state.appearance.layoutStyle === "classic") {
-    section.append(createImageBlock(model.footerBannerUrl, "Footer wave", "preview-footer-wave"));
-  }
-
-  return section;
-}
-
-function buildSocialBadgeRow(model, includeViews) {
-  const row = document.createElement("div");
-  row.className = "preview-badge-row";
-
-  model.socials.forEach((entry) => {
-    const image = document.createElement("img");
-    image.src = entry.badgeUrl;
-    image.alt = entry.meta.badgeLabel;
-    row.append(image);
-  });
-
-  if (includeViews && model.state.widgets.views && model.viewsUrl) {
-    const image = document.createElement("img");
-    image.src = model.viewsUrl;
-    image.alt = "Profile views";
-    row.append(image);
-  }
-
-  return row;
-}
-
-function buildHeaderBadgeRow(model) {
-  const row = document.createElement("div");
-  row.className = "preview-badge-row preview-badge-row--compact";
-
-  model.headerBadges.forEach((badge) => {
-    const image = document.createElement("img");
-    image.src = badge.imageUrl;
-    image.alt = badge.label;
-    row.append(image);
-  });
-
-  return row;
-}
-
-function createSection(title) {
-  const section = document.createElement("section");
-  section.className = "preview-section";
-  const heading = document.createElement("h2");
-  heading.className = "preview-h2";
-  heading.textContent = title;
-  section.append(heading);
-  return section;
-}
-
-function buildTypingPreview(model) {
-  if (!model.state.widgets.typing || !model.typingLines.length) {
-    return null;
-  }
-
-  const shell = document.createElement("div");
-  shell.className = "preview-typing";
-  shell.setAttribute("aria-label", "Typing lines preview");
-
-  model.typingLines.forEach((line) => {
-    const row = document.createElement("div");
-    row.className = "preview-typing-line";
-
-    const prompt = document.createElement("span");
-    prompt.className = "preview-typing-prompt";
-    prompt.textContent = ">";
-
-    const text = document.createElement("span");
-    text.className = "preview-typing-text";
-    text.textContent = line;
-
-    row.append(prompt, text);
-    shell.append(row);
-  });
-
-  return shell;
-}
-
-function createImageBlock(src, alt, className) {
   const image = document.createElement("img");
-  image.className = className;
-  image.src = src;
-  image.alt = alt;
+  image.src = safeSrc;
+  image.alt = decodeText(alt);
   image.loading = "lazy";
+  image.decoding = "async";
   return image;
+}
+
+function sanitizeHtmlFragment(html) {
+  const template = document.createElement("template");
+  template.innerHTML = html;
+  return sanitizeChildNodes(template.content.childNodes);
+}
+
+function sanitizeChildNodes(nodes) {
+  const fragment = document.createDocumentFragment();
+
+  nodes.forEach((node) => {
+    const sanitized = sanitizeNode(node);
+    if (sanitized) {
+      fragment.append(sanitized);
+    }
+  });
+
+  return fragment;
+}
+
+function sanitizeNode(node) {
+  if (node.nodeType === Node.TEXT_NODE) {
+    const value = decodeText(node.textContent || "");
+    return value.trim() ? document.createTextNode(value) : null;
+  }
+
+  if (node.nodeType !== Node.ELEMENT_NODE) {
+    return null;
+  }
+
+  switch (node.tagName) {
+    case "A":
+      return sanitizeAnchor(node);
+    case "IMG":
+      return sanitizeImage(node);
+    case "PICTURE":
+      return sanitizePicture(node);
+    case "SOURCE":
+      return sanitizeSource(node);
+    case "SUB":
+      return sanitizeSub(node);
+    default:
+      return sanitizeChildNodes(node.childNodes);
+  }
+}
+
+function sanitizeAnchor(node) {
+  const href = sanitizeUrl(node.getAttribute("href"), ALLOWED_LINK_PROTOCOLS);
+  if (!href) {
+    return sanitizeChildNodes(node.childNodes);
+  }
+
+  const anchor = document.createElement("a");
+  anchor.href = href;
+  anchor.target = "_blank";
+  anchor.rel = "noreferrer noopener";
+  anchor.append(sanitizeChildNodes(node.childNodes));
+  return anchor;
+}
+
+function sanitizeImage(node) {
+  const src = sanitizeUrl(node.getAttribute("src"), ALLOWED_IMAGE_PROTOCOLS);
+  if (!src) {
+    return null;
+  }
+
+  const image = document.createElement("img");
+  image.src = src;
+  image.alt = decodeText(node.getAttribute("alt") || "");
+  image.loading = "lazy";
+  image.decoding = "async";
+
+  const width = (node.getAttribute("width") || "").trim();
+  const height = (node.getAttribute("height") || "").trim();
+
+  if (width) {
+    if (width.endsWith("%")) {
+      image.style.width = width;
+    } else {
+      image.setAttribute("width", width);
+    }
+  }
+
+  if (height) {
+    image.setAttribute("height", height);
+  }
+
+  return image;
+}
+
+function sanitizePicture(node) {
+  const picture = document.createElement("picture");
+  Array.from(node.childNodes).forEach((child) => {
+    const sanitized = sanitizeNode(child);
+    if (sanitized) {
+      picture.append(sanitized);
+    }
+  });
+  return picture.childNodes.length ? picture : null;
+}
+
+function sanitizeSource(node) {
+  const srcset = sanitizeUrl(node.getAttribute("srcset"), ALLOWED_IMAGE_PROTOCOLS);
+  if (!srcset) {
+    return null;
+  }
+
+  const source = document.createElement("source");
+  source.srcset = srcset;
+
+  const media = node.getAttribute("media");
+  if (media) {
+    source.media = media;
+  }
+
+  return source;
+}
+
+function sanitizeSub(node) {
+  const sub = document.createElement("sub");
+  sub.append(sanitizeChildNodes(node.childNodes));
+  return sub;
+}
+
+function sanitizeUrl(value, allowedProtocols) {
+  const candidate = decodeText(`${value || ""}`.trim());
+
+  if (!candidate) {
+    return "";
+  }
+
+  try {
+    const parsed = new URL(candidate, window.location.origin);
+    return allowedProtocols.has(parsed.protocol) ? parsed.href : "";
+  } catch (error) {
+    return "";
+  }
+}
+
+function decodeText(value) {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = `${value || ""}`;
+  return textarea.value;
 }

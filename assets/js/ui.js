@@ -1,18 +1,19 @@
 import { LANGUAGE_LEVELS, LAYOUT_STYLES, SOCIAL_FIELDS, STATUS_OPTIONS, WIDGET_OPTIONS } from "./data-options.js";
 import { ACCENT_THEMES, STATS_THEMES } from "./data-themes.js";
 import { TECH_GROUPS } from "./data-tech.js";
-import { getByPath, hexToRgb, isFilled } from "./utils.js";
+import { getByPath, gradientStopsToCss, hexToRgb, isFilled } from "./utils.js";
 
 export function applyAccentTheme(theme) {
   const rgb = hexToRgb(theme.color);
   const root = document.documentElement;
+  const gradientCss = theme.gradient ? gradientStopsToCss(theme.gradient) : "";
 
   root.style.setProperty("--accent", theme.color);
   root.style.setProperty("--accent-ink", getContrastInk(theme.color));
   root.style.setProperty("--accent-r", `${rgb.r}`);
   root.style.setProperty("--accent-g", `${rgb.g}`);
   root.style.setProperty("--accent-b", `${rgb.b}`);
-  root.style.setProperty("--accent-gradient", theme.gradient ? `linear-gradient(135deg, ${theme.gradientCss || gradientToCss(theme.gradient)})` : theme.color);
+  root.style.setProperty("--accent-gradient", gradientCss ? `linear-gradient(135deg, ${gradientCss})` : theme.color);
 }
 
 export function renderPresetRail(container, presets, activePresetId = "") {
@@ -108,12 +109,12 @@ export function renderAccentThemes(container, currentAccentId) {
   const groups = [
     {
       title: "Solid accents",
-      copy: "Quieter single-color accents for lower visual noise.",
+      copy: "Lower-noise accents for cleaner README chrome.",
       items: ACCENT_THEMES.filter((theme) => !theme.gradient),
     },
     {
       title: "Gradient accents",
-      copy: "Higher-energy blends for the banner and primary CTA.",
+      copy: "Higher-contrast blends for headers, swatches, and the primary CTA.",
       items: ACCENT_THEMES.filter((theme) => theme.gradient),
     },
   ];
@@ -220,11 +221,7 @@ export function renderTechGroups(container, state, searchQuery) {
       button.setAttribute("aria-pressed", `${selectedIds.has(item.id)}`);
       button.classList.toggle("is-active", selectedIds.has(item.id));
 
-      button.append(createElement("span", "tech-chip-label", item.label));
-      const chipMeta = getTechChipMeta(item.aliases);
-      if (chipMeta) {
-        button.append(createElement("span", "tech-chip-meta", chipMeta));
-      }
+      button.append(createTechChipIcon(item.label, item.skillIcon), createElement("span", "tech-chip-label", item.label));
 
       grid.append(button);
     });
@@ -236,14 +233,14 @@ export function renderTechGroups(container, state, searchQuery) {
   const customSection = createElement("section", "tech-group");
   const customHeader = createElement("div", "section-head section-head--stack");
   customHeader.append(createElement("h3", "section-title", "Custom Tech"));
-  customHeader.append(createElement("p", "section-caption", "Add anything missing from the built-in list."));
+  customHeader.append(createElement("p", "section-caption", "Missing a built-in icon? Custom entries fall back to a clean monogram badge."));
   customSection.append(customHeader);
 
   const pillRow = createElement("div", "custom-tech-list");
   if (state.tech.custom.length) {
     state.tech.custom.forEach((item) => {
       const pill = createElement("span", "custom-tech-pill");
-      pill.append(createElement("span", "custom-tech-pill-text", item.label));
+      pill.append(createTechChipIcon(item.label, ""), createElement("span", "custom-tech-pill-text", item.label));
       const removeButton = createElement("button", "icon-button icon-button--danger", "×");
       removeButton.type = "button";
       removeButton.dataset.action = "remove-custom-tech";
@@ -407,21 +404,19 @@ export function syncMobilePanel(root, panel) {
   });
 }
 
-function gradientToCss(gradient) {
-  return gradient
-    .split(",")
-    .map((chunk) => chunk.split(":")[1])
-    .join(", ");
+export function syncDesktopPreviewMode(root, mode) {
+  root.dataset.previewMode = mode;
+  document.querySelectorAll("[data-preview-mode-button]").forEach((button) => {
+    const isActive = button.dataset.previewModeButton === mode;
+    button.classList.toggle("is-active", isActive);
+    button.setAttribute("aria-pressed", `${isActive}`);
+  });
 }
 
 function getContrastInk(hexColor) {
   const { r, g, b } = hexToRgb(hexColor);
   const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
   return luminance > 0.66 ? "#04110b" : "#f7fbff";
-}
-
-function getTechChipMeta(aliases = []) {
-  return aliases.find((alias) => alias.length <= 8 && !alias.includes(" ")) || "";
 }
 
 function createAccentThemeButton(theme, currentAccentId) {
@@ -433,7 +428,7 @@ function createAccentThemeButton(theme, currentAccentId) {
   button.classList.toggle("is-active", theme.id === currentAccentId);
 
   const swatch = createElement("span", "theme-swatch");
-  swatch.style.background = theme.gradient ? `linear-gradient(135deg, ${gradientToCss(theme.gradient)})` : theme.color;
+  swatch.style.background = theme.gradient ? `linear-gradient(135deg, ${gradientStopsToCss(theme.gradient)})` : theme.color;
 
   const meta = createElement("span", "theme-meta");
   meta.append(createElement("span", "theme-name", theme.name), createElement("span", "theme-subtitle", theme.subtitle));
@@ -482,6 +477,39 @@ function buildProjectActions(projectId) {
 
 function getLanguageLevelLabel(value) {
   return LANGUAGE_LEVELS.find((level) => level.value === Number(value))?.label || LANGUAGE_LEVELS[2].label;
+}
+
+function createTechChipIcon(label, iconSlug) {
+  const shell = createElement("span", "tech-chip-icon");
+  const fallback = createElement("span", "tech-chip-fallback", getTechMonogram(label));
+  shell.append(fallback);
+
+  if (iconSlug) {
+    const image = createElement("img", "tech-chip-icon-image");
+    image.src = `https://skillicons.dev/icons?i=${encodeURIComponent(iconSlug)}&theme=dark`;
+    image.alt = "";
+    image.loading = "lazy";
+    image.decoding = "async";
+    image.addEventListener("error", () => {
+      shell.classList.remove("has-image");
+      image.remove();
+    });
+    shell.classList.add("has-image");
+    shell.append(image);
+  }
+
+  return shell;
+}
+
+function getTechMonogram(label) {
+  const normalized = `${label || ""}`.replace(/[^a-z0-9+#]/gi, "");
+
+  if (!normalized) {
+    return "•";
+  }
+
+  const compact = normalized.slice(0, 2).toUpperCase();
+  return compact.length === 1 ? `${compact}•` : compact;
 }
 
 function createElement(tagName, className = "", text = "") {

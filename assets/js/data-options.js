@@ -1,4 +1,5 @@
 export const STORAGE_KEY = "readmeforge:draft:v2";
+export const UI_STORAGE_KEY = "readmeforge:ui:v1";
 export const CONFIG_VERSION = 2;
 
 export const STATUS_OPTIONS = [

@@ -76,30 +76,46 @@
             </span>
           </a>
 
-          <p class="eyebrow">Preview-first • GitHub Pages friendly • zero install</p>
-          <h1>Build a GitHub profile README that feels deliberate, clean, and easy to keep alive.</h1>
+          <p class="eyebrow">Premium README workbench • static-first • GitHub Pages compatible</p>
+          <h1>Build a GitHub profile README with less guesswork and a truer preview.</h1>
           <p class="lede">
-            The editor, preview, and markdown output now read from one shared state object, so what you see here is much
-            closer to what lands in your repository.
+            Edit once, preview the generated README.md itself, and export a cleaner profile README from one framework-free
+            workspace.
           </p>
 
-          <div class="hero-actions">
-            <a class="button button--primary" href="https://github.com/lebedevnet/ReadmeForge" target="_blank" rel="noreferrer noopener">
-              <i class="fa-solid fa-star" aria-hidden="true"></i>
-              Star on GitHub
-            </a>
-            <a class="button button--ghost" href="#output">Jump to README output</a>
+          <div class="hero-points" aria-label="ReadmeForge highlights">
+            <span class="hero-point">Shared app state</span>
+            <span class="hero-point">Local draft autosave</span>
+            <span class="hero-point">Markdown-led preview</span>
           </div>
         </div>
 
-        <div class="hero-notes">
-          <div class="hero-note">
-            <span class="hero-note-label">What changed</span>
-            <p>Autosave, config import/export, mobile preview tabs, presets, safer rendering, and cleaner default output.</p>
+        <div class="hero-side">
+          <div class="hero-actions-card">
+            <p class="hero-side-label">Start here</p>
+            <div class="hero-actions">
+              <a class="button button--primary" href="https://github.com/lebedevnet/ReadmeForge" target="_blank" rel="noreferrer noopener">
+                <i class="fa-solid fa-star" aria-hidden="true"></i>
+                Star on GitHub
+              </a>
+              <a class="button button--ghost" href="#output">Jump to README output</a>
+            </div>
+            <p class="hero-side-copy">Open a preset, tune the structure, then copy or download the generated README when it looks right.</p>
           </div>
-          <div class="hero-note">
-            <span class="hero-note-label">Why it matters</span>
-            <p>Drafts survive refreshes, controls are keyboard-friendly, and you do not have to trust a separate rendering path anymore.</p>
+
+          <div class="hero-notes">
+            <div class="hero-note">
+              <span class="hero-note-label">Preview</span>
+              <p>Rendered from the generated README.md, not a separate handcrafted mock.</p>
+            </div>
+            <div class="hero-note">
+              <span class="hero-note-label">Reliability</span>
+              <p>Drafts stay local, config import/export still roundtrips, and the static setup stays GitHub Pages friendly.</p>
+            </div>
+            <div class="hero-note">
+              <span class="hero-note-label">Workflow</span>
+              <p>Desktop split view keeps the editor and README surface aligned without making the first screen feel oversized.</p>
+            </div>
           </div>
         </div>
       </header>
@@ -110,9 +126,20 @@
             <p class="section-kicker">Starter Presets</p>
             <h2>Pick a direction, then personalize it.</h2>
           </div>
-          <p class="section-copy">Presets keep your name, username, and social links intact while swapping the structure around them.</p>
+          <p class="section-copy">Presets keep your core identity intact while swapping the structure around it.</p>
         </div>
         <div class="preset-rail" id="preset-rail"></div>
+      </section>
+
+      <section class="workspace-toolbar panel" aria-label="Desktop workspace controls">
+        <div class="workspace-toolbar-copy">
+          <p class="section-kicker">Workbench</p>
+          <h2>Keep the README surface visible when you need it, and hide it when you want a wider editor.</h2>
+        </div>
+        <div class="preview-mode-switch" role="group" aria-label="Desktop preview visibility">
+          <button type="button" data-preview-mode-button="split" class="is-active" aria-pressed="true">Editor + Preview</button>
+          <button type="button" data-preview-mode-button="editor" aria-pressed="false">Editor only</button>
+        </div>
       </section>
 
       <div class="mobile-panel-switch" role="group" aria-label="Switch editor panels">
@@ -286,7 +313,7 @@
                 <p class="section-kicker">Appearance</p>
                 <h2>Choose the README structure first, then color it.</h2>
               </div>
-              <p class="section-copy">Classic keeps the original spirit, Minimal reduces noise, Portfolio pushes you and your work higher.</p>
+              <p class="section-copy">Pick the structure first, then tune the accent and stats palette around it.</p>
             </div>
 
             <div class="subsection">
@@ -317,7 +344,7 @@
                 <p class="section-kicker">Widgets & Header Info</p>
                 <h2>Control the extra signal without cross-wired toggles.</h2>
               </div>
-              <p class="section-copy">Status selection is isolated from widget toggles, so the two systems do not interfere anymore.</p>
+              <p class="section-copy">Status badges and optional widgets stay separated, so the controls stay predictable.</p>
             </div>
 
             <div class="subsection">
@@ -354,13 +381,13 @@
             </div>
           </section>
 
-          <section class="sticky-actions panel panel--sticky">
-            <div class="sticky-actions-copy">
+          <section class="output-rail panel">
+            <div class="output-rail-copy">
               <p class="section-kicker">Output</p>
-              <h2>Review the generated README before copying or exporting.</h2>
+              <h2>Keep the final markdown clean, close, and easy to export.</h2>
             </div>
-            <div class="sticky-actions-meta">
-              <button type="button" class="button button--primary button--cta" id="generate-readme">Review README output</button>
+            <div class="output-rail-meta">
+              <button type="button" class="button button--primary button--cta" id="generate-readme">Jump to README output</button>
               <p class="draft-status" id="draft-status" aria-live="polite"></p>
             </div>
           </section>
@@ -369,8 +396,9 @@
             <div class="panel-head panel-head--tight">
               <div>
                 <p class="section-kicker">README.md Output</p>
-                <h2>Actions stay grouped with the final markdown.</h2>
+                <h2>Copy, download, or export the current README draft.</h2>
               </div>
+              <p class="section-copy">Preview and output now come from the same generated markdown string.</p>
             </div>
 
             <div class="output-actions">
@@ -405,9 +433,9 @@
             <div class="preview-toolbar">
               <div>
                 <p class="section-kicker">Live Preview</p>
-                <h2>GitHub-style preview</h2>
+                <h2>README.md surface</h2>
               </div>
-              <p class="preview-toolbar-copy">Approximate GitHub rendering, with user text inserted safely.</p>
+              <p class="preview-toolbar-copy">Rendered from the generated markdown and styled closer to GitHub’s dark README view.</p>
             </div>
             <div class="preview-content" id="preview-content"></div>
           </div>

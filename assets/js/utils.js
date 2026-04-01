@@ -120,6 +120,25 @@ export function hexToRgb(hex) {
   };
 }
 
+export function gradientStopsToCss(gradient) {
+  return `${gradient || ""}`
+    .split(",")
+    .map((chunk) => {
+      const [position, rawColor] = chunk.split(":").map((part) => `${part || ""}`.trim());
+
+      if (!position || !rawColor) {
+        return "";
+      }
+
+      const normalizedColor = rawColor.startsWith("#") ? rawColor : `#${rawColor}`;
+      const numericPosition = Number.parseFloat(position);
+      const normalizedPosition = Number.isFinite(numericPosition) ? `${numericPosition}%` : position;
+      return `${normalizedColor} ${normalizedPosition}`;
+    })
+    .filter(Boolean)
+    .join(", ");
+}
+
 export function isFilled(value) {
   return `${value || ""}`.trim().length > 0;
 }

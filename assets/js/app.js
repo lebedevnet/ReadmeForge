@@ -1,5 +1,14 @@
 import { ACCENT_THEME_BY_ID } from "./data-themes.js";
-import { exportConfig, loadDraft, parseImportedConfig, saveDraft, clearDraft, createDraftAutosave } from "./storage.js";
+import {
+  exportConfig,
+  loadDraft,
+  loadPreviewMode,
+  parseImportedConfig,
+  saveDraft,
+  savePreviewMode,
+  clearDraft,
+  createDraftAutosave,
+} from "./storage.js";
 import { applyPreset, PRESETS } from "./presets.js";
 import { renderPreview } from "./preview.js";
 import { createInitialState, createStore } from "./state.js";
@@ -17,6 +26,7 @@ import {
   renderTechGroups,
   renderWidgetOptions,
   setStatusMessage,
+  syncDesktopPreviewMode,
   syncMobilePanel,
   updateOutputPanel,
   updateProgress,
@@ -72,6 +82,7 @@ let currentMarkdown = "";
 let currentPresetId = "";
 let currentTechQuery = "";
 let currentMobilePanel = "form";
+let currentPreviewMode = loadPreviewMode();
 let skipAutosaveOnce = false;
 
 renderSocialFields(refs.socialFields);
@@ -192,6 +203,13 @@ function handleClick(event) {
   if (button.dataset.mobilePanelButton) {
     currentMobilePanel = button.dataset.mobilePanelButton;
     syncMobilePanel(refs.workspace, currentMobilePanel);
+    return;
+  }
+
+  if (button.dataset.previewModeButton) {
+    currentPreviewMode = button.dataset.previewModeButton;
+    syncDesktopPreviewMode(refs.workspace, currentPreviewMode);
+    savePreviewMode(currentPreviewMode);
     return;
   }
 
@@ -339,7 +357,8 @@ function renderLiveState(state) {
 
   currentMarkdown = generateMarkdown(state);
   updateOutputPanel(refs, currentMarkdown);
-  renderPreview(refs.preview, state);
+  renderPreview(refs.preview, currentMarkdown, state.appearance.layoutStyle);
+  syncDesktopPreviewMode(refs.workspace, currentPreviewMode);
   syncMobilePanel(refs.workspace, currentMobilePanel);
 }
 

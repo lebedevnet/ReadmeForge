@@ -1,6 +1,8 @@
-import { CONFIG_VERSION, STORAGE_KEY } from "./data-options.js";
+import { CONFIG_VERSION, STORAGE_KEY, UI_STORAGE_KEY } from "./data-options.js";
 import { normalizeState, serializeState } from "./state.js";
 import { debounce } from "./utils.js";
+
+const VALID_PREVIEW_MODES = new Set(["split", "editor"]);
 
 export function loadDraft() {
   try {
@@ -42,6 +44,37 @@ export function clearDraft() {
 
 export function createDraftAutosave(callback) {
   return debounce(callback, 300);
+}
+
+export function loadPreviewMode() {
+  try {
+    const rawValue = localStorage.getItem(UI_STORAGE_KEY);
+
+    if (!rawValue) {
+      return "split";
+    }
+
+    const parsedValue = JSON.parse(rawValue);
+    return VALID_PREVIEW_MODES.has(parsedValue?.previewMode) ? parsedValue.previewMode : "split";
+  } catch (error) {
+    return "split";
+  }
+}
+
+export function savePreviewMode(mode) {
+  if (!VALID_PREVIEW_MODES.has(mode)) {
+    return false;
+  }
+
+  try {
+    const rawValue = localStorage.getItem(UI_STORAGE_KEY);
+    const parsedValue = rawValue ? JSON.parse(rawValue) : {};
+    parsedValue.previewMode = mode;
+    localStorage.setItem(UI_STORAGE_KEY, JSON.stringify(parsedValue));
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 
 export function exportConfig(state) {
