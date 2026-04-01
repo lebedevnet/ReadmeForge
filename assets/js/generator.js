@@ -7,7 +7,16 @@ import {
 } from "./data-options.js";
 import { ACCENT_THEME_BY_ID, STATS_THEME_BY_ID } from "./data-themes.js";
 import { TECH_BY_ID, TECH_GROUPS } from "./data-tech.js";
-import { encodeBadgeText, ensureUrl, isFilled, joinDefined, normalizeMarkdown } from "./utils.js";
+import {
+  encodeBadgeText,
+  ensureUrl,
+  escapeHtml,
+  escapeHtmlAttribute,
+  escapeMarkdownText,
+  isFilled,
+  joinDefined,
+  normalizeMarkdown,
+} from "./utils.js";
 
 export function buildReadmeModel(state) {
   const accentTheme = ACCENT_THEME_BY_ID.get(state.appearance.accentId) || ACCENT_THEME_BY_ID.values().next().value;
@@ -144,7 +153,11 @@ export function generateMarkdown(state) {
 function renderClassicMarkdown(model) {
   const blocks = [];
 
-  blocks.push(`<div align="center">\n  <img src="${model.bannerUrl}" width="100%" alt="${model.displayName} banner"/>\n</div>`);
+  blocks.push(
+    `<div align="center">\n  <img src="${model.bannerUrl}" width="100%" alt="${escapeHtmlAttribute(
+      `${model.displayName} banner`
+    )}"/>\n</div>`
+  );
 
   const centerBits = [];
   if (model.state.widgets.typing && model.typingUrl) {
@@ -170,7 +183,9 @@ function renderClassicMarkdown(model) {
   blocks.push(renderQuoteMarkdown(model));
   blocks.push(
     `---\n\n<div align="center">\n\n<sub>Made with <a href="https://lebedevnet.github.io/ReadmeForge/">ReadmeForge</a>${
-      model.username ? ` · <a href="https://github.com/${model.username}">github.com/${model.username}</a>` : ""
+      model.username
+        ? ` · <a href="https://github.com/${encodeURIComponent(model.username)}">github.com/${escapeHtml(model.username)}</a>`
+        : ""
     }</sub>\n\n<img src="${model.footerBannerUrl}" width="100%" alt="Footer wave"/>\n\n</div>`
   );
 
@@ -180,13 +195,13 @@ function renderClassicMarkdown(model) {
 function renderMinimalMarkdown(model) {
   const lines = [];
 
-  lines.push(`# ${model.displayName}`);
-  lines.push(`**${model.role}**`);
+  lines.push(`# ${escapeMarkdownText(model.displayName)}`);
+  lines.push(`**${escapeMarkdownText(model.role)}**`);
   if (model.state.widgets.typing && model.typingUrl) {
     lines.push(`[![Typing SVG](${model.typingUrl})](https://git.io/typing-svg)`);
   }
   if (isFilled(model.state.profile.bio)) {
-    lines.push(model.state.profile.bio.trim());
+    lines.push(escapeMarkdownText(model.state.profile.bio.trim()));
   }
 
   const headerInfo = buildInlineHeaderInfo(model);
@@ -219,9 +234,13 @@ function renderMinimalMarkdown(model) {
 
 function renderPortfolioMarkdown(model) {
   const sections = [];
-  sections.push(`<div align="center">\n  <img src="${model.bannerUrl}" width="100%" alt="${model.displayName} banner"/>\n</div>`);
+  sections.push(
+    `<div align="center">\n  <img src="${model.bannerUrl}" width="100%" alt="${escapeHtmlAttribute(
+      `${model.displayName} banner`
+    )}"/>\n</div>`
+  );
 
-  const heroBits = [`## ${model.displayName}`, `**${model.role}**`];
+  const heroBits = [`## ${escapeMarkdownText(model.displayName)}`, `**${escapeMarkdownText(model.role)}**`];
   if (model.state.widgets.typing && model.typingUrl) {
     heroBits.push(`[![Typing SVG](${model.typingUrl})](https://git.io/typing-svg)`);
   }
@@ -236,7 +255,7 @@ function renderPortfolioMarkdown(model) {
 
   const ctaLines = [];
   if (isFilled(model.state.profile.bio)) {
-    ctaLines.push(model.state.profile.bio.trim());
+    ctaLines.push(escapeMarkdownText(model.state.profile.bio.trim()));
   }
   if (model.primaryContactUrl) {
     ctaLines.push(`> Building something interesting? Let's connect: ${model.primaryContactUrl}`);
@@ -261,15 +280,15 @@ function renderPortfolioMarkdown(model) {
 }
 
 function renderAboutMarkdown(model, heading = "### About", includeIntro = true) {
-  const intro = includeIntro && isFilled(model.state.profile.bio) ? model.state.profile.bio.trim() : "";
+  const intro = includeIntro && isFilled(model.state.profile.bio) ? escapeMarkdownText(model.state.profile.bio.trim()) : "";
   const lines = [];
 
   const facts = [
-    model.state.profile.location ? `⌖ **Location** · ${model.state.profile.location.trim()}` : "",
-    model.state.profile.experience ? `⌗ **Experience** · ${model.state.profile.experience.trim()}` : "",
-    model.state.profile.education ? `◎ **Education** · ${model.state.profile.education.trim()}` : "",
-    model.state.profile.learning ? `⟳ **Learning** · ${model.state.profile.learning.trim()}` : "",
-    model.state.profile.funFact ? `✦ **Fun fact** · ${model.state.profile.funFact.trim()}` : "",
+    model.state.profile.location ? `⌖ **Location** · ${escapeMarkdownText(model.state.profile.location.trim())}` : "",
+    model.state.profile.experience ? `⌗ **Experience** · ${escapeMarkdownText(model.state.profile.experience.trim())}` : "",
+    model.state.profile.education ? `◎ **Education** · ${escapeMarkdownText(model.state.profile.education.trim())}` : "",
+    model.state.profile.learning ? `⟳ **Learning** · ${escapeMarkdownText(model.state.profile.learning.trim())}` : "",
+    model.state.profile.funFact ? `✦ **Fun fact** · ${escapeMarkdownText(model.state.profile.funFact.trim())}` : "",
   ].filter(Boolean);
 
   if (!intro && !facts.length) {
@@ -298,8 +317,10 @@ function renderFeaturedProjectsMarkdown(model, heading = "### Featured Projects"
 
   model.featuredProjects.forEach((project) => {
     const title = isFilled(project.title) ? project.title.trim() : "Untitled project";
-    const label = project.url ? `[${title}](${ensureUrl(project.url)})` : `**${title}**`;
-    const description = project.description.trim();
+    const label = project.url
+      ? `[${escapeMarkdownText(title)}](${ensureUrl(project.url)})`
+      : `**${escapeMarkdownText(title)}**`;
+    const description = escapeMarkdownText(project.description.trim());
     lines.push(`- ${joinDefined([label, description], " — ")}`);
   });
 
@@ -341,7 +362,7 @@ function renderLanguagesMarkdown(model, heading = "### Languages") {
 
   model.spokenLanguages.forEach((entry) => {
     lines.push(
-      `- ${getLanguageFlag(entry.name)} **${entry.name.trim()}** · ![${entry.levelMeta.label}](https://img.shields.io/badge/-${encodeBadgeText(
+      `- ${getLanguageFlag(entry.name)} **${escapeMarkdownText(entry.name.trim())}** · ![${entry.levelMeta.label}](https://img.shields.io/badge/-${encodeBadgeText(
         entry.levelMeta.label
       )}-${entry.levelMeta.badgeColor}?style=flat-square)`
     );
@@ -357,10 +378,14 @@ function renderStatsMarkdown(model, centered = true, heading = "### GitHub Stats
 
   const imageBits = [];
   if (model.state.widgets.stats && model.statsUrl) {
-    imageBits.push(`<img height="165" src="${model.statsUrl}" alt="${model.displayName} stats"/>`);
+    imageBits.push(
+      `<img height="165" src="${model.statsUrl}" alt="${escapeHtmlAttribute(`${model.displayName} stats`)}"/>`
+    );
   }
   if (model.state.widgets.langs && model.topLanguagesUrl) {
-    imageBits.push(`<img height="165" src="${model.topLanguagesUrl}" alt="${model.displayName} top languages"/>`);
+    imageBits.push(
+      `<img height="165" src="${model.topLanguagesUrl}" alt="${escapeHtmlAttribute(`${model.displayName} top languages`)}"/>`
+    );
   }
 
   const lines = [heading];
@@ -387,7 +412,9 @@ function renderOptionalWidgetsMarkdown(model, heading = "") {
 
   if (model.state.widgets.trophies && model.trophyUrl) {
     blocks.push(
-      `### Trophies\n\n<div align="center">\n\n<img src="${model.trophyUrl}" alt="${model.displayName} trophies"/>\n\n</div>`
+      `### Trophies\n\n<div align="center">\n\n<img src="${model.trophyUrl}" alt="${escapeHtmlAttribute(
+        `${model.displayName} trophies`
+      )}"/>\n\n</div>`
     );
   }
 
@@ -430,7 +457,7 @@ function renderQuoteMarkdown(model, heading = "") {
   }
 
   if (model.quote) {
-    return joinDefined([heading, `> "${model.quote}"`], "\n\n");
+    return joinDefined([heading, `> "${escapeMarkdownText(model.quote)}"`], "\n\n");
   }
 
   return joinDefined([heading, `![Quote](${model.quoteUrl})`], "\n\n");
@@ -465,23 +492,24 @@ function buildHeaderBadges(state, statusMeta, accentHex) {
   const statusColor = statusMeta.color === "accent" ? accentHex : statusMeta.color;
 
   if (state.header.status !== "none" && statusText) {
+    const badgeText = `${statusMeta.emoji} ${statusText}`;
     badges.push({
       label: statusText,
-      markdown: `![${statusText}](https://img.shields.io/badge/${encodeBadgeText(
-        `${statusMeta.emoji} ${statusText}`
+      markdown: `![${escapeMarkdownText(statusText)}](https://img.shields.io/badge/${encodeBadgeText(
+        badgeText
       )}-${statusColor}?style=flat-square)`,
-      imageUrl: `https://img.shields.io/badge/${encodeBadgeText(`${statusMeta.emoji} ${statusText}`)}-${statusColor}?style=flat-square`,
+      imageUrl: `https://img.shields.io/badge/${encodeBadgeText(badgeText)}-${statusColor}?style=flat-square`,
     });
   }
 
   if (isFilled(state.header.project)) {
-    const projectUrl = isFilled(state.header.projectUrl) ? ensureUrl(state.header.projectUrl) : "#";
     const label = `Building -> ${state.header.project.trim()}`;
+    const imageMarkdown = `![${escapeMarkdownText(label)}](https://img.shields.io/badge/${encodeBadgeText(
+      label
+    )}-6366f1?style=flat-square&logo=github&logoColor=white)`;
     badges.push({
       label,
-      markdown: `[![${label}](https://img.shields.io/badge/${encodeBadgeText(
-        label
-      )}-6366f1?style=flat-square&logo=github&logoColor=white)](${projectUrl})`,
+      markdown: isFilled(state.header.projectUrl) ? `[${imageMarkdown}](${ensureUrl(state.header.projectUrl)})` : imageMarkdown,
       imageUrl: `https://img.shields.io/badge/${encodeBadgeText(
         label
       )}-6366f1?style=flat-square&logo=github&logoColor=white`,
@@ -491,7 +519,7 @@ function buildHeaderBadges(state, statusMeta, accentHex) {
   if (isFilled(state.header.timezone)) {
     badges.push({
       label: state.header.timezone.trim(),
-      markdown: `![${state.header.timezone.trim()}](https://img.shields.io/badge/${encodeBadgeText(
+      markdown: `![${escapeMarkdownText(state.header.timezone.trim())}](https://img.shields.io/badge/${encodeBadgeText(
         state.header.timezone.trim()
       )}-333?style=flat-square)`,
       imageUrl: `https://img.shields.io/badge/${encodeBadgeText(state.header.timezone.trim())}-333?style=flat-square`,
@@ -545,12 +573,13 @@ function buildTechGroups(state) {
 
 function buildTechBadgeMarkdown(item) {
   const badgeLabel = encodeBadgeText(item.badgeLabel || item.label);
+  const altLabel = escapeMarkdownText(item.label);
 
   if (!item.badgeLogo) {
-    return `![${item.label}](https://img.shields.io/badge/${badgeLabel}-${item.badgeColor}?style=for-the-badge)`;
+    return `![${altLabel}](https://img.shields.io/badge/${badgeLabel}-${item.badgeColor}?style=for-the-badge)`;
   }
 
-  return `![${item.label}](https://img.shields.io/badge/${badgeLabel}-${item.badgeColor}?style=for-the-badge&logo=${item.badgeLogo}&logoColor=${item.badgeLogoColor || "white"})`;
+  return `![${altLabel}](https://img.shields.io/badge/${badgeLabel}-${item.badgeColor}?style=for-the-badge&logo=${item.badgeLogo}&logoColor=${item.badgeLogoColor || "white"})`;
 }
 
 function buildSocialBadgeMarkdown(model, includeViews) {
@@ -567,9 +596,9 @@ function buildSocialBadgeMarkdown(model, includeViews) {
 
 function buildInlineHeaderInfo(model) {
   return [
-    model.state.profile.location ? `Location: ${model.state.profile.location.trim()}` : "",
-    model.state.profile.experience ? `Experience: ${model.state.profile.experience.trim()}` : "",
-    model.state.profile.learning ? `Learning: ${model.state.profile.learning.trim()}` : "",
+    model.state.profile.location ? `Location: ${escapeMarkdownText(model.state.profile.location.trim())}` : "",
+    model.state.profile.experience ? `Experience: ${escapeMarkdownText(model.state.profile.experience.trim())}` : "",
+    model.state.profile.learning ? `Learning: ${escapeMarkdownText(model.state.profile.learning.trim())}` : "",
   ].filter(Boolean);
 }
 

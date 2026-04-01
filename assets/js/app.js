@@ -129,11 +129,11 @@ function bindEvents() {
   refs.importButton.addEventListener("click", () => refs.importInput.click());
   refs.generateButton.addEventListener("click", () => {
     if (!currentMarkdown.trim()) {
-      setStatusMessage(refs.draftStatus, "Add a bit more information before generating.", "danger");
+      setStatusMessage(refs.draftStatus, "Add a bit more information before reviewing the README.", "danger");
       return;
     }
     refs.outputSection.scrollIntoView({ behavior: "smooth", block: "start" });
-    setStatusMessage(refs.draftStatus, "README refreshed below.", "success");
+    setStatusMessage(refs.draftStatus, "Jumped to the latest README output.", "success");
   });
 }
 
@@ -183,14 +183,14 @@ function handleChange(event) {
 }
 
 function handleClick(event) {
-  const button = event.target.closest("[data-action], [data-mobile-panel]");
+  const button = event.target.closest("[data-action], [data-mobile-panel-button]");
 
   if (!button) {
     return;
   }
 
-  if (button.dataset.mobilePanel) {
-    currentMobilePanel = button.dataset.mobilePanel;
+  if (button.dataset.mobilePanelButton) {
+    currentMobilePanel = button.dataset.mobilePanelButton;
     syncMobilePanel(refs.workspace, currentMobilePanel);
     return;
   }

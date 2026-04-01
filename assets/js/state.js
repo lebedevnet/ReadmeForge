@@ -13,7 +13,7 @@ export function createInitialState() {
       education: "",
       learning: "",
       funFact: "",
-      typingLines: ["", ""],
+      typingLines: ["", "", ""],
       quote: "",
     },
     socials: {
@@ -95,9 +95,7 @@ export function normalizeState(input = {}) {
   nextState.profile = {
     ...base.profile,
     ...(source.profile || {}),
-    typingLines: Array.isArray(source.profile?.typingLines)
-      ? source.profile.typingLines.slice(0, 4).map((line) => `${line ?? ""}`)
-      : base.profile.typingLines,
+    typingLines: normalizeTypingLines(source.profile?.typingLines),
   };
   nextState.socials = { ...base.socials, ...(source.socials || {}) };
   nextState.header = { ...base.header, ...(source.header || {}) };
@@ -133,6 +131,16 @@ function ensureStringArray(value) {
   return Array.isArray(value)
     ? value.filter((entry) => typeof entry === "string" && entry.trim().length > 0)
     : [];
+}
+
+function normalizeTypingLines(value) {
+  const lines = Array.isArray(value) ? value.slice(0, 3).map((line) => `${line ?? ""}`) : [];
+
+  while (lines.length < 3) {
+    lines.push("");
+  }
+
+  return lines;
 }
 
 function normalizeSpokenLanguages(value) {

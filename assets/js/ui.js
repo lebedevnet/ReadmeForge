@@ -353,6 +353,7 @@ export function updateOutputPanel(refs, markdown) {
     ? markdown
     : "Your generated README.md will appear here once the draft has enough information.";
 
+  refs.generateButton.disabled = !hasMarkdown;
   refs.copyButton.disabled = !hasMarkdown;
   refs.downloadButton.disabled = !hasMarkdown;
 }
@@ -388,8 +389,8 @@ export function setStatusMessage(element, text, tone = "neutral") {
 
 export function syncMobilePanel(root, panel) {
   root.dataset.mobilePanel = panel;
-  document.querySelectorAll("[data-mobile-panel]").forEach((button) => {
-    const isActive = button.dataset.mobilePanel === panel;
+  document.querySelectorAll("[data-mobile-panel-button]").forEach((button) => {
+    const isActive = button.dataset.mobilePanelButton === panel;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-pressed", `${isActive}`);
   });

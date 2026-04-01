@@ -115,13 +115,28 @@
         <div class="preset-rail" id="preset-rail"></div>
       </section>
 
-      <div class="mobile-panel-switch" aria-label="Switch editor panels">
-        <button type="button" data-mobile-panel="form" class="is-active" aria-pressed="true">Form</button>
-        <button type="button" data-mobile-panel="preview" aria-pressed="false">Preview</button>
+      <div class="mobile-panel-switch" role="group" aria-label="Switch editor panels">
+        <button
+          type="button"
+          data-mobile-panel-button="form"
+          class="is-active"
+          aria-controls="editor-panel"
+          aria-pressed="true"
+        >
+          Form
+        </button>
+        <button
+          type="button"
+          data-mobile-panel-button="preview"
+          aria-controls="preview-panel"
+          aria-pressed="false"
+        >
+          Preview
+        </button>
       </div>
 
       <div class="workspace" id="workspace" data-mobile-panel="form">
-        <main class="editor" data-form-root>
+        <main class="editor" id="editor-panel" data-form-root>
           <section class="panel">
             <div class="panel-head">
               <div>
@@ -342,10 +357,10 @@
           <section class="sticky-actions panel panel--sticky">
             <div>
               <p class="section-kicker">Output</p>
-              <h2>Generate, copy, export, or reset without leaving the page.</h2>
+              <h2>Review, copy, export, or reset without leaving the page.</h2>
             </div>
             <div class="sticky-actions-meta">
-              <button type="button" class="button button--primary" id="generate-readme">Generate README</button>
+              <button type="button" class="button button--primary" id="generate-readme">Review README output</button>
               <p class="draft-status" id="draft-status" aria-live="polite"></p>
             </div>
           </section>
@@ -385,7 +400,7 @@
           </section>
         </main>
 
-        <aside class="preview-shell">
+        <aside class="preview-shell" id="preview-panel">
           <div class="preview-head panel">
             <div>
               <p class="section-kicker">Live Preview</p>
